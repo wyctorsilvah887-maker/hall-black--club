@@ -1,0 +1,98 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Hall Black Club Security Rules
+     *
+     * Core Philosophy:
+     * This ruleset enforces a strict user-ownership model centered around Firebase Authentication UIDs.
+     * Access is primarily governed by the document path and denormalized ownership fields to ensure
+     * high performance and authorization independence.
+     *
+     * Data Structure:
+     * - /mythicCodes/{mythicCodeId}: Global collection for club access codes.
+     * - /users/{userId}: Root profiles where {userId} matches the Firebase Auth UID.
+     * - /users/{userId}/pets/{petId}: User-specific subcollections for pet data.
+     *
+     * Key Security Decisions:
+     * - Path-Based Ownership: User data and their subcollections are secured by matching the path 
+     *   segment directly to the request.auth.uid.
+     * - Denormalization: Critical fields like 'userId' are required on child documents (Pets) to 
+     *   allow for standalone authorization checks without parent document lookups.
+     * - Prototyping Flexibility: Rules enforce WHO can access data and relational integrity, 
+     *   but do not restrict the specific fields or data types (schema) of the content itself.
+     * - Listing Restrictions: General listing of the /users and /mythicCodes collections is 
+     *   disabled to prevent data enumeration, upholding the "Rules are not Filters" principle.
+     */
+
+    // --- Helper Functions ---
+
+    /** Checks if the user is authenticated. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Checks if the authenticated user's UID matches the provided userId. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** 
+     * Checks if the authenticated user's UID matches the provided userId 
+     * AND ensures the document currently exists for updates or deletes. 
+     */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for unique access codes. Users can retrieve a code if they have the ID, but cannot browse them.
+     * @path /mythicCodes/{mythicCodeId}
+     * @allow get: (get) If signed in, to verify code status.
+     * @deny list: (list) Always denied to prevent code enumeration.
+     * @principle Prevents unauthorized discovery of available codes while allowing verification.
+     */
+    match /mythicCodes/{mythicCodeId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create: if false; // Managed by backend/serverless
+      allow update: if isExistingOwner(resource.data.userId);
+      allow delete: if false;
+    }
+
+    /**
+     * @description Rules for User Profiles. Provides strict ownership for writes and specific ID-based lookups for reads.
+     * @path /users/{userId}
+     * @allow create: (create) If the user's UID matches the document ID.
+     * @deny list: (list) Prevented to stop user directory scraping.
+     * @principle Enforces path-based ownership and relational integrity between Auth UID and Document ID.
+     */
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if false; // QAP: Rules are not filters. Users should not list the root collection.
+      
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Rules for Pets. Subcollection secured by parent path and denormalized userId field.
+       * @path /users/{userId}/pets/{petId}
+       * @allow list: (list) If the path userId matches the requester's UID.
+       * @deny create: (create) If the internal userId field does not match the parent path.
+       * @principle Authorization independence via denormalization and path-based restriction.
+       */
+      match /pets/{petId} {
+        allow get, list: if isOwner(userId);
+        
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+  }
+}

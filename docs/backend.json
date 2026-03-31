@@ -1,0 +1,207 @@
+{
+  "entities": {
+    "MythicCode": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MythicCode",
+      "type": "object",
+      "description": "Represents a unique Mythic Code used for initial access and activation of club membership.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the MythicCode entity."
+        },
+        "code": {
+          "type": "string",
+          "description": "The actual unique mythic code string provided to users for club access."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the mythic code, e.g., 'available' or 'activated'.",
+          "format": "enum"
+        },
+        "activationDateTime": {
+          "type": "string",
+          "description": "Timestamp when the mythic code was activated.",
+          "format": "date-time"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile entity that activated this code. (Relationship: MythicCode 1:1 UserProfile)"
+        }
+      },
+      "required": [
+        "id",
+        "code",
+        "status"
+      ]
+    },
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Stores detailed information about a club member, associated with an activated Mythic Code.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "mythicCodeId": {
+          "type": "string",
+          "description": "Reference to the MythicCode entity used by this user to gain initial access. (Relationship: UserProfile 1:1 MythicCode)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The full name of the club member."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the club member.",
+          "format": "email"
+        },
+        "registrationDateTime": {
+          "type": "string",
+          "description": "Timestamp when the user profile was fully registered with additional details.",
+          "format": "date-time"
+        },
+        "lastLoginDateTime": {
+          "type": "string",
+          "description": "Timestamp of the user's last login.",
+          "format": "date-time"
+        },
+        "rankingScore": {
+          "type": "number",
+          "description": "The user's current score or rank within the club, for the ranking feature."
+        },
+        "isPublicProfile": {
+          "type": "boolean",
+          "description": "Indicates whether the user's profile is visible to other members."
+        },
+        "profileImageUrl": {
+          "type": "string",
+          "description": "An optional URL to the user's profile picture.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "mythicCodeId",
+        "name",
+        "email",
+        "registrationDateTime",
+        "isPublicProfile"
+      ]
+    },
+    "Pet": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Pet",
+      "type": "object",
+      "description": "Records details about a pet owned by a club member, allowing for pet registration and linking to external monitoring services.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Pet entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile entity that owns this pet. (Relationship: UserProfile 1:N Pet)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the pet."
+        },
+        "species": {
+          "type": "string",
+          "description": "The species of the pet (e.g., 'dog', 'cat')."
+        },
+        "breed": {
+          "type": "string",
+          "description": "The breed of the pet."
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "The birth date of the pet.",
+          "format": "date"
+        },
+        "weightKg": {
+          "type": "number",
+          "description": "The weight of the pet in kilograms."
+        },
+        "registrationDateTime": {
+          "type": "string",
+          "description": "Timestamp when the pet was registered in the Hall Black Club app.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "species",
+        "registrationDateTime"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/mythicCodes/{mythicCodeId}",
+        "definition": {
+          "entityName": "MythicCode",
+          "schema": {
+            "$ref": "#/backend/entities/MythicCode"
+          },
+          "description": "Stores unique Mythic Codes. The `id` of the document is `mythicCodeId`. Includes denormalized `userId` once activated for authorization independence.",
+          "params": [
+            {
+              "name": "mythicCodeId",
+              "description": "The unique identifier of the Mythic Code."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores detailed user profiles. The `id` of the document is the user's Firebase Authentication UID, providing path-based ownership for authorization.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user, matching their Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/pets/{petId}",
+        "definition": {
+          "entityName": "Pet",
+          "schema": {
+            "$ref": "#/backend/entities/Pet"
+          },
+          "description": "Stores pets belonging to a specific user. The `userId` field within each pet document is denormalized from the parent UserProfile for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the pet's owner, matching their Firebase Authentication UID."
+            },
+            {
+              "name": "petId",
+              "description": "The unique identifier of the pet."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure for Hall Black Club is designed with security, scalability, and debuggability as top priorities, adhering to all mandated principles. \n\n**Authorization Independence (CRITICAL) & Denormalization:**\n1.  **UserProfile:** Each user's profile is stored at `/users/{userId}`, where `{userId}` is directly mapped to `request.auth.uid`. This path-based ownership inherently provides authorization independence, as the `uid` is part of the document's path, eliminating the need for `get()` calls to determine ownership for primary user data. The `UserProfile` entity has an `id` field which, in practice, will be the same as the Firebase `auth.uid`.\n2.  **Pet:** Pets are stored as a subcollection under their owner: `/users/{userId}/pets/{petId}`. The `Pet` entity itself includes a `userId` field. This `userId` field is **denormalized** from the parent `UserProfile`. This means that security rules for a pet document can directly check `resource.data.userId == request.auth.uid` without needing to `get()` the parent `/users/{userId}` document. This ensures that creating, updating, or deleting a pet can be an atomic operation, independent of the parent `UserProfile`'s state for authorization purposes. This robust approach significantly simplifies security rules and prevents complex transactional issues.\n3.  **MythicCode:** This collection holds codes that are activated by new users. The `MythicCode` entity includes a `userId` field which is populated upon activation. While the initial activation is handled by a backend serverless function (which inherently bypasses client-side rules), this `userId` field makes it easy to enforce read access for the associated user or for administrative purposes after activation, without needing to `get()` other documents.\n\n**QAPs (Rules are not Filters):**\n1.  **UserProfile:** `list` operations for a user's *own* profile are inherently secure due to path-based ownership (`/users/{request.auth.uid}`). For public profiles, `list` queries will need to filter on `isPublicProfile == true`. The structure allows rules to efficiently validate these queries, ensuring that a user can only query for profiles explicitly marked as public, thus preventing rules from acting as filters on sensitive data.\n2.  **Pet:** `list` operations within `/users/{userId}/pets` are secure and efficient. A user can `list` their own pets by querying `/users/request.auth.uid/pets`. Because pets are directly nested under the user and contain the `userId` field, the rules can enforce that `request.auth.uid == userId` (from the path) and `request.auth.uid == resource.data.userId` (from the document) for any `list` operation, ensuring that only the owner can retrieve their pets. No unauthorized listing is possible because the path explicitly includes the owner's ID.\n3.  **MythicCode:** The design assumes that users do not `list` `mythicCodes`. Instead, they `update` a *specific* code (via a serverless function) they already possess. This prevents information leakage about available codes, upholding the QAP by not allowing general `list` access for regular users. Admin `list` operations would be restricted to specific statuses (e.g., `available`).\n\n**Structural Segregation & Access Modeling:**\n*   **Private User Data:** `/users/{userId}` and `/users/{userId}/pets/{petId}` clearly segregate user-owned private data, making ownership explicit and rules straightforward.\n*   **Global, Transactional Data:** `/mythicCodes/{mythicCodeId}` represents a collection with specific, controlled access patterns (mostly backend-driven updates), separate from user-specific data, to simplify its security posture."
+  }
+}
