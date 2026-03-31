@@ -22,8 +22,7 @@ service cloud.firestore {
      *   allow for standalone authorization checks without parent document lookups.
      * - Prototyping Flexibility: Rules enforce WHO can access data and relational integrity, 
      *   but do not restrict the specific fields or data types (schema) of the content itself.
-     * - Listing Restrictions: General listing of the /users and /mythicCodes collections is 
-     *   disabled to prevent data enumeration, upholding the "Rules are not Filters" principle.
+     * - Listing: Permitida para usuários logados na coleção /users para suportar contagem de membros e ranking.
      */
 
     // --- Helper Functions ---
@@ -49,11 +48,8 @@ service cloud.firestore {
     // --- Collection Rules ---
 
     /**
-     * @description Rules for unique access codes. Users can retrieve a code if they have the ID, but cannot browse them.
+     * @description Rules for unique access codes.
      * @path /mythicCodes/{mythicCodeId}
-     * @allow get: (get) If signed in, to verify code status.
-     * @deny list: (list) Always denied to prevent code enumeration.
-     * @principle Prevents unauthorized discovery of available codes while allowing verification.
      */
     match /mythicCodes/{mythicCodeId} {
       allow get: if isSignedIn();
@@ -64,26 +60,20 @@ service cloud.firestore {
     }
 
     /**
-     * @description Rules for User Profiles. Provides strict ownership for writes and specific ID-based lookups for reads.
+     * @description Rules for User Profiles.
      * @path /users/{userId}
-     * @allow create: (create) If the user's UID matches the document ID.
-     * @deny list: (list) Prevented to stop user directory scraping.
-     * @principle Enforces path-based ownership and relational integrity between Auth UID and Document ID.
      */
     match /users/{userId} {
       allow get: if isSignedIn();
-      allow list: if false; // QAP: Rules are not filters. Users should not list the root collection.
+      allow list: if isSignedIn(); // Permitido para contagem de membros e ranking
       
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(userId);
 
       /**
-       * @description Rules for Pets. Subcollection secured by parent path and denormalized userId field.
+       * @description Rules for Pets.
        * @path /users/{userId}/pets/{petId}
-       * @allow list: (list) If the path userId matches the requester's UID.
-       * @deny create: (create) If the internal userId field does not match the parent path.
-       * @principle Authorization independence via denormalization and path-based restriction.
        */
       match /pets/{petId} {
         allow get, list: if isOwner(userId);
