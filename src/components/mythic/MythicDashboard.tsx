@@ -9,15 +9,27 @@ import { CollarIcon, RubyShield } from "./MythicIcons";
 import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 interface MythicDashboardProps {
   profile: any;
 }
 
 export function MythicDashboard({ profile }: MythicDashboardProps) {
+  const db = useFirestore();
   const luxuryPetImg = PlaceHolderImages.find(img => img.id === 'luxury-pet');
   const avatarImg = PlaceHolderImages.find(img => img.id === 'member-avatar');
   
+  // Busca a coleção de usuários para contar o registro
+  const usersQuery = useMemoFirebase(() => {
+    return collection(db, 'users');
+  }, [db]);
+  
+  const { data: usersData } = useCollection(usersQuery);
+  const userCount = usersData?.length || 0;
+  const formattedRegistration = userCount.toString().padStart(3, '0');
+
   const isLegendary = profile.status === 'LEGENDARY';
   const isAmber = profile.status === 'AMBER';
 
@@ -50,7 +62,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               {badgeInfo.icon}
               {badgeInfo.text}
             </Badge>
-            <span className="text-zinc-500 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] mt-1 sm:mt-0">REGISTRO: #{profile.rank || '0'}923</span>
+            <span className="text-zinc-500 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] mt-1 sm:mt-0 font-bold">
+              REGISTRO: #{formattedRegistration}
+            </span>
           </div>
         </div>
 
