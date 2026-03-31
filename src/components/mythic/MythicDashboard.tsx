@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -5,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -43,13 +44,21 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const { toast } = useToast();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editPetFileInputRef = useRef<HTMLInputElement>(null);
   const profilePicInputRef = useRef<HTMLInputElement>(null);
   
   const [isAddPetOpen, setIsAddPetOpen] = useState(false);
+  const [isEditPetOpen, setIsEditPetOpen] = useState(false);
+  const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const [newPetName, setNewPetName] = useState('');
   const [newPetSpecies, setNewPetSpecies] = useState('');
   const [newPetPhoto, setNewPetPhoto] = useState<string | null>(null);
+
+  const [editPetName, setEditPetName] = useState('');
+  const [editPetSpecies, setEditPetSpecies] = useState('');
+  const [editPetPhoto, setEditPetPhoto] = useState<string | null>(null);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
@@ -76,17 +85,15 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, isProfilePic = false) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'profile' | 'newPet' | 'editPet') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
       const compressed = await compressImage(file);
-      if (isProfilePic) {
-        setSettingsPhoto(compressed);
-      } else {
-        setNewPetPhoto(compressed);
-      }
+      if (target === 'profile') setSettingsPhoto(compressed);
+      if (target === 'newPet') setNewPetPhoto(compressed);
+      if (target === 'editPet') setEditPetPhoto(compressed);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -120,6 +127,36 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     setNewPetSpecies('');
     setNewPetPhoto(null);
     setIsAddPetOpen(false);
+    setIsSubmitting(false);
+  };
+
+  const handleOpenEditPet = (pet: any) => {
+    setEditingPet(pet);
+    setEditPetName(pet.name);
+    setEditPetSpecies(pet.species);
+    setEditPetPhoto(pet.photo);
+    setIsEditPetOpen(true);
+  };
+
+  const handleUpdatePet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPet || !profile?.id) return;
+
+    setIsSubmitting(true);
+    const petRef = doc(db, 'users', profile.id, 'pets', editingPet.id);
+    
+    updateDocumentNonBlocking(petRef, {
+      name: editPetName,
+      species: editPetSpecies,
+      photo: editPetPhoto
+    });
+
+    toast({
+      title: "IDENTIDADE ATUALIZADA",
+      description: `AS CREDENCIAIS DE ${editPetName.toUpperCase()} FORAM SINCRONIZADAS.`,
+    });
+
+    setIsEditPetOpen(false);
     setIsSubmitting(false);
   };
 
@@ -180,7 +217,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               className="h-9 rounded-full border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 gap-2 px-4 transition-all"
             >
               <PlusCircle className="w-4 h-4" />
-              <span className="text-[9px] font-bold uppercase tracking-wider">Novo Pet</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider hidden sm:inline">Novo Pet</span>
             </Button>
             
             <DropdownMenu>
@@ -242,6 +279,19 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             {isLegendary ? <Crown className="w-4 h-4" /> : isAmber ? <Gem className="w-4 h-4" /> : <CollarIcon className="w-4 h-4" />}
             {isLegendary ? 'ACREDITAÇÃO LENDÁRIA' : isAmber ? 'STATUS LEGENDÁRIO' : 'MEMBRO MÍTICO'}
           </Badge>
+        </div>
+
+        {/* SAÚDE MUNDO PET CTA */}
+        <div className="grid grid-cols-1 gap-6">
+          <Button 
+            className={`w-full h-16 md:h-20 text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
+              ${isLegendary ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 hover:scale-[1.01] shadow-yellow-500/20' : 
+                isAmber ? 'bg-gradient-to-r from-orange-600 to-orange-400 hover:scale-[1.01] shadow-orange-500/20' : 
+                'bg-gradient-to-r from-red-800 to-primary hover:scale-[1.01] shadow-primary/20'}`}
+          >
+            <Stethoscope className="w-6 h-6 md:w-8 md:h-8 mr-4 group-hover:rotate-12 transition-transform" />
+            SAÚDE MUNDO PET
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
@@ -321,10 +371,18 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                           <Button 
                             size="icon" 
                             variant="ghost" 
+                            className="h-8 w-8 text-zinc-700 hover:text-primary"
+                            onClick={(e) => { e.preventDefault(); handleOpenEditPet(pet); }}
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
                             className="h-8 w-8 text-zinc-700 hover:text-red-500 hover:bg-red-950/20"
                             onClick={(e) => { e.preventDefault(); handleDeletePet(pet.id, pet.name); }}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
@@ -351,7 +409,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               <div onClick={() => fileInputRef.current?.click()} className="w-24 h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
                 {newPetPhoto ? <Image src={newPetPhoto} alt="Preview" fill className="object-cover" /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
               </div>
-              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, false)} />
+              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'newPet')} />
             </div>
             <div className="space-y-4">
               <div className="space-y-2">
@@ -372,6 +430,38 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={isEditPetOpen} onOpenChange={setIsEditPetOpen}>
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tighter">Editar Identidade</DialogTitle>
+            <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Atualize as credenciais do seu pet.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdatePet} className="space-y-6 pt-4">
+            <div className="flex flex-col items-center gap-3">
+              <div onClick={() => editPetFileInputRef.current?.click()} className="w-24 h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
+                {editPetPhoto ? <Image src={editPetPhoto} alt="Preview" fill className="object-cover" /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
+              </div>
+              <input type="file" ref={editPetFileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'editPet')} />
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome do Pet</Label>
+                <Input className="bg-black/50 border-zinc-800 font-bold uppercase" value={editPetName} onChange={(e) => setEditPetName(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Espécie / Raça</Label>
+                <Input className="bg-black/50 border-zinc-800 font-bold uppercase" value={editPetSpecies} onChange={(e) => setEditPetSpecies(e.target.value)} required />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" className={`w-full h-12 font-black uppercase tracking-widest ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary'}`} disabled={isSubmitting}>
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sincronizar Dados'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md">
           <DialogHeader>
@@ -383,7 +473,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               <div onClick={() => profilePicInputRef.current?.click()} className="w-24 h-24 rounded-full border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
                 {settingsPhoto ? <Image src={settingsPhoto} alt="Profile" fill className="object-cover" /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
               </div>
-              <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, true)} />
+              <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'profile')} />
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
