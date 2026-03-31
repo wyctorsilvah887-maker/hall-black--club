@@ -1,16 +1,16 @@
 
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone, LogOut, Settings, ExternalLink } from "lucide-react";
+import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, serverTimestamp } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import {
@@ -21,6 +21,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useToast } from '@/hooks/use-toast';
 
 interface MythicDashboardProps {
   profile: any;
@@ -29,8 +42,14 @@ interface MythicDashboardProps {
 export function MythicDashboard({ profile }: MythicDashboardProps) {
   const db = useFirestore();
   const auth = useAuth();
+  const { toast } = useToast();
   const luxuryPetImg = PlaceHolderImages.find(img => img.id === 'luxury-pet');
   
+  const [isAddPetOpen, setIsAddPetOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newPetName, setNewPetName] = useState('');
+  const [newPetSpecies, setNewPetSpecies] = useState('');
+
   // Busca a coleção de usuários para contar o registro
   const usersQuery = useMemoFirebase(() => {
     return collection(db, 'users');
@@ -39,6 +58,39 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const { data: usersData } = useCollection(usersQuery);
   const userCount = usersData?.length || 0;
   const formattedRegistration = userCount.toString().padStart(3, '0');
+
+  // Busca os pets do usuário logado
+  const petsQuery = useMemoFirebase(() => {
+    if (!profile?.id) return null;
+    return collection(db, 'users', profile.id, 'pets');
+  }, [db, profile?.id]);
+
+  const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
+
+  const handleAddPet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPetName || !newPetSpecies || !profile?.id) return;
+
+    setIsSubmitting(true);
+    const petsRef = collection(db, 'users', profile.id, 'pets');
+    
+    addDocumentNonBlocking(petsRef, {
+      userId: profile.id,
+      name: newPetName,
+      species: newPetSpecies,
+      registrationDateTime: new Date().toISOString(),
+    });
+
+    toast({
+      title: "PET REGISTRADO",
+      description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.`,
+    });
+
+    setNewPetName('');
+    setNewPetSpecies('');
+    setIsAddPetOpen(false);
+    setIsSubmitting(false);
+  };
 
   const isLegendary = profile.status === 'LEGENDARY';
   const isAmber = profile.status === 'AMBER';
@@ -76,14 +128,63 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="hidden xs:flex h-9 rounded-full border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 gap-2 px-4 transition-all"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span className="text-[9px] font-bold uppercase tracking-wider">Novo Pet</span>
-            </Button>
+            <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className={`h-9 rounded-full border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 gap-2 px-4 transition-all
+                    ${isLegendary ? 'hover:border-yellow-500/50 hover:text-yellow-500' : isAmber ? 'hover:border-orange-500/50 hover:text-orange-500' : 'hover:border-primary/50 hover:text-primary'}`}
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Novo Pet</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-zinc-950 border-zinc-800 text-white">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-black uppercase tracking-tighter">Registrar Novo Pet</DialogTitle>
+                  <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">
+                    Adicione uma nova identidade à sua linhagem de elite.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleAddPet} className="space-y-6 pt-4">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="pet-name" className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome do Pet</Label>
+                      <Input
+                        id="pet-name"
+                        placeholder="EX: THOR"
+                        className="bg-black/50 border-zinc-800 focus:border-primary/50 font-bold uppercase"
+                        value={newPetName}
+                        onChange={(e) => setNewPetName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="pet-species" className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Espécie / Raça</Label>
+                      <Input
+                        id="pet-species"
+                        placeholder="EX: DOBERMAN"
+                        className="bg-black/50 border-zinc-800 focus:border-primary/50 font-bold uppercase"
+                        value={newPetSpecies}
+                        onChange={(e) => setNewPetSpecies(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button 
+                      type="submit" 
+                      className={`w-full h-12 font-black uppercase tracking-widest
+                        ${isLegendary ? 'bg-yellow-500 hover:bg-yellow-400 text-black' : isAmber ? 'bg-orange-500 hover:bg-orange-400 text-black' : 'bg-primary hover:bg-accent'}`}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Registro'}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -193,45 +294,54 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
           {/* Pet Monitoring & Status */}
           <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <Card className={`bg-zinc-900/40 border-zinc-800/50 overflow-hidden group relative ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
-              <div className="h-48 md:h-56 relative overflow-hidden">
-                 <Image 
-                  src={luxuryPetImg?.imageUrl || ''} 
-                  alt="Luxury Pet" 
-                  fill 
-                  className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                  data-ai-hint="luxury dog"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
-                <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 flex flex-col gap-1">
-                  <Badge className={`border-none font-bold uppercase tracking-tighter text-[8px] md:text-[10px] h-5 md:h-6 px-2 
-                    ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary text-white'}`}>
-                    {isLegendary ? 'OURO LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'VIP MÍTICO'}
-                  </Badge>
-                  <span className="text-white font-bold text-lg md:text-xl tracking-tighter uppercase">Thor</span>
-                </div>
-              </div>
-              <CardContent className="p-5 md:p-6 space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
-                  <Heart className={`w-4 h-4 md:w-5 md:h-5 animate-pulse ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
-                  Sinais Vitais Pet
-                </h3>
-                <p className="text-zinc-400 text-[11px] md:text-xs leading-relaxed">
-                  Monitoramento biométrico de alta precisão exclusivo para membros da elite Hall Black.
-                </p>
+            <Card className={`bg-zinc-900/40 border-zinc-800/50 overflow-hidden group relative flex flex-col ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
+              <CardHeader className="pb-3 md:pb-4">
+                <CardTitle className="flex items-center gap-3 text-lg md:text-xl tracking-tight uppercase">
+                  <PawPrint className={`w-4 h-4 md:w-5 md:h-5 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                  Seus Pets de Elite
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 space-y-4">
+                {isPetsLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-6 h-6 animate-spin text-zinc-800" />
+                  </div>
+                ) : !petsData || petsData.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 opacity-40">
+                    <CollarIcon className="w-12 h-12 text-zinc-700" />
+                    <p className="text-[10px] uppercase tracking-widest font-bold max-w-[150px]">Nenhum pet registrado na sua linhagem.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {petsData.map((pet) => (
+                      <div key={pet.id} className="flex items-center justify-between p-4 rounded-xl bg-black/60 border border-zinc-800/50 group/item hover:border-zinc-700 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-zinc-900 border border-zinc-800
+                            ${isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
+                            <Heart className={`w-4 h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                          </div>
+                          <div>
+                            <p className="text-white font-black text-sm uppercase tracking-tighter">{pet.name}</p>
+                            <p className="text-zinc-500 text-[10px] uppercase tracking-widest">{pet.species}</p>
+                          </div>
+                        </div>
+                        <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-700 hover:text-white">
+                          <ArrowUpRight className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
                 <Button 
-                  asChild
-                  className={`w-full h-11 md:h-12 text-xs font-bold transition-all group overflow-hidden relative 
+                  onClick={() => setIsAddPetOpen(true)}
+                  className={`w-full h-11 md:h-12 text-xs font-bold transition-all mt-4
                     ${isLegendary ? 'bg-yellow-500 hover:bg-yellow-400 text-black' : 
                       isAmber ? 'bg-orange-500 hover:bg-orange-400 text-black' : 
                       'bg-primary hover:bg-accent text-white'}`}
                 >
-                  <a href="https://example.com/mundo-pet" target="_blank" rel="noopener noreferrer">
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      {isLegendary || isAmber ? 'CONEXÃO LEGENDÁRIA' : 'MONITORAR AGORA'}
-                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                    </span>
-                  </a>
+                  <PlusCircle className="w-4 h-4 mr-2" />
+                  ADICIONAR NOVO PET
                 </Button>
               </CardContent>
             </Card>
@@ -297,3 +407,4 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     </div>
   );
 }
+
