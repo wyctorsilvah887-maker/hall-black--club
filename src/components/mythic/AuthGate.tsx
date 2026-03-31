@@ -32,6 +32,41 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const db = useFirestore();
   const { toast } = useToast();
 
+  const formatPhoneMask = (value: string) => {
+    // Remove tudo que não é dígito
+    const digits = value.replace(/\D/g, '');
+    
+    // Limita a 11 dígitos (2 do DDD + 9 do número)
+    const truncated = digits.slice(0, 11);
+    
+    if (truncated.length === 0) return '';
+    
+    let formatted = '+55 ';
+    
+    if (truncated.length > 0) {
+      if (truncated.length <= 2) {
+        formatted += `(${truncated}`;
+      } else if (truncated.length <= 7) {
+        formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2)}`;
+      } else {
+        formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2, 7)}-${truncated.slice(7)}`;
+      }
+    }
+    
+    return formatted;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    // Se o usuário estiver apagando, permitimos o comportamento padrão ou limpamos tudo se for pequeno
+    if (input.length < emergencyPhone.length && emergencyPhone.startsWith('+55 ') && input.length <= 4) {
+      setEmergencyPhone('');
+      return;
+    }
+    
+    setEmergencyPhone(formatPhoneMask(input));
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -129,11 +164,11 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
                   <Phone className="w-3 h-3" /> Contato de Emergência
                 </Label>
                 <Input
-                  placeholder="(00) 00000-0000"
+                  placeholder="+55 (00) 00000-0000"
                   required
                   className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
                   value={emergencyPhone}
-                  onChange={(e) => setEmergencyPhone(e.target.value)}
+                  onChange={handlePhoneChange}
                 />
               </div>
             </>
