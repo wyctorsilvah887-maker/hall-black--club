@@ -164,13 +164,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                       {isSOSActive ? 'Emergência Ativa' : 'SOS Privado'}
                     </span>
                   </div>
-                  {isSOSActive ? (
-                    <div className="text-right">
-                      <p className="font-mono text-red-500 text-lg font-black tracking-tight animate-in slide-in-from-right-2">
-                        {owner.emergencyContact || 'S/N'}
-                      </p>
-                    </div>
-                  ) : (
+                  {!isSOSActive && (
                     <p className="text-[9px] font-bold text-zinc-800 uppercase italic">Protegido</p>
                   )}
                 </div>
@@ -201,7 +195,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
             <div className="text-center space-y-2">
               <h2 className="text-red-500 font-black text-2xl uppercase tracking-tighter italic">PET ENCONTRA-SE PERDIDO</h2>
               <p className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold max-w-sm mx-auto leading-relaxed">
-                ESTE ANIMAL FAZ PARTE DA REDE HALL BLACK. POR FAVOR, AJUDE-O A VOLTAR PARA CASA USANDO OS CONTATOS ABAIXO.
+                ESTE ANIMAL FAZ PARTE DA REDE HALL BLACK. POR FAVOR, AJUDE-O A VOLTAR PARA CASA USANDO OS CANAIS DE CONTATO ABAIXO.
               </p>
             </div>
             
