@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -7,7 +6,7 @@ import { MythicDashboard } from '@/components/mythic/MythicDashboard';
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   const handleAccessGranted = (profile: any) => {
     setUserProfile(profile);
@@ -15,7 +14,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-black">
+    <main className={`min-h-screen bg-black ${userProfile?.theme === 'legendary' ? 'theme-legendary' : ''}`}>
       {!isAuthenticated ? (
         <AccessGate onSuccess={handleAccessGranted} />
       ) : (

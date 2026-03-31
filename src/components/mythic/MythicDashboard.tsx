@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -6,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle } from "lucide-react";
+import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
@@ -17,18 +16,19 @@ interface MythicDashboardProps {
 export function MythicDashboard({ profile }: MythicDashboardProps) {
   const luxuryPetImg = PlaceHolderImages.find(img => img.id === 'luxury-pet');
   const avatarImg = PlaceHolderImages.find(img => img.id === 'member-avatar');
+  const isLegendary = profile.status === 'LEGENDARY';
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8 animate-in fade-in duration-1000">
       <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
         <div className="text-center md:text-left">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline mb-2 animate-text-ruby-glow">
-            BEM-VINDO À ELITE
+          <h2 className="text-3xl md:text-4xl font-bold font-headline mb-2 animate-text-ruby-glow uppercase tracking-tight">
+            {isLegendary ? 'ASCENSÃO LENDÁRIA' : 'BEM-VINDO À ELITE'}
           </h2>
           <div className="flex items-center gap-2 justify-center md:justify-start">
             <Badge variant="outline" className="border-primary/50 bg-primary/10 text-primary py-1 px-3 flex items-center gap-2 rounded-full font-bold tracking-wider">
-              <CollarIcon className="w-4 h-4" />
-              STATUS MÍTICO
+              {isLegendary ? <Sparkles className="w-4 h-4" /> : <CollarIcon className="w-4 h-4" />}
+              {isLegendary ? 'STATUS LENDÁRIO' : 'STATUS MÍTICO'}
             </Badge>
             <span className="text-zinc-500 text-xs uppercase tracking-widest">ID: {profile.rank}923-B</span>
           </div>
@@ -39,7 +39,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             <PlusCircle className="w-4 h-4" />
             Cadastrar Pet
           </Button>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/50 shadow-[0_0_15px_rgba(160,16,41,0.3)]">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/50 shadow-[0_0_15px_rgba(var(--primary),0.3)]">
             <Image 
               src={avatarImg?.imageUrl || ''} 
               alt="Avatar" 
@@ -102,7 +102,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 data-ai-hint="luxury dog"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent" />
-              <Badge className="absolute bottom-4 left-4 bg-primary text-white border-none font-bold">VIP</Badge>
+              <Badge className="absolute bottom-4 left-4 bg-primary text-white border-none font-bold uppercase tracking-tighter">
+                {isLegendary ? 'LEGENDARY' : 'VIP'}
+              </Badge>
             </div>
             <CardContent className="p-6 space-y-4">
               <h3 className="text-xl font-bold flex items-center gap-2">
@@ -117,7 +119,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 className="w-full h-12 bg-primary hover:bg-accent text-white font-bold transition-all group"
               >
                 <a href="https://example.com/mundo-pet" target="_blank" rel="noopener noreferrer">
-                  Monitorar Saúde (Mundo Pet) 🐾
+                  {isLegendary ? 'Painel de Controle Real' : 'Monitorar Saúde (Mundo Pet) 🐾'}
                   <ArrowUpRight className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </a>
               </Button>
@@ -127,7 +129,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <Card className="bg-zinc-900/40 border-zinc-800/50 relative overflow-hidden">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <Trophy className="w-5 h-5 text-yellow-500" />
+                <Trophy className={`w-5 h-5 ${isLegendary ? 'text-primary' : 'text-yellow-500'}`} />
                 Ranking Hall Black
               </CardTitle>
             </CardHeader>
@@ -139,7 +141,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               ].map((item, i) => (
                 <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-black/30 border border-zinc-800/30">
                   <div className="flex items-center gap-3">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-yellow-500/20 text-yellow-500' : 'bg-zinc-800 text-zinc-400'}`}>
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-primary/20 text-primary' : 'bg-zinc-800 text-zinc-400'}`}>
                       {item.rank}
                     </span>
                     <span className="font-medium text-sm">{item.name}</span>
@@ -151,7 +153,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               <div className="pt-4 border-t border-zinc-800 mt-4 text-center">
                 <p className="text-xs text-zinc-500 uppercase tracking-widest mb-2">Sua Posição Atual</p>
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-2xl font-bold text-white">#42</span>
+                  <span className="text-2xl font-bold text-white">{isLegendary ? '#1' : '#42'}</span>
                   <span className="text-zinc-400">/ 1,500</span>
                 </div>
               </div>

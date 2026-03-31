@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -33,8 +32,8 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
       const result = await validateMythicCode(code);
       if (result.success) {
         toast({
-          title: "BEM-VINDO À ELITE",
-          description: "Seu status mítico foi ativado com sucesso.",
+          title: result.profile.status === 'LEGENDARY' ? "ASCENSÃO LENDÁRIA" : "BEM-VINDO À ELITE",
+          description: result.message,
         });
         onSuccess(result.profile);
       } else {
@@ -72,10 +71,10 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
         <form onSubmit={handleClaimAccess} className="space-y-6 mt-12">
           <div className="space-y-2">
-            <Label htmlFor="mythic-code" className="sr-only">Código Mítico</Label>
+            <Label htmlFor="mythic-code" className="sr-only">Código Mítico ou Lendário</Label>
             <Input
               id="mythic-code"
-              placeholder="INSIRA SEU CÓDIGO MÍTICO"
+              placeholder="INSIRA SEU CÓDIGO"
               className="bg-zinc-900/50 border-zinc-800 text-center text-lg h-14 tracking-widest focus-visible:ring-primary focus-visible:border-primary/50 placeholder:text-zinc-600 transition-all"
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -85,7 +84,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
           <Button 
             type="submit" 
-            className="w-full h-14 text-lg font-bold bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow shadow-[0_0_20px_rgba(160,16,41,0.3)] hover:shadow-[0_0_30px_rgba(237,10,57,0.5)] group"
+            className="w-full h-14 text-lg font-bold bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] group"
             disabled={isLoading || !code}
           >
             {isLoading ? (
@@ -109,14 +108,17 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="sm" className="text-zinc-600 hover:text-zinc-400 gap-2 text-[10px] tracking-widest">
                   <Info className="w-3 h-3" />
-                  DICA DE ACESSO
+                  DICAS DE CÓDIGOS
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="bg-zinc-900 border-zinc-800 text-zinc-300 p-3 space-y-2">
-                <p className="font-bold text-[10px] uppercase">Códigos Míticos de Teste:</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800">MYTH-2024</code>
-                  <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800">RUBY-ELITE</code>
+              <TooltipContent className="bg-zinc-900 border-zinc-800 text-zinc-300 p-3 space-y-3">
+                <div className="space-y-1">
+                  <p className="font-bold text-[10px] uppercase text-primary">Mítico (Rubi):</p>
+                  <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800 block">MYTH-2024</code>
+                </div>
+                <div className="space-y-1">
+                  <p className="font-bold text-[10px] uppercase text-orange-500">Lendário (Âmbar):</p>
+                  <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800 block">LEGEND-GOLD</code>
                 </div>
               </TooltipContent>
             </Tooltip>
