@@ -6,12 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone, LogOut } from "lucide-react";
+import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone, LogOut, Settings, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface MythicDashboardProps {
   profile: any;
@@ -76,21 +84,42 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               <span className="text-[9px] font-bold uppercase tracking-wider">Novo Pet</span>
             </Button>
             
-            <div className={`w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center border-2 transition-all bg-zinc-900/80
-              ${isLegendary ? 'border-yellow-500 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 
-                isAmber ? 'border-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 
-                'border-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]'}`}>
-              <User className={`w-4 h-4 md:w-5 md:h-5 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
-            </div>
-
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => signOut(auth)}
-              className="text-zinc-500 hover:text-white h-9 w-9 rounded-full"
-            >
-              <LogOut className="w-4 h-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={`w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center border-2 transition-all bg-zinc-900/80 outline-none
+                  ${isLegendary ? 'border-yellow-500 shadow-[0_0_15px_rgba(255,215,0,0.3)] hover:shadow-[0_0_20px_rgba(255,215,0,0.5)]' : 
+                    isAmber ? 'border-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)]' : 
+                    'border-primary shadow-[0_0_10px_rgba(var(--primary),0.2)] hover:shadow-[0_0_15px_rgba(var(--primary),0.4)]'}`}>
+                  <User className={`w-4 h-4 md:w-5 md:h-5 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300">
+                <DropdownMenuLabel className="font-black text-[10px] uppercase tracking-widest text-zinc-500 px-3 pt-3">Conta Elite</DropdownMenuLabel>
+                <div className="px-3 pb-3">
+                  <p className="font-bold text-sm text-white truncate">{profile.name}</p>
+                  <p className={`text-[9px] font-black uppercase tracking-tighter ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`}>
+                    {badgeInfo.text}
+                  </p>
+                </div>
+                <DropdownMenuSeparator className="bg-zinc-800" />
+                <DropdownMenuItem className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
+                  <Settings className="w-4 h-4 mr-2" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Editar Perfil Público</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Ver Perfil Público</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-zinc-800" />
+                <DropdownMenuItem 
+                  onClick={() => signOut(auth)}
+                  className="focus:bg-red-950/30 focus:text-red-500 text-red-600 cursor-pointer py-2.5"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Encerrar Sessão</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -123,15 +152,15 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             </div>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-lg md:text-xl tracking-tight">
-                <User className={`w-4 h-4 md:w-5 md:h-5 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
-                Perfil do Membro
+                <ShieldCheck className={`w-4 h-4 md:w-5 md:h-5 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                Credencial de Membro
               </CardTitle>
-              <CardDescription className="text-zinc-500 uppercase text-[9px] md:text-[10px] tracking-widest">Controle de Identidade Elite</CardDescription>
+              <CardDescription className="text-zinc-500 uppercase text-[9px] md:text-[10px] tracking-widest">Identificação Criptografada</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 md:space-y-6">
               <div className="flex items-center gap-4 p-4 md:p-5 rounded-xl bg-black/60 border border-zinc-800/50">
                 <div className="text-sm space-y-0.5">
-                  <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest font-semibold">Nome do Titular</p>
+                  <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest font-semibold">Titular da Conta</p>
                   <p className="font-bold text-lg md:text-xl break-words">{profile.name}</p>
                 </div>
               </div>
@@ -140,7 +169,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl bg-black/40 border border-zinc-800/30">
                   <Phone className={`w-4 h-4 flex-shrink-0 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
                   <div className="text-sm">
-                    <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Emergência</p>
+                    <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Contato Emergencial</p>
                     <p className="font-mono text-white text-xs sm:text-sm">{profile.emergencyContact}</p>
                   </div>
                 </div>
@@ -148,18 +177,14 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               
               <div className="grid grid-cols-2 gap-3 md:gap-4">
                 <div className="p-3 md:p-4 rounded-xl bg-black/60 border border-zinc-800/50">
-                  <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest mb-1">Rede</p>
-                  <p className={`font-bold text-xs sm:text-sm ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`}>GLOBAL</p>
+                  <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest mb-1">Status Rede</p>
+                  <p className={`font-bold text-xs sm:text-sm ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`}>VERIFICADO</p>
                 </div>
                 <div className="p-3 md:p-4 rounded-xl bg-black/60 border border-zinc-800/50">
-                  <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest mb-1">Pontos</p>
-                  <p className="font-bold text-white text-xs sm:text-sm">2.450k</p>
+                  <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest mb-1">Influência</p>
+                  <p className="font-bold text-white text-xs sm:text-sm">MÍTICA</p>
                 </div>
               </div>
-
-              <Button className={`w-full h-10 md:h-12 text-xs font-bold transition-all duration-300 ${isLegendary ? 'bg-yellow-500 text-black hover:bg-yellow-400' : isAmber ? 'bg-orange-500 text-black hover:bg-orange-400' : 'bg-white text-black hover:bg-zinc-200'}`}>
-                EDITAR PERFIL PÚBLICO
-              </Button>
             </CardContent>
           </Card>
 
@@ -259,7 +284,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       <footer className="max-w-7xl mx-auto mt-12 md:mt-20 pb-12 md:pb-16 border-t border-zinc-900 pt-8 md:pt-10 text-center">
         <div className="flex items-center justify-center gap-3 md:gap-4 mb-4">
           <div className="h-px w-6 md:w-8 bg-zinc-800" />
-          <Sparkles className={`w-3 h-3 md:w-4 md:h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+          <Crown className={`w-3 h-3 md:w-4 md:h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
           <div className="h-px w-6 md:w-8 bg-zinc-800" />
         </div>
         <p className="text-zinc-600 text-[8px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.4em] font-light px-4">
