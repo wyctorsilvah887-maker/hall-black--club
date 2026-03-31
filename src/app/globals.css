@@ -27,9 +27,9 @@
   }
 
   .theme-legendary {
-    --primary: 38 92% 50%;
-    --accent: 45 93% 47%;
-    --ring: 38 92% 50%;
+    --primary: 47 95% 50%;
+    --accent: 43 100% 50%;
+    --ring: 47 95% 50%;
   }
 }
 
@@ -54,12 +54,25 @@
   50% { text-shadow: 0 0 25px hsla(var(--primary), 0.9); }
 }
 
+@keyframes gold-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-ruby-glow {
   animation: ruby-glow 3s infinite ease-in-out;
 }
 
 .animate-text-ruby-glow {
   animation: text-ruby-glow 2.5s infinite ease-in-out;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(90deg, #ffd700, #ff8c00, #ffd700);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-shimmer 4s linear infinite;
 }
 
 .glass-card {

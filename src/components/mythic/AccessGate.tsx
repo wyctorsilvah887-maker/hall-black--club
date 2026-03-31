@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode } from "@/app/actions";
-import { Loader2, Sparkles, Info } from "lucide-react";
+import { Loader2, Sparkles, Info, Crown } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -32,7 +32,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
       const result = await validateMythicCode(code);
       if (result.success) {
         toast({
-          title: result.profile.status === 'LEGENDARY' ? "ASCENSÃO LENDÁRIA" : "BEM-VINDO À ELITE",
+          title: result.profile.status === 'LEGENDARY' ? "👑 ASCENSÃO REAL" : "💎 BEM-VINDO À ELITE",
           description: result.message,
         });
         onSuccess(result.profile);
@@ -117,7 +117,9 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
                   <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800 block">MYTH-2024</code>
                 </div>
                 <div className="space-y-1">
-                  <p className="font-bold text-[10px] uppercase text-orange-500">Lendário (Âmbar):</p>
+                  <p className="font-bold text-[10px] uppercase text-yellow-500 flex items-center gap-1">
+                    <Crown className="w-3 h-3" /> Lendário (Dourado):
+                  </p>
                   <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800 block">LEGEND-GOLD</code>
                 </div>
               </TooltipContent>
