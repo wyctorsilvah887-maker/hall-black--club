@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef } from 'react';
@@ -376,7 +375,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                   <div className="space-y-3">
                     {petsData.map((pet) => (
                       <div key={pet.id} className="flex items-center justify-between p-3 rounded-xl bg-black/60 border border-zinc-800/50 group/item hover:border-zinc-700 transition-colors">
-                        <div className="flex items-center gap-3">
+                        <Link href={`/pet/${profile.id}/${pet.id}`} className="flex items-center gap-3 flex-1">
                           <div className={`w-12 h-12 rounded-lg border border-zinc-800 overflow-hidden relative
                             ${isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
                             {pet.photo ? (
@@ -391,19 +390,24 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                             <p className="text-white font-black text-xs sm:text-sm uppercase tracking-tighter truncate">{pet.name}</p>
                             <p className="text-zinc-500 text-[8px] sm:text-[10px] uppercase tracking-widest truncate">{pet.species}</p>
                           </div>
-                        </div>
+                        </Link>
                         <div className="flex items-center gap-1">
                           <Button 
                             size="icon" 
                             variant="ghost" 
                             className="h-8 w-8 text-zinc-700 hover:text-red-500 hover:bg-red-950/20"
-                            onClick={() => handleDeletePet(pet.id, pet.name)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDeletePet(pet.id, pet.name);
+                            }}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
-                          <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-700 hover:text-white">
-                            <ArrowUpRight className="w-4 h-4" />
-                          </Button>
+                          <Link href={`/pet/${profile.id}/${pet.id}`}>
+                            <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-700 hover:text-white">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     ))}
