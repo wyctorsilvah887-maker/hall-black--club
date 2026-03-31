@@ -24,18 +24,24 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    match /users/{userId} {
-      // Permite que qualquer membro logado veja a lista e perfis individuais
-      // Essencial para o ranking e contagem de registros (#099)
-      allow get, list: if isSignedIn();
+    // Explicitly allow listing the users collection for registration count (#099)
+    match /users {
+      // Allow listing the collection to count members
+      allow list: if isSignedIn();
       
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      match /{userId} {
+        // Allow reading individual profiles for the ranking and public views
+        allow get: if isSignedIn();
+        
+        // Ownership rules for profile management
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
 
-      match /pets/{petId} {
-        allow get, list: if isOwner(userId);
-        allow create, update, delete: if isOwner(userId);
+        match /pets/{petId} {
+          allow get, list: if isOwner(userId);
+          allow create, update, delete: if isOwner(userId);
+        }
       }
     }
   }
