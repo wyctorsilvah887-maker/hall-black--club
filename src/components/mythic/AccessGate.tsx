@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode } from "@/app/actions";
-import { Loader2, Sparkles, Info, Crown, Gem } from "lucide-react";
+import { Loader2, Info, Crown, Gem, Sparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -66,7 +66,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
         <div className="space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
-            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" />
+            <Crown className="w-5 h-5 md:w-6 md:h-6 text-primary animate-pulse" />
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white font-headline">
@@ -100,7 +100,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
             ) : (
               <span className="flex items-center justify-center gap-2">
                 REIVINDICAR ACESSO
-                <Sparkles className="h-4 h-4 md:h-5 md:w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Crown className="h-4 w-4 md:h-5 md:w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </span>
             )}
           </Button>
