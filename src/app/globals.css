@@ -27,9 +27,11 @@
   }
 
   .theme-legendary {
-    --primary: 47 95% 50%;
-    --accent: 43 100% 50%;
-    --ring: 47 95% 50%;
+    --primary: 47 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --accent: 45 100% 58%;
+    --ring: 47 100% 50%;
+    --border: 47 50% 20%;
   }
 }
 
@@ -44,14 +46,25 @@
 }
 
 @keyframes ruby-glow {
-  0% { box-shadow: 0 0 5px hsla(var(--primary), 0.2); }
-  50% { box-shadow: 0 0 20px hsla(var(--primary), 0.6); }
-  100% { box-shadow: 0 0 5px hsla(var(--primary), 0.2); }
+  0% { box-shadow: 0 0 5px hsla(350, 82%, 35%, 0.2); }
+  50% { box-shadow: 0 0 20px hsla(350, 82%, 35%, 0.6); }
+  100% { box-shadow: 0 0 5px hsla(350, 82%, 35%, 0.2); }
+}
+
+@keyframes gold-glow {
+  0% { box-shadow: 0 0 5px hsla(47, 100%, 50%, 0.2); }
+  50% { box-shadow: 0 0 25px hsla(47, 100%, 50%, 0.7); }
+  100% { box-shadow: 0 0 5px hsla(47, 100%, 50%, 0.2); }
 }
 
 @keyframes text-ruby-glow {
-  0%, 100% { text-shadow: 0 0 10px hsla(var(--primary), 0.4); }
-  50% { text-shadow: 0 0 25px hsla(var(--primary), 0.9); }
+  0%, 100% { text-shadow: 0 0 10px hsla(350, 82%, 35%, 0.4); }
+  50% { text-shadow: 0 0 25px hsla(350, 82%, 35%, 0.9); }
+}
+
+@keyframes text-gold-glow {
+  0%, 100% { text-shadow: 0 0 10px hsla(47, 100%, 50%, 0.4); }
+  50% { text-shadow: 0 0 30px hsla(47, 100%, 50%, 1); }
 }
 
 @keyframes gold-shimmer {
@@ -63,12 +76,20 @@
   animation: ruby-glow 3s infinite ease-in-out;
 }
 
+.animate-gold-glow {
+  animation: gold-glow 3s infinite ease-in-out;
+}
+
 .animate-text-ruby-glow {
   animation: text-ruby-glow 2.5s infinite ease-in-out;
 }
 
+.animate-text-gold-glow {
+  animation: text-gold-glow 2.5s infinite ease-in-out;
+}
+
 .gold-gradient-text {
-  background: linear-gradient(90deg, #ffd700, #ff8c00, #ffd700);
+  background: linear-gradient(90deg, #ffd700, #fff2ac, #ffd700, #bf953f, #fcf6ba);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
