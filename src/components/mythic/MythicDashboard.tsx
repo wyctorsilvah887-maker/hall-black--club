@@ -33,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/image-utils';
+import { ImageEditor } from './ImageEditor';
 
 interface MythicDashboardProps {
   profile: any;
@@ -52,6 +53,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Editor State
+  const [editorState, setEditorState] = useState<{
+    isOpen: boolean;
+    image: string;
+    target: 'profile' | 'newPet' | 'editPet';
+  } | null>(null);
+
   const [newPetName, setNewPetName] = useState('');
   const [newPetSpecies, setNewPetSpecies] = useState('');
   const [newPetPhoto, setNewPetPhoto] = useState<string | null>(null);
@@ -68,7 +76,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [settingsState, setSettingsState] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
 
-  // Inicializa os campos de configurações apenas quando o modal abre ou o perfil carrega
   useEffect(() => {
     if (profile && isSettingsOpen) {
       setSettingsName(profile.name || '');
@@ -90,16 +97,31 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const reader = new FileReader();
+    reader.onload = () => {
+      setEditorState({
+        isOpen: true,
+        image: reader.result as string,
+        target
+      });
+    };
+    reader.readAsDataURL(file);
+    // Reset input value so same file can be selected again
+    e.target.value = '';
+  };
+
+  const handleEditorConfirm = async (croppedImage: string) => {
     try {
-      const compressed = await compressImage(file);
-      if (target === 'profile') setSettingsPhoto(compressed);
-      if (target === 'newPet') setNewPetPhoto(compressed);
-      if (target === 'editPet') setEditPetPhoto(compressed);
+      const compressed = await compressImage(croppedImage);
+      if (editorState?.target === 'profile') setSettingsPhoto(compressed);
+      if (editorState?.target === 'newPet') setNewPetPhoto(compressed);
+      if (editorState?.target === 'editPet') setEditPetPhoto(compressed);
+      setEditorState(null);
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "ERRO NA IMAGEM",
-        description: "Não foi possível processar a foto.",
+        title: "ERRO NO PROCESSAMENTO",
+        description: "Falha ao otimizar a imagem editada.",
       });
     }
   };
@@ -282,7 +304,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </Badge>
         </div>
 
-        {/* SAÚDE MUNDO PET CTA - DESTAQUE TOTAL */}
         <div className="grid grid-cols-1 gap-6">
           <Button 
             className={`w-full h-16 md:h-20 text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
@@ -399,6 +420,24 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </div>
       </main>
 
+      {/* Editor Modal */}
+      <Dialog open={!!editorState} onOpenChange={() => setEditorState(null)}>
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md p-6">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tighter">Ajuste de Imagem</DialogTitle>
+            <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Configure o enquadramento perfeito para a elite.</DialogDescription>
+          </DialogHeader>
+          {editorState && (
+            <ImageEditor 
+              image={editorState.image}
+              cropShape={editorState.target === 'profile' ? 'round' : 'rect'}
+              onCancel={() => setEditorState(null)}
+              onConfirm={handleEditorConfirm}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* DIÁLOGOS */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
@@ -480,7 +519,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                   <Image src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
                 ) : (
                   <div className="flex flex-col items-center gap-1 text-zinc-600">
-                    <Camera className="w-6 h-6" />
+                    <User className="w-8 h-8" />
                     <span className="text-[8px] font-black uppercase">Foto</span>
                   </div>
                 )}
