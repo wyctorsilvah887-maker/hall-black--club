@@ -62,21 +62,22 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
-  const [settingsName, setSettingsName] = useState(profile?.name || '');
-  const [settingsPhone, setSettingsPhone] = useState(profile?.emergencyContact || '');
-  const [settingsCity, setSettingsCity] = useState(profile?.city || '');
-  const [settingsState, setSettingsState] = useState(profile?.state || '');
-  const [settingsPhoto, setSettingsPhoto] = useState<string | null>(profile?.photo || null);
+  const [settingsName, setSettingsName] = useState('');
+  const [settingsPhone, setSettingsPhone] = useState('');
+  const [settingsCity, setSettingsCity] = useState('');
+  const [settingsState, setSettingsState] = useState('');
+  const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
 
+  // Inicializa os campos de configurações apenas quando o modal abre ou o perfil carrega
   useEffect(() => {
-    if (profile) {
+    if (profile && isSettingsOpen) {
       setSettingsName(profile.name || '');
       setSettingsPhone(profile.emergencyContact || '');
       setSettingsCity(profile.city || '');
       setSettingsState(profile.state || '');
       setSettingsPhoto(profile.photo || null);
     }
-  }, [profile]);
+  }, [profile, isSettingsOpen]);
 
   const petsQuery = useMemoFirebase(() => {
     if (!profile?.id) return null;
@@ -227,7 +228,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                     isAmber ? 'border-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 
                     'border-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]'}`}>
                   {profile.photo ? (
-                    <Image src={profile.photo} alt={profile.name} width={44} height={44} className="object-cover w-full h-full" />
+                    <Image src={profile.photo} alt={profile.name} width={44} height={44} className="object-cover w-full h-full" unoptimized />
                   ) : (
                     <User className={`w-4 h-4 md:w-5 md:h-5 ${themeColorClass}`} />
                   )}
@@ -308,8 +309,8 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             </CardHeader>
             <CardContent className="space-y-4 md:space-y-6">
               <div className="flex items-center gap-4 p-4 md:p-5 rounded-xl bg-black/60 border border-zinc-800/50">
-                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800">
-                  {profile.photo ? <Image src={profile.photo} alt={profile.name} width={48} height={48} className="object-cover" /> : <User className="w-full h-full p-2 text-zinc-700" />}
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative">
+                  {profile.photo ? <Image src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
                 </div>
                 <div className="text-sm space-y-0.5">
                   <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest font-semibold">Titular da Conta</p>
@@ -355,7 +356,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                           <div className={`w-12 h-12 rounded-lg border border-zinc-800 overflow-hidden relative
                             ${isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
                             {pet.photo ? (
-                              <Image src={pet.photo} alt={pet.name} fill className="object-cover" />
+                              <Image src={pet.photo} alt={pet.name} fill className="object-cover" unoptimized />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-zinc-900">
                                 <Heart className={`w-4 h-4 ${themeColorClass}`} />
@@ -398,6 +399,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </div>
       </main>
 
+      {/* DIÁLOGOS */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
           <DialogHeader>
@@ -407,7 +409,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <form onSubmit={handleAddPet} className="space-y-6 pt-4">
             <div className="flex flex-col items-center gap-3">
               <div onClick={() => fileInputRef.current?.click()} className="w-24 h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
-                {newPetPhoto ? <Image src={newPetPhoto} alt="Preview" fill className="object-cover" /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
+                {newPetPhoto ? <Image src={newPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
               </div>
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'newPet')} />
             </div>
@@ -439,7 +441,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <form onSubmit={handleUpdatePet} className="space-y-6 pt-4">
             <div className="flex flex-col items-center gap-3">
               <div onClick={() => editPetFileInputRef.current?.click()} className="w-24 h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
-                {editPetPhoto ? <Image src={editPetPhoto} alt="Preview" fill className="object-cover" /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
+                {editPetPhoto ? <Image src={editPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
               </div>
               <input type="file" ref={editPetFileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'editPet')} />
             </div>
@@ -470,8 +472,21 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </DialogHeader>
           <form onSubmit={handleUpdateSettings} className="space-y-6 pt-4">
             <div className="flex flex-col items-center gap-3">
-              <div onClick={() => profilePicInputRef.current?.click()} className="w-24 h-24 rounded-full border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
-                {settingsPhoto ? <Image src={settingsPhoto} alt="Profile" fill className="object-cover" /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
+              <div 
+                onClick={() => profilePicInputRef.current?.click()} 
+                className="w-24 h-24 rounded-full border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group"
+              >
+                {settingsPhoto ? (
+                  <Image src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-zinc-600">
+                    <Camera className="w-6 h-6" />
+                    <span className="text-[8px] font-black uppercase">Foto</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera className="w-6 h-6 text-white" />
+                </div>
               </div>
               <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'profile')} />
             </div>
