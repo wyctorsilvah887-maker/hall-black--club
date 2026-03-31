@@ -122,9 +122,9 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 <div className="p-5 rounded-2xl bg-black/40 border border-zinc-800/30 space-y-2">
                   <div className="flex items-center gap-2 text-zinc-500">
                     <MapPin className="w-3 h-3" />
-                    <span className="text-[9px] font-bold uppercase tracking-widest">Localização/Contato</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Contato de Emergência</span>
                   </div>
-                  <p className="font-mono text-zinc-300 text-xs">{owner.emergencyContact || 'ENDEREÇO RESTRITO'}</p>
+                  <p className="font-mono text-zinc-300 text-xs">{owner.emergencyContact || 'RESTRITO'}</p>
                 </div>
                 <div className="p-5 rounded-2xl bg-black/40 border border-zinc-800/30 space-y-2">
                   <div className="flex items-center gap-2 text-zinc-500">
@@ -137,22 +137,19 @@ export default function PetProfilePage({ params }: PetPageProps) {
             </CardContent>
           </Card>
 
-          {/* Status Sidebar */}
+          {/* Sidebar - Security Focus */}
           <div className="space-y-6">
             <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 text-center space-y-4">
-              <CollarIcon className={`w-12 h-12 mx-auto ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+              <ShieldCheck className={`w-12 h-12 mx-auto ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
               <div className="space-y-1">
-                <h3 className="text-xs font-black uppercase tracking-tighter">Status Biométrico</h3>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Sincronizado</p>
-              </div>
-              <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-                <div className={`h-full w-full animate-pulse ${isLegendary ? 'bg-yellow-500' : isAmber ? 'bg-orange-500' : 'bg-primary'}`} />
+                <h3 className="text-xs font-black uppercase tracking-tighter">Status de Segurança</h3>
+                <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Identidade Verificada</p>
               </div>
             </Card>
 
             <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 text-center">
               <p className="text-[8px] text-zinc-600 uppercase tracking-[0.4em] mb-4">HALL BLACK VERIFIED</p>
-              <ShieldCheck className="w-8 h-8 mx-auto text-zinc-800" />
+              <CollarIcon className="w-8 h-8 mx-auto text-zinc-800" />
             </Card>
           </div>
         </div>

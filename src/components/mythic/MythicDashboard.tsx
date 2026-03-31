@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef } from 'react';
@@ -360,7 +359,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             </CardContent>
           </Card>
 
-          {/* Pet Monitoring & Status */}
+          {/* Gestão de Linhagem */}
           <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <Card className={`bg-zinc-900/40 border-zinc-800/50 overflow-hidden group relative flex flex-col ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
               <CardHeader className="pb-3 md:pb-4">
