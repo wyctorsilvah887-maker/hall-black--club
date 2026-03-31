@@ -1,0 +1,17 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "luxury-pet",
+      "description": "Luxury Pet Portrait",
+      "imageUrl": "https://picsum.photos/seed/hallblack1/800/600",
+      "imageHint": "luxury dog"
+    },
+    {
+      "id": "member-avatar",
+      "description": "Exclusive Member Avatar",
+      "imageUrl": "https://picsum.photos/seed/hallblack2/200/200",
+      "imageHint": "fashionable person"
+    }
+  ]
+}
