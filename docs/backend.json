@@ -115,6 +115,10 @@
           "type": "string",
           "description": "The species of the pet."
         },
+        "photo": {
+          "type": "string",
+          "description": "Compressed base64 representation of the pet photo."
+        },
         "registrationDateTime": {
           "type": "string",
           "description": "Timestamp when the pet was registered.",

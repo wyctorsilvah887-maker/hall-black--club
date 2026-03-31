@@ -1,16 +1,16 @@
 
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint } from "lucide-react";
+import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, X } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import {
@@ -32,8 +32,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
+import { compressImage } from '@/lib/image-utils';
 
 interface MythicDashboardProps {
   profile: any;
@@ -43,12 +44,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const db = useFirestore();
   const auth = useAuth();
   const { toast } = useToast();
-  const luxuryPetImg = PlaceHolderImages.find(img => img.id === 'luxury-pet');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isAddPetOpen, setIsAddPetOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newPetName, setNewPetName] = useState('');
   const [newPetSpecies, setNewPetSpecies] = useState('');
+  const [newPetPhoto, setNewPetPhoto] = useState<string | null>(null);
 
   // Busca a coleção de usuários para contar o registro
   const usersQuery = useMemoFirebase(() => {
@@ -67,6 +69,22 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const compressed = await compressImage(file);
+      setNewPetPhoto(compressed);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "ERRO NA IMAGEM",
+        description: "Não foi possível processar a foto do pet.",
+      });
+    }
+  };
+
   const handleAddPet = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPetName || !newPetSpecies || !profile?.id) return;
@@ -78,6 +96,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       userId: profile.id,
       name: newPetName,
       species: newPetSpecies,
+      photo: newPetPhoto,
       registrationDateTime: new Date().toISOString(),
     });
 
@@ -88,8 +107,21 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
     setNewPetName('');
     setNewPetSpecies('');
+    setNewPetPhoto(null);
     setIsAddPetOpen(false);
     setIsSubmitting(false);
+  };
+
+  const handleDeletePet = (petId: string, petName: string) => {
+    if (!profile?.id) return;
+    
+    const petRef = doc(db, 'users', profile.id, 'pets', petId);
+    deleteDocumentNonBlocking(petRef);
+
+    toast({
+      title: "PET REMOVIDO",
+      description: `${petName.toUpperCase()} FOI RETIRADO DA LINHAGEM.`,
+    });
   };
 
   const isLegendary = profile.status === 'LEGENDARY';
@@ -140,7 +172,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                   <span className="text-[9px] font-bold uppercase tracking-wider">Novo Pet</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-zinc-950 border-zinc-800 text-white">
+              <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
                 <DialogHeader>
                   <DialogTitle className="text-xl font-black uppercase tracking-tighter">Registrar Novo Pet</DialogTitle>
                   <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">
@@ -149,6 +181,35 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 </DialogHeader>
                 <form onSubmit={handleAddPet} className="space-y-6 pt-4">
                   <div className="space-y-4">
+                    {/* Foto Upload */}
+                    <div className="flex flex-col items-center gap-3">
+                      <div 
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`w-24 h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors overflow-hidden relative group`}
+                      >
+                        {newPetPhoto ? (
+                          <>
+                            <Image src={newPetPhoto} alt="Preview" fill className="object-cover" />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                              <Camera className="w-6 h-6 text-white" />
+                            </div>
+                          </>
+                        ) : (
+                          <div className="flex flex-col items-center gap-1 text-zinc-600">
+                            <Camera className="w-6 h-6" />
+                            <span className="text-[8px] font-black uppercase">Foto</span>
+                          </div>
+                        )}
+                      </div>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        className="hidden" 
+                        accept="image/*" 
+                        onChange={handleFileChange}
+                      />
+                    </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="pet-name" className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome do Pet</Label>
                       <Input
@@ -314,20 +375,36 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 ) : (
                   <div className="space-y-3">
                     {petsData.map((pet) => (
-                      <div key={pet.id} className="flex items-center justify-between p-4 rounded-xl bg-black/60 border border-zinc-800/50 group/item hover:border-zinc-700 transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-zinc-900 border border-zinc-800
+                      <div key={pet.id} className="flex items-center justify-between p-3 rounded-xl bg-black/60 border border-zinc-800/50 group/item hover:border-zinc-700 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-12 h-12 rounded-lg border border-zinc-800 overflow-hidden relative
                             ${isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
-                            <Heart className={`w-4 h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                            {pet.photo ? (
+                              <Image src={pet.photo} alt={pet.name} fill className="object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+                                <Heart className={`w-4 h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                              </div>
+                            )}
                           </div>
-                          <div>
-                            <p className="text-white font-black text-sm uppercase tracking-tighter">{pet.name}</p>
-                            <p className="text-zinc-500 text-[10px] uppercase tracking-widest">{pet.species}</p>
+                          <div className="min-w-0">
+                            <p className="text-white font-black text-xs sm:text-sm uppercase tracking-tighter truncate">{pet.name}</p>
+                            <p className="text-zinc-500 text-[8px] sm:text-[10px] uppercase tracking-widest truncate">{pet.species}</p>
                           </div>
                         </div>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-700 hover:text-white">
-                          <ArrowUpRight className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            className="h-8 w-8 text-zinc-700 hover:text-red-500 hover:bg-red-950/20"
+                            onClick={() => handleDeletePet(pet.id, pet.name)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                          <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-700 hover:text-white">
+                            <ArrowUpRight className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -407,4 +484,3 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     </div>
   );
 }
-
