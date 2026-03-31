@@ -10,39 +10,29 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    // --- Collection Rules ---
-
-    match /mythicCodes/{mythicCodeId} {
-      allow get: if isSignedIn();
-      allow list: if false;
-      allow create: if false;
-      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow delete: if false;
-    }
-
-    // Explicitly allow listing the users collection for registration count (#099)
-    match /users {
-      // Allow listing the collection to count members
+    // Regras para a coleção de usuários e seus documentos
+    match /users/{userId} {
+      // Permite listar a coleção para a funcionalidade de contagem de membros (#099)
+      // No Firestore, 'allow list' em match /users/{userId} autoriza consultas na coleção 'users'
       allow list: if isSignedIn();
       
-      match /{userId} {
-        // Allow reading individual profiles for the ranking and public views
-        allow get: if isSignedIn();
-        
-        // Ownership rules for profile management
-        allow create: if isOwner(userId);
-        allow update: if isOwner(userId);
-        allow delete: if isOwner(userId);
+      // Permite leitura de perfis individuais (necessário para ranking e visualização pública)
+      allow get: if isSignedIn();
+      
+      // Regras de propriedade para gerenciamento de perfil
+      allow create, update, delete: if isSignedIn() && request.auth.uid == userId;
 
-        match /pets/{petId} {
-          allow get, list: if isOwner(userId);
-          allow create, update, delete: if isOwner(userId);
-        }
+      // Regras para a subcoleção de pets
+      match /pets/{petId} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
       }
+    }
+
+    // Regras para os códigos míticos de ativação
+    match /mythicCodes/{mythicCodeId} {
+      allow get: if isSignedIn();
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list, create, delete: if false;
     }
   }
 }
