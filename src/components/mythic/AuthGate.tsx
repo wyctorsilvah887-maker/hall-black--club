@@ -32,21 +32,28 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const { toast } = useToast();
 
   const formatPhoneMask = (value: string) => {
-    const digits = value.replace(/\D/g, '');
-    const truncated = digits.slice(0, 11);
+    // Remove tudo que não é dígito
+    let digits = value.replace(/\D/g, '');
     
-    if (truncated.length === 0) return '';
+    // Se o usuário apagou tudo, retorna vazio
+    if (!digits) return '';
+
+    // Se o usuário digitou ou colou o 55 no início, tratamos para não duplicar
+    if (digits.startsWith('55') && digits.length > 2) {
+      digits = digits.slice(2);
+    }
+
+    // Limita a 11 dígitos (DDD + 9 dígitos)
+    const truncated = digits.slice(0, 11);
     
     let formatted = '+55 ';
     
-    if (truncated.length > 0) {
-      if (truncated.length <= 2) {
-        formatted += `(${truncated}`;
-      } else if (truncated.length <= 7) {
-        formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2)}`;
-      } else {
-        formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2, 7)}-${truncated.slice(7)}`;
-      }
+    if (truncated.length <= 2) {
+      formatted += `(${truncated}`;
+    } else if (truncated.length <= 7) {
+      formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2)}`;
+    } else {
+      formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2, 7)}-${truncated.slice(7)}`;
     }
     
     return formatted;
@@ -54,10 +61,13 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    if (input.length < emergencyPhone.length && emergencyPhone.startsWith('+55 ') && input.length <= 4) {
+    
+    // Se o usuário tentar apagar o prefixo "+55 ", limpamos tudo para facilitar
+    if (emergencyPhone.startsWith('+55 ') && input.length < 5) {
       setEmergencyPhone('');
       return;
     }
+
     setEmergencyPhone(formatPhoneMask(input));
   };
 
