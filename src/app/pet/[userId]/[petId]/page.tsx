@@ -7,7 +7,7 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, Phone, ChevronRight } from "lucide-react";
+import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, Phone, ChevronRight, Siren } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon } from '@/components/mythic/MythicIcons';
@@ -146,7 +146,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 <div className="h-8 w-px bg-zinc-900/50" />
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2 text-zinc-600">
-                    <Phone className={`w-3 h-3 ${themeColorClass}`} />
+                    <Siren className={`w-3 h-3 text-red-500 animate-pulse`} />
                     <span className="text-[9px] font-black uppercase tracking-widest">Emergência</span>
                   </div>
                   <p className="font-mono text-zinc-300 text-xs font-bold">{owner.emergencyContact || 'S/N'}</p>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -53,6 +53,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
+  const [selectedPetForSOS, setSelectedPetForSOS] = useState<any>(null);
+
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
     image: string;
@@ -118,7 +121,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       if (currentTarget === 'newPet') setNewPetPhoto(compressed);
       if (currentTarget === 'editPet') setEditPetPhoto(compressed);
       
-      // Fecha o editor com um pequeno delay para garantir que o DOM limpe o bloqueio de cliques
       setTimeout(() => {
         setEditorState(null);
       }, 100);
@@ -236,6 +238,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     const petRef = doc(db, 'users', profile.id, 'pets', petId);
     deleteDocumentNonBlocking(petRef);
     toast({ title: "PET REMOVIDO", description: `${petName.toUpperCase()} FOI RETIRADO DA LINHAGEM.` });
+  };
+
+  const handleOpenEmergency = (pet: any) => {
+    setSelectedPetForSOS(pet);
+    setIsEmergencyOpen(true);
   };
 
   const isLegendary = profile.status === 'LEGENDARY';
@@ -417,6 +424,14 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                           <Button 
                             size="icon" 
                             variant="ghost" 
+                            className="h-8 w-8 text-zinc-700 hover:text-red-500"
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenEmergency(pet); }}
+                          >
+                            <Siren className="w-3.5 h-3.5 animate-pulse" />
+                          </Button>
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
                             className="h-8 w-8 text-zinc-700 hover:text-primary"
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenEditPet(pet); }}
                           >
@@ -563,6 +578,37 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={isEmergencyOpen} onOpenChange={setIsEmergencyOpen}>
+        <DialogContent className="bg-zinc-950 border-red-900/50 text-white w-[90vw] max-w-sm rounded-3xl overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-red-600 animate-pulse" />
+          <DialogHeader className="pt-4">
+            <div className="w-12 h-12 rounded-2xl bg-red-950/30 flex items-center justify-center mb-4 mx-auto border border-red-900/30">
+              <Siren className="w-6 h-6 text-red-500 animate-pulse" />
+            </div>
+            <DialogTitle className="text-xl font-black uppercase tracking-tighter text-center">Protocolo SOS</DialogTitle>
+            <DialogDescription className="text-zinc-500 text-[10px] uppercase tracking-widest text-center">
+              Informação de emergência para {selectedPetForSOS?.name}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-6 space-y-6">
+            <div className="p-5 rounded-2xl bg-black/60 border border-zinc-900 text-center space-y-2">
+              <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">Contato do Guardião</p>
+              <p className="text-2xl font-mono font-black text-white tracking-tight">{profile.emergencyContact || 'S/N'}</p>
+            </div>
+            <p className="text-[8px] text-zinc-700 uppercase tracking-widest leading-relaxed text-center px-4">
+              ESTE NÚMERO É EXIBIDO PUBLICAMENTE NO PERFIL DO PET PARA CASOS DE RESGATE IMEDIATO.
+            </p>
+          </div>
+          
+          <DialogFooter className="pb-4">
+            <Button onClick={() => setIsEmergencyOpen(false)} variant="outline" className="w-full border-zinc-800 text-zinc-500 hover:text-white rounded-full font-black uppercase text-[10px] tracking-widest">
+              Fechar Protocolo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[100] rounded-2xl">
           <DialogHeader>
@@ -582,3 +628,4 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     </div>
   );
 }
+
