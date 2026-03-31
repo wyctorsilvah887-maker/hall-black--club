@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode } from "@/app/actions";
-import { Loader2, Sparkles, Info, Crown } from "lucide-react";
+import { Loader2, Sparkles, Info, Crown, Gem } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -31,8 +31,12 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
     try {
       const result = await validateMythicCode(code);
       if (result.success) {
+        let title = "💎 STATUS MÍTICO";
+        if (result.profile.status === 'LEGENDARY') title = "👑 STATUS LENDÁRIO";
+        if (result.profile.status === 'AMBER') title = "🔥 STATUS ÂMBAR";
+
         toast({
-          title: result.profile.status === 'LEGENDARY' ? "👑 STATUS LENDÁRIO" : "💎 STATUS MÍTICO",
+          title,
           description: result.message,
         });
         onSuccess(result.profile);
@@ -56,7 +60,6 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-black overflow-hidden relative">
-      {/* Dynamic Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
       
       <div className="w-full max-w-md space-y-10 relative z-10 text-center">
@@ -118,15 +121,20 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64">
                 <div className="space-y-2">
-                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Acesso Mítico (Rubi):</p>
+                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi):</p>
                   <code className="bg-black px-3 py-2 rounded text-[10px] border border-zinc-800 block font-mono text-zinc-400">MYTH-2024</code>
+                </div>
+                <div className="space-y-2 pt-2 border-t border-zinc-800">
+                  <p className="font-black text-[10px] uppercase text-orange-500 flex items-center gap-2 tracking-widest">
+                    <Gem className="w-3 h-3" /> Âmbar (Laranja):
+                  </p>
+                  <code className="bg-black px-3 py-2 rounded text-[10px] border border-orange-900/50 block font-mono text-orange-500">AMBER-LEGEND</code>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
                   <p className="font-black text-[10px] uppercase text-yellow-500 flex items-center gap-2 tracking-widest">
                     <Crown className="w-3 h-3" /> Lendário (Dourado):
                   </p>
                   <code className="bg-black px-3 py-2 rounded text-[10px] border border-yellow-900/50 block font-mono text-yellow-500">LEGEND-GOLD</code>
-                  <p className="text-[8px] text-zinc-500 leading-tight">A chave Lendária libera o sistema de cores Ouro Real e status máximo.</p>
                 </div>
               </TooltipContent>
             </Tooltip>

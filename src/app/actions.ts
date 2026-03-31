@@ -1,7 +1,8 @@
 "use server"
 
-// Chaves autorizadas
+// Chaves autorizadas por categoria
 const MYTHIC_CODES = ["MYTH-2024", "RUBY-ELITE", "HALL-BLACK-V1", "ELITE-PET"];
+const AMBER_CODES = ["AMBER-LEGEND"];
 const LEGENDARY_CODES = ["LEGEND-GOLD"];
 const USED_CODES = new Set<string>();
 
@@ -11,17 +12,13 @@ export async function validateMythicCode(code: string) {
 
   const normalizedCode = code.toUpperCase().trim();
 
+  // Verificação Lendária (Dourado)
   if (LEGENDARY_CODES.includes(normalizedCode)) {
-    if (USED_CODES.has(normalizedCode)) {
-      return { success: false, message: "Chave Lendária já Utilizada" };
-    }
-    // Mark code as used
-    // USED_CODES.add(normalizedCode); // Comentado para facilitar testes múltiplos
     return {
       success: true,
       message: "ACESSO LENDÁRIO CONCEDIDO",
       profile: {
-        name: "Lenda Viva do Hall",
+        name: "Lenda do Hall",
         status: "LEGENDARY",
         theme: "legendary",
         rank: 1,
@@ -29,23 +26,33 @@ export async function validateMythicCode(code: string) {
     };
   }
 
-  if (!MYTHIC_CODES.includes(normalizedCode)) {
-    return { success: false, message: "Chave Inválida" };
+  // Verificação Âmbar (Laranja)
+  if (AMBER_CODES.includes(normalizedCode)) {
+    return {
+      success: true,
+      message: "ACESSO ÂMBAR ATIVADO",
+      profile: {
+        name: "Guardião de Elite",
+        status: "AMBER",
+        theme: "amber",
+        rank: 7,
+      }
+    };
   }
 
-  if (USED_CODES.has(normalizedCode)) {
-    return { success: false, message: "Chave já Utilizada" };
+  // Verificação Mítica (Vermelho)
+  if (MYTHIC_CODES.includes(normalizedCode)) {
+    return {
+      success: true,
+      message: "Acesso Mítico Concedido",
+      profile: {
+        name: "Membro da Elite",
+        status: "MYTHIC",
+        theme: "mythic",
+        rank: 42,
+      }
+    };
   }
 
-  // USED_CODES.add(normalizedCode);
-  return {
-    success: true,
-    message: "Acesso Concedido",
-    profile: {
-      name: "Membro da Elite",
-      status: "MYTHIC",
-      theme: "mythic",
-      rank: 42,
-    }
-  };
+  return { success: false, message: "Chave de Acesso Inválida" };
 }

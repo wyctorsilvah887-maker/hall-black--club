@@ -33,6 +33,14 @@
     --ring: 47 100% 50%;
     --border: 47 50% 20%;
   }
+
+  .theme-amber {
+    --primary: 35 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --accent: 30 100% 60%;
+    --ring: 35 100% 50%;
+    --border: 35 50% 20%;
+  }
 }
 
 @layer base {
@@ -57,6 +65,12 @@
   100% { box-shadow: 0 0 5px hsla(47, 100%, 50%, 0.2); }
 }
 
+@keyframes amber-glow {
+  0% { box-shadow: 0 0 5px hsla(35, 100%, 50%, 0.2); }
+  50% { box-shadow: 0 0 25px hsla(35, 100%, 50%, 0.7); }
+  100% { box-shadow: 0 0 5px hsla(35, 100%, 50%, 0.2); }
+}
+
 @keyframes text-ruby-glow {
   0%, 100% { text-shadow: 0 0 10px hsla(350, 82%, 35%, 0.4); }
   50% { text-shadow: 0 0 25px hsla(350, 82%, 35%, 0.9); }
@@ -65,6 +79,11 @@
 @keyframes text-gold-glow {
   0%, 100% { text-shadow: 0 0 10px hsla(47, 100%, 50%, 0.4); }
   50% { text-shadow: 0 0 30px hsla(47, 100%, 50%, 1); }
+}
+
+@keyframes text-amber-glow {
+  0%, 100% { text-shadow: 0 0 10px hsla(35, 100%, 50%, 0.4); }
+  50% { text-shadow: 0 0 30px hsla(35, 100%, 50%, 1); }
 }
 
 @keyframes gold-shimmer {
@@ -80,6 +99,10 @@
   animation: gold-glow 3s infinite ease-in-out;
 }
 
+.animate-amber-glow {
+  animation: amber-glow 3s infinite ease-in-out;
+}
+
 .animate-text-ruby-glow {
   animation: text-ruby-glow 2.5s infinite ease-in-out;
 }
@@ -88,8 +111,20 @@
   animation: text-gold-glow 2.5s infinite ease-in-out;
 }
 
+.animate-text-amber-glow {
+  animation: text-amber-glow 2.5s infinite ease-in-out;
+}
+
 .gold-gradient-text {
   background: linear-gradient(90deg, #ffd700, #fff2ac, #ffd700, #bf953f, #fcf6ba);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-shimmer 4s linear infinite;
+}
+
+.amber-gradient-text {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b, #d97706, #fbbf24);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

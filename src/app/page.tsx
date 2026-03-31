@@ -13,8 +13,14 @@ export default function Home() {
     setIsAuthenticated(true);
   };
 
+  const themeClass = userProfile?.theme === 'legendary' 
+    ? 'theme-legendary' 
+    : userProfile?.theme === 'amber' 
+    ? 'theme-amber' 
+    : '';
+
   return (
-    <main className={`min-h-screen bg-black ${userProfile?.theme === 'legendary' ? 'theme-legendary' : ''}`}>
+    <main className={`min-h-screen bg-black ${themeClass}`}>
       {!isAuthenticated ? (
         <AccessGate onSuccess={handleAccessGranted} />
       ) : (
