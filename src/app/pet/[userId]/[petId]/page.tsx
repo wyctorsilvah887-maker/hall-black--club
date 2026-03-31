@@ -7,7 +7,7 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, Phone, ChevronRight, Siren, AlertCircle } from "lucide-react";
+import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, Phone, ChevronRight, Siren, AlertCircle, MessageSquare, PhoneCall } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon } from '@/components/mythic/MythicIcons';
@@ -61,6 +61,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const themeBorderClass = isLegendary ? 'border-yellow-500/30' : isAmber ? 'border-orange-500/30' : 'border-primary/30';
 
   const isSOSActive = pet.isEmergencyActive;
+  
+  // Limpa o número para links de ação
+  const cleanPhone = owner.emergencyContact?.replace(/\D/g, '') || '';
+  const whatsappUrl = `https://wa.me/${cleanPhone}`;
+  const telUrl = `tel:${cleanPhone}`;
 
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 ${themeClass}`}>
@@ -160,9 +165,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
                     </span>
                   </div>
                   {isSOSActive ? (
-                    <p className="font-mono text-red-500 text-lg font-black tracking-tight animate-in slide-in-from-right-2">
-                      {owner.emergencyContact || 'S/N'}
-                    </p>
+                    <div className="text-right">
+                      <p className="font-mono text-red-500 text-lg font-black tracking-tight animate-in slide-in-from-right-2">
+                        {owner.emergencyContact || 'S/N'}
+                      </p>
+                    </div>
                   ) : (
                     <p className="text-[9px] font-bold text-zinc-800 uppercase italic">Protegido</p>
                   )}
@@ -187,6 +194,33 @@ export default function PetProfilePage({ params }: PetPageProps) {
              </Card>
           </div>
         </div>
+
+        {/* Seção de Emergência Expandida */}
+        {isSOSActive && (
+          <Card className="bg-red-950/10 border-red-600/30 backdrop-blur-2xl p-6 md:p-8 rounded-[2.5rem] space-y-6 animate-in zoom-in-95 duration-500">
+            <div className="text-center space-y-2">
+              <h2 className="text-red-500 font-black text-2xl uppercase tracking-tighter italic">PET ENCONTRA-SE PERDIDO</h2>
+              <p className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold max-w-sm mx-auto leading-relaxed">
+                ESTE ANIMAL FAZ PARTE DA REDE HALL BLACK. POR FAVOR, AJUDE-O A VOLTAR PARA CASA USANDO OS CONTATOS ABAIXO.
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button asChild className="flex-1 h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-[11px] rounded-2xl group">
+                <a href={telUrl} className="flex items-center justify-center gap-2">
+                  <PhoneCall className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  Ligar para o Dono
+                </a>
+              </Button>
+              <Button asChild className="flex-1 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase tracking-widest text-[11px] rounded-2xl group">
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+                  <MessageSquare className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  WhatsApp
+                </a>
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {/* Selo de Autenticidade */}
         <div className="pt-8 flex flex-col items-center text-center">
