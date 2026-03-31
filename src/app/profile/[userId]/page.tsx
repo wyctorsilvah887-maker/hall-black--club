@@ -72,43 +72,43 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
 
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white ${themeClass}`}>
-      <div className="max-w-4xl mx-auto px-4 py-12 md:py-20 space-y-12">
+      <div className="max-w-4xl mx-auto px-4 py-8 md:py-20 space-y-10 md:space-y-12">
         <Link href="/" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-[0.3em]">
           <ArrowLeft className="w-4 h-4" /> Voltar ao Dashboard
         </Link>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-zinc-900 pb-12">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-zinc-900 pb-10 md:pb-12">
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className={`w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 shadow-2xl transition-transform hover:scale-105 duration-500
+            <div className={`w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 shadow-2xl transition-transform hover:scale-105 duration-500 flex-shrink-0
               ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary'}`}>
               {profile.photo ? (
-                <Image src={profile.photo} alt={profile.name} width={160} height={160} className="object-cover w-full h-full" />
+                <Image src={profile.photo} alt={profile.name} width={160} height={160} className="object-cover w-full h-full" unoptimized />
               ) : (
                 <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
-                  <User className="w-16 h-16 text-zinc-800" />
+                  <User className="w-12 h-12 md:w-16 md:h-16 text-zinc-800" />
                 </div>
               )}
             </div>
             <div className="space-y-2 text-center md:text-left">
               <p className="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-bold">Membro Verificado</p>
-              <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none">{profile.name}</h1>
+              <h1 className="text-3xl sm:text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none break-words max-w-md">{profile.name}</h1>
               {(profile.city || profile.state) && (
                 <div className="flex items-center justify-center md:justify-start gap-2 text-zinc-500">
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-[12px] font-black uppercase tracking-widest italic">
+                  <MapPin className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="text-[10px] md:text-[12px] font-black uppercase tracking-widest italic">
                     {profile.city}{profile.city && profile.state ? ', ' : ''}{profile.state}
                   </span>
                 </div>
               )}
             </div>
           </div>
-          <Badge variant="outline" className={`py-3 px-6 flex items-center gap-3 rounded-full font-black tracking-[0.15em] text-xs w-fit mx-auto md:mx-0 ${badgeInfo.style}`}>
+          <Badge variant="outline" className={`py-3 px-6 flex items-center gap-3 rounded-full font-black tracking-[0.15em] text-xs w-full sm:w-fit mx-auto md:mx-0 justify-center ${badgeInfo.style}`}>
             {badgeInfo.icon}
             {badgeInfo.text}
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 md:p-8 space-y-6">
             <CardHeader className="p-0">
               <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500 flex items-center gap-2">
@@ -120,28 +120,28 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
               <div className="flex justify-between items-center p-4 rounded-xl bg-black/40 border border-zinc-800/30">
                 <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Desde</span>
                 <span className="text-xs font-mono font-bold text-zinc-300">
-                  {new Date(profile.registrationDateTime).toLocaleDateString('pt-BR')}
+                  {profile.registrationDateTime ? new Date(profile.registrationDateTime).toLocaleDateString('pt-BR') : '---'}
                 </span>
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 md:p-8 flex flex-col justify-center items-center text-center space-y-4">
-            <Trophy className={`w-12 h-12 mb-2 ${isLegendary ? 'text-yellow-500 animate-gold-glow' : isAmber ? 'text-orange-500 animate-amber-glow' : 'text-primary'}`} />
-            <h3 className="text-lg font-black uppercase tracking-tighter">Status de Elite</h3>
+            <Trophy className={`w-10 h-10 md:w-12 md:h-12 mb-2 ${isLegendary ? 'text-yellow-500 animate-gold-glow' : isAmber ? 'text-orange-500 animate-amber-glow' : 'text-primary'}`} />
+            <h3 className="text-base md:text-lg font-black uppercase tracking-tighter">Status de Elite</h3>
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest leading-relaxed max-w-xs">
               Membro certificado com acesso total às funcionalidades e eventos exclusivos Hall Black em {profile.city || 'sua região'}.
             </p>
           </Card>
         </div>
 
-        <footer className="pt-20 text-center opacity-30">
+        <footer className="pt-12 md:pt-20 text-center opacity-30">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-8 bg-zinc-800" />
             <ShieldCheck className="w-4 h-4 text-zinc-500" />
             <div className="h-px w-8 bg-zinc-800" />
           </div>
-          <p className="text-[9px] text-zinc-600 uppercase tracking-[0.4em] font-light">
+          <p className="text-[8px] md:text-[9px] text-zinc-600 uppercase tracking-[0.4em] font-light">
             HALL BLACK CLUB SECURE PROFILE
           </p>
         </footer>

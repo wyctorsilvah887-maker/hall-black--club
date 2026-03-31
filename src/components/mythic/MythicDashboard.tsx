@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -229,7 +228,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-800/50">
         <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-             <h2 className={`text-base sm:text-xl md:text-2xl font-black font-headline uppercase tracking-tighter 
+             <h2 className={`text-sm sm:text-lg md:text-2xl font-black font-headline uppercase tracking-tighter 
               ${isLegendary ? 'gold-gradient-text' : isAmber ? 'amber-gradient-text' : 'text-primary'}`}>
               {isLegendary ? 'HALL BLACK LENDÁRIO' : isAmber ? 'HALL BLACK LEGENDÁRIO' : 'HALL BLACK'}
             </h2>
@@ -240,22 +239,22 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               variant="outline" 
               size="sm"
               onClick={() => setIsAddPetOpen(true)}
-              className="h-9 rounded-full border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 gap-2 px-4 transition-all"
+              className="h-8 md:h-9 rounded-full border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 gap-1.5 md:gap-2 px-3 md:px-4 transition-all"
             >
-              <PlusCircle className="w-4 h-4" />
-              <span className="text-[9px] font-bold uppercase tracking-wider hidden sm:inline">Novo Pet</span>
+              <PlusCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider hidden sm:inline">Novo Pet</span>
             </Button>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className={`w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center border-2 transition-all bg-zinc-900/80 outline-none overflow-hidden
+                <button className={`w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center border-2 transition-all bg-zinc-900/80 outline-none overflow-hidden
                   ${isLegendary ? 'border-yellow-500 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 
                     isAmber ? 'border-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 
                     'border-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]'}`}>
                   {profile.photo ? (
                     <Image src={profile.photo} alt={profile.name} width={44} height={44} className="object-cover w-full h-full" unoptimized />
                   ) : (
-                    <User className={`w-4 h-4 md:w-5 md:h-5 ${themeColorClass}`} />
+                    <User className={`w-3.5 h-3.5 md:w-5 md:h-5 ${themeColorClass}`} />
                   )}
                 </button>
               </DropdownMenuTrigger>
@@ -293,7 +292,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-900 pb-8 md:pb-12">
           <div className="space-y-1">
             <p className="text-zinc-500 text-[10px] md:text-[12px] uppercase tracking-[0.4em] font-bold">Bem-vindo ao Elite</p>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tight uppercase leading-none">{profile.name}</h1>
+            <h1 className="text-2xl sm:text-4xl md:text-6xl font-black tracking-tight uppercase leading-none break-words max-w-2xl">{profile.name}</h1>
             {(profile.city || profile.state) && (
               <div className="flex items-center gap-2 text-zinc-500 mt-2">
                 <MapPin className="w-3 h-3" />
@@ -301,8 +300,8 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </div>
             )}
           </div>
-          <Badge variant="outline" className={`py-2 px-5 flex items-center gap-2 rounded-full font-bold tracking-widest text-[10px] md:text-xs w-fit ${themeBadgeStyle}`}>
-            {isLegendary ? <Crown className="w-4 h-4" /> : isAmber ? <Gem className="w-4 h-4" /> : <CollarIcon className="w-4 h-4" />}
+          <Badge variant="outline" className={`py-2 px-5 flex items-center gap-2 rounded-full font-bold tracking-widest text-[10px] md:text-xs w-full sm:w-fit justify-center ${themeBadgeStyle}`}>
+            {isLegendary ? <Crown className="w-3.5 h-3.5 md:w-4 md:h-4" /> : isAmber ? <Gem className="w-3.5 h-3.5 md:w-4 md:h-4" /> : <CollarIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />}
             {isLegendary ? 'ACREDITAÇÃO LENDÁRIA' : isAmber ? 'STATUS LEGENDÁRIO' : 'MEMBRO MÍTICO'}
           </Badge>
         </div>
@@ -310,12 +309,12 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         {/* BOTÃO SAÚDE MUNDO PET - DESTAQUE */}
         <div className="grid grid-cols-1 gap-6">
           <Button 
-            className={`w-full h-16 md:h-20 text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
+            className={`w-full h-14 md:h-20 text-xs sm:text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
               ${isLegendary ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 hover:scale-[1.01] shadow-yellow-500/20' : 
                 isAmber ? 'bg-gradient-to-r from-orange-600 to-orange-400 hover:scale-[1.01] shadow-orange-500/20' : 
                 'bg-gradient-to-r from-red-800 to-primary hover:scale-[1.01] shadow-primary/20'}`}
           >
-            <Stethoscope className="w-6 h-6 md:w-8 md:h-8 mr-4 group-hover:rotate-12 transition-transform" />
+            <Stethoscope className="w-5 h-5 md:w-8 md:h-8 mr-3 md:mr-4 group-hover:rotate-12 transition-transform" />
             SAÚDE MUNDO PET
           </Button>
         </div>
@@ -334,21 +333,21 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             </CardHeader>
             <CardContent className="space-y-4 md:space-y-6">
               <div className="flex items-center gap-4 p-4 md:p-5 rounded-xl bg-black/60 border border-zinc-800/50">
-                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative flex-shrink-0">
                   {profile.photo ? <Image src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
                 </div>
-                <div className="text-sm space-y-0.5">
+                <div className="text-sm space-y-0.5 min-w-0">
                   <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest font-semibold">Titular da Conta</p>
-                  <p className="font-bold text-lg md:text-xl break-words">{profile.name}</p>
+                  <p className="font-bold text-base md:text-xl truncate">{profile.name}</p>
                 </div>
               </div>
 
               {profile.emergencyContact && (
                 <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl bg-black/40 border border-zinc-800/30">
                   <Phone className={`w-4 h-4 flex-shrink-0 ${themeColorClass}`} />
-                  <div className="text-sm">
+                  <div className="text-sm min-w-0">
                     <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Contato Emergencial</p>
-                    <p className="font-mono text-white text-xs sm:text-sm">{profile.emergencyContact}</p>
+                    <p className="font-mono text-white text-[11px] sm:text-sm">{profile.emergencyContact}</p>
                   </div>
                 </div>
               )}
@@ -377,14 +376,14 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                   <div className="space-y-3">
                     {petsData.map((pet) => (
                       <div key={pet.id} className="flex items-center justify-between p-3 rounded-xl bg-black/60 border border-zinc-800/50 group/item hover:border-zinc-700 transition-colors">
-                        <Link href={`/pet/${profile.id}/${pet.id}`} className="flex items-center gap-3 flex-1">
-                          <div className={`w-12 h-12 rounded-lg border border-zinc-800 overflow-hidden relative
+                        <Link href={`/pet/${profile.id}/${pet.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg border border-zinc-800 overflow-hidden relative flex-shrink-0
                             ${isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
                             {pet.photo ? (
                               <Image src={pet.photo} alt={pet.name} fill className="object-cover" unoptimized />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-zinc-900">
-                                <Heart className={`w-4 h-4 ${themeColorClass}`} />
+                                <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${themeColorClass}`} />
                               </div>
                             )}
                           </div>
@@ -426,7 +425,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
       {/* DIÁLOGOS DE REGISTRO E EDIÇÃO */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Registrar Novo Pet</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Adicione uma nova identidade à sua linhagem.</DialogDescription>
@@ -441,11 +440,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome do Pet</Label>
-                <Input placeholder="EX: THOR" className="bg-black/50 border-zinc-800 font-bold uppercase" value={newPetName} onChange={(e) => setNewPetName(e.target.value)} required />
+                <Input placeholder="EX: THOR" className="bg-black/50 border-zinc-800 font-bold uppercase h-11" value={newPetName} onChange={(e) => setNewPetName(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Espécie / Raça</Label>
-                <Input placeholder="EX: DOBERMAN" className="bg-black/50 border-zinc-800 font-bold uppercase" value={newPetSpecies} onChange={(e) => setNewPetSpecies(e.target.value)} required />
+                <Input placeholder="EX: DOBERMAN" className="bg-black/50 border-zinc-800 font-bold uppercase h-11" value={newPetSpecies} onChange={(e) => setNewPetSpecies(e.target.value)} required />
               </div>
             </div>
             <DialogFooter>
@@ -458,7 +457,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </Dialog>
 
       <Dialog open={isEditPetOpen} onOpenChange={(open) => { setIsEditPetOpen(open); if(!open) setEditingPet(null); }}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Editar Identidade</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Atualize as credenciais do seu pet.</DialogDescription>
@@ -473,11 +472,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome do Pet</Label>
-                <Input className="bg-black/50 border-zinc-800 font-bold uppercase" value={editPetName} onChange={(e) => setEditPetName(e.target.value)} required />
+                <Input className="bg-black/50 border-zinc-800 font-bold uppercase h-11" value={editPetName} onChange={(e) => setEditPetName(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Espécie / Raça</Label>
-                <Input className="bg-black/50 border-zinc-800 font-bold uppercase" value={editPetSpecies} onChange={(e) => setEditPetSpecies(e.target.value)} required />
+                <Input className="bg-black/50 border-zinc-800 font-bold uppercase h-11" value={editPetSpecies} onChange={(e) => setEditPetSpecies(e.target.value)} required />
               </div>
             </div>
             <DialogFooter>
@@ -490,7 +489,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </Dialog>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Configurações de Elite</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Gerencie suas credenciais e identidade mística.</DialogDescription>
@@ -519,19 +518,19 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2 sm:col-span-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome Completo</Label>
-                <Input className="bg-black/50 border-zinc-800" value={settingsName} onChange={(e) => setSettingsName(e.target.value)} required />
+                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsName} onChange={(e) => setSettingsName(e.target.value)} required />
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Contato de Emergência</Label>
-                <Input className="bg-black/50 border-zinc-800" value={settingsPhone} onChange={(e) => setSettingsPhone(e.target.value)} required />
+                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsPhone} onChange={(e) => setSettingsPhone(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Cidade</Label>
-                <Input className="bg-black/50 border-zinc-800" value={settingsCity} onChange={(e) => setSettingsCity(e.target.value)} placeholder="Ex: São Paulo" />
+                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsCity} onChange={(e) => setSettingsCity(e.target.value)} placeholder="Ex: São Paulo" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Estado</Label>
-                <Input className="bg-black/50 border-zinc-800" value={settingsState} onChange={(e) => setSettingsState(e.target.value)} placeholder="Ex: SP" />
+                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsState} onChange={(e) => setSettingsState(e.target.value)} placeholder="Ex: SP" />
               </div>
             </div>
 
@@ -546,7 +545,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
       {/* EDITOR DE IMAGEM - SEMPRE POR CIMA */}
       <Dialog open={!!editorState} onOpenChange={() => setEditorState(null)}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md p-6 z-[100]">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[100] rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Ajuste de Imagem</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Configure o enquadramento perfeito para a elite.</DialogDescription>
