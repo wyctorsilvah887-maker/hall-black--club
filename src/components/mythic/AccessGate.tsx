@@ -7,7 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode } from "@/app/actions";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AccessGateProps {
   onSuccess: (profile: any) => void;
@@ -93,10 +99,29 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           </Button>
         </form>
 
-        <p className="text-zinc-500 text-xs mt-8">
-          Acesso restrito a portadores de chaves autorizadas.
-          <br />Todos os acessos são monitorados.
-        </p>
+        <div className="mt-8 flex flex-col items-center gap-4">
+          <p className="text-zinc-500 text-xs">
+            Acesso restrito a portadores de chaves autorizadas.
+          </p>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-zinc-600 hover:text-zinc-400 gap-2 text-[10px] tracking-widest">
+                  <Info className="w-3 h-3" />
+                  DICA DE ACESSO
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-zinc-900 border-zinc-800 text-zinc-300 p-3 space-y-2">
+                <p className="font-bold text-[10px] uppercase">Códigos Míticos de Teste:</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800">MYTH-2024</code>
+                  <code className="bg-black/50 px-2 py-1 rounded text-[10px] border border-zinc-800">RUBY-ELITE</code>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
     </div>
   );
