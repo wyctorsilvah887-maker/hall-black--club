@@ -1,3 +1,4 @@
+
 "use client"
 
 import React from 'react';
@@ -5,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem } from "lucide-react";
+import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
@@ -49,7 +50,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               {badgeInfo.icon}
               {badgeInfo.text}
             </Badge>
-            <span className="text-zinc-500 text-[10px] uppercase tracking-[0.2em] ml-2">REGISTRO: #{profile.rank}923</span>
+            <span className="text-zinc-500 text-[10px] uppercase tracking-[0.2em] ml-2">REGISTRO: #{profile.rank || '0'}923</span>
           </div>
         </div>
 
@@ -99,6 +100,16 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 <p className="font-bold text-xl">{profile.name}</p>
               </div>
             </div>
+
+            {profile.emergencyContact && (
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800/30">
+                <Phone className={`w-4 h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                <div className="text-sm">
+                  <p className="text-zinc-500 uppercase text-[9px] tracking-widest font-semibold">Contato de Emergência</p>
+                  <p className="font-mono text-white text-xs">{profile.emergencyContact}</p>
+                </div>
+              </div>
+            )}
             
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-xl bg-black/60 border border-zinc-800/50">

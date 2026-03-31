@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "MythicCode": {
@@ -58,6 +59,10 @@
           "description": "The email address of the club member.",
           "format": "email"
         },
+        "emergencyContact": {
+          "type": "string",
+          "description": "Emergency contact phone number for the member."
+        },
         "registrationDateTime": {
           "type": "string",
           "description": "Timestamp when the user profile was fully registered with additional details.",
@@ -84,7 +89,6 @@
       },
       "required": [
         "id",
-        "mythicCodeId",
         "name",
         "email",
         "registrationDateTime",

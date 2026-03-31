@@ -57,12 +57,6 @@ export default function Home() {
     setIsCodeValidated(true);
   };
 
-  const handleLogout = () => {
-    // Opcional: limpar também a validação do código se quiser que ele peça sempre
-    // localStorage.removeItem('mythic_access_granted');
-    // setIsCodeValidated(false);
-  };
-
   if (isUserLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -83,7 +77,7 @@ export default function Home() {
       {!isCodeValidated ? (
         <AccessGate onSuccess={handleCodeSuccess} />
       ) : !user ? (
-        <AuthGate theme={activeProfile?.theme} />
+        <AuthGate theme={activeProfile?.theme} tempProfile={tempProfile} />
       ) : (
         <MythicDashboard profile={activeProfile} />
       )}

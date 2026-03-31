@@ -6,26 +6,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/firebase";
+import { useAuth, useFirestore } from "@/firebase";
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   updateProfile 
 } from "firebase/auth";
-import { Loader2, UserPlus, LogIn, ArrowLeft, Shield } from "lucide-react";
+import { doc, setDoc } from "firebase/firestore";
+import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
 
 interface AuthGateProps {
   theme?: string;
+  tempProfile?: any;
 }
 
-export function AuthGate({ theme }: AuthGateProps) {
+export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
   
   const auth = useAuth();
+  const db = useFirestore();
   const { toast } = useToast();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -42,6 +46,21 @@ export function AuthGate({ theme }: AuthGateProps) {
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
+        
+        // Salva o perfil no Firestore após o registro
+        const userRef = doc(db, 'users', userCredential.user.uid);
+        setDoc(userRef, {
+          id: userCredential.user.uid,
+          name: name,
+          email: email,
+          emergencyContact: emergencyPhone,
+          registrationDateTime: new Date().toISOString(),
+          isPublicProfile: true,
+          rankingScore: tempProfile?.rank || 0,
+          status: tempProfile?.status || 'MYTHIC',
+          theme: tempProfile?.theme || 'mythic'
+        }, { merge: true });
+
         toast({
           title: "REGISTRO CONCLUÍDO",
           description: "Sua conta na elite foi criada com sucesso.",
@@ -94,16 +113,30 @@ export function AuthGate({ theme }: AuthGateProps) {
 
         <form onSubmit={handleAuth} className="space-y-5 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
           {!isLogin && (
-            <div className="space-y-2">
-              <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
-              <Input
-                placeholder="SEU NOME"
-                required
-                className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
+                <Input
+                  placeholder="SEU NOME"
+                  required
+                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 flex items-center gap-2">
+                  <Phone className="w-3 h-3" /> Contato de Emergência
+                </Label>
+                <Input
+                  placeholder="(00) 00000-0000"
+                  required
+                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
+                  value={emergencyPhone}
+                  onChange={(e) => setEmergencyPhone(e.target.value)}
+                />
+              </div>
+            </>
           )}
 
           <div className="space-y-2">
