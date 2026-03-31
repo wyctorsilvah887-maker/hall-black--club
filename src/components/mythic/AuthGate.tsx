@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -33,10 +32,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const { toast } = useToast();
 
   const formatPhoneMask = (value: string) => {
-    // Remove tudo que não é dígito
     const digits = value.replace(/\D/g, '');
-    
-    // Limita a 11 dígitos (2 do DDD + 9 do número)
     const truncated = digits.slice(0, 11);
     
     if (truncated.length === 0) return '';
@@ -58,12 +54,10 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    // Se o usuário estiver apagando, permitimos o comportamento padrão ou limpamos tudo se for pequeno
     if (input.length < emergencyPhone.length && emergencyPhone.startsWith('+55 ') && input.length <= 4) {
       setEmergencyPhone('');
       return;
     }
-    
     setEmergencyPhone(formatPhoneMask(input));
   };
 
@@ -82,7 +76,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
         
-        // Salva o perfil no Firestore após o registro
         const userRef = doc(db, 'users', userCredential.user.uid);
         setDoc(userRef, {
           id: userCredential.user.uid,
@@ -131,42 +124,44 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
     ? 'bg-orange-500 hover:bg-orange-400 text-black animate-amber-glow'
     : 'bg-primary hover:bg-accent text-white animate-ruby-glow';
 
+  const iconColorClass = theme === 'legendary' ? 'text-yellow-500' : theme === 'amber' ? 'text-orange-500' : 'text-primary';
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-black relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none" />
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/5 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
       
-      <div className="w-full max-w-md space-y-8 relative z-10">
+      <div className="w-full max-w-md space-y-6 md:space-y-8 relative z-10">
         <div className="text-center space-y-2">
-          <Shield className={`w-12 h-12 mx-auto mb-4 ${theme === 'legendary' ? 'text-yellow-500' : theme === 'amber' ? 'text-orange-500' : 'text-primary'}`} />
-          <h2 className={`text-4xl font-black tracking-tighter uppercase ${themeTextClass}`}>
+          <Shield className={`w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 ${iconColorClass}`} />
+          <h2 className={`text-3xl md:text-4xl font-black tracking-tighter uppercase leading-tight ${themeTextClass}`}>
             {isLogin ? 'Confirmar Identidade' : 'Criar Credenciais'}
           </h2>
-          <p className="text-zinc-500 text-[10px] uppercase tracking-[0.3em] font-bold">
+          <p className="text-zinc-500 text-[8px] md:text-[10px] uppercase tracking-[0.25em] md:tracking-[0.3em] font-bold">
             Proteção de Nível Militar Hall Black
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="space-y-5 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
+        <form onSubmit={handleAuth} className="space-y-4 md:space-y-5 bg-zinc-900/30 p-6 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
           {!isLogin && (
             <>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
+              <div className="space-y-1.5 md:space-y-2">
+                <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
                 <Input
                   placeholder="SEU NOME"
                   required
-                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
+                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 flex items-center gap-2">
+              <div className="space-y-1.5 md:space-y-2">
+                <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 flex items-center gap-2">
                   <Phone className="w-3 h-3" /> Contato de Emergência
                 </Label>
                 <Input
                   placeholder="+55 (00) 00000-0000"
                   required
-                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
+                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
                   value={emergencyPhone}
                   onChange={handlePhoneChange}
                 />
@@ -174,25 +169,25 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             </>
           )}
 
-          <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Email Autorizado</Label>
+          <div className="space-y-1.5 md:space-y-2">
+            <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Email Autorizado</Label>
             <Input
               type="email"
               placeholder="email@exemplo.com"
               required
-              className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
+              className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha de Criptografia</Label>
+          <div className="space-y-1.5 md:space-y-2">
+            <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha de Criptografia</Label>
             <Input
               type="password"
               placeholder="••••••••"
               required
-              className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white"
+              className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -200,7 +195,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
           <Button 
             type="submit" 
-            className={`w-full h-14 text-sm font-black tracking-widest uppercase transition-all duration-500 mt-4 ${themeBtnClass}`}
+            className={`w-full h-12 md:h-14 text-xs md:text-sm font-black tracking-widest uppercase transition-all duration-500 mt-2 md:mt-4 ${themeBtnClass}`}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -214,21 +209,21 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           </Button>
         </form>
 
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-5 md:space-y-6">
           <button 
             onClick={() => setIsLogin(!isLogin)}
-            className="text-zinc-500 hover:text-white transition-colors text-[10px] uppercase tracking-[0.2em] font-bold"
+            className="text-zinc-500 hover:text-white transition-colors text-[9px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-bold"
           >
             {isLogin ? 'Não possui registro? Criar conta elite' : 'Já possui credenciais? Fazer login'}
           </button>
           
-          <div className="pt-4">
+          <div className="pt-2 md:pt-4">
             <button 
               onClick={() => {
                 localStorage.removeItem('mythic_access_granted');
                 window.location.reload();
               }}
-              className="flex items-center gap-2 mx-auto text-zinc-700 hover:text-zinc-500 transition-colors text-[9px] uppercase tracking-widest font-black"
+              className="flex items-center gap-2 mx-auto text-zinc-700 hover:text-zinc-500 transition-colors text-[8px] md:text-[9px] uppercase tracking-widest font-black"
             >
               <ArrowLeft className="w-3 h-3" />
               Voltar para Validação de Chave

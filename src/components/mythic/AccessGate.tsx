@@ -59,31 +59,31 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-black overflow-hidden relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black overflow-hidden relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/10 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
       
-      <div className="w-full max-w-md space-y-10 relative z-10 text-center">
-        <div className="space-y-4">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="h-[1px] w-6 bg-primary/50" />
-            <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-            <div className="h-[1px] w-6 bg-primary/50" />
+      <div className="w-full max-w-md space-y-8 md:space-y-10 relative z-10 text-center">
+        <div className="space-y-3 md:space-y-4">
+          <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
+            <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" />
+            <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white font-headline">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white font-headline">
             HALL <span className="text-primary animate-text-ruby-glow">BLACK</span>
           </h1>
-          <p className="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-bold">
+          <p className="text-zinc-500 text-[8px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.5em] font-bold">
             THE ABSOLUTE PET ELITE
           </p>
         </div>
 
-        <form onSubmit={handleClaimAccess} className="space-y-6 mt-12 bg-zinc-900/20 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md">
-          <div className="space-y-3">
-            <Label htmlFor="mythic-code" className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Chave de Acesso</Label>
+        <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-5 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md">
+          <div className="space-y-2 md:space-y-3">
+            <Label htmlFor="mythic-code" className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Chave de Acesso</Label>
             <Input
               id="mythic-code"
               placeholder="XXXXXXXX-XXXX"
-              className="bg-black/50 border-zinc-800 text-center text-xl h-16 tracking-[0.2em] font-black focus-visible:ring-primary focus-visible:border-primary/50 placeholder:text-zinc-800 transition-all"
+              className="bg-black/50 border-zinc-800 text-center text-lg md:text-xl h-14 md:h-16 tracking-[0.15em] md:tracking-[0.2em] font-black focus-visible:ring-primary focus-visible:border-primary/50 placeholder:text-zinc-800 transition-all"
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               disabled={isLoading}
@@ -92,34 +92,34 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
           <Button 
             type="submit" 
-            className="w-full h-16 text-lg font-black bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow group relative overflow-hidden"
+            className="w-full h-14 md:h-16 text-base md:text-lg font-black bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow group relative overflow-hidden"
             disabled={isLoading || !code}
           >
             {isLoading ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" />
             ) : (
               <span className="flex items-center justify-center gap-2">
                 REIVINDICAR ACESSO
-                <Sparkles className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Sparkles className="h-4 h-4 md:h-5 md:w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </span>
             )}
           </Button>
         </form>
 
-        <div className="mt-10 flex flex-col items-center gap-6">
-          <p className="text-zinc-600 text-[9px] uppercase tracking-widest font-medium">
+        <div className="mt-8 md:mt-10 flex flex-col items-center gap-4 md:gap-6">
+          <p className="text-zinc-600 text-[8px] md:text-[9px] px-4 uppercase tracking-widest font-medium leading-relaxed">
             Acesso restrito. Use chaves de criptografia autorizadas.
           </p>
           
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-zinc-700 hover:text-zinc-400 gap-2 text-[10px] tracking-[0.3em] font-bold">
+                <Button variant="ghost" size="sm" className="text-zinc-700 hover:text-zinc-400 gap-2 text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.3em] font-bold">
                   <Info className="w-3 h-3" />
                   CONSULTAR CHAVES
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64">
+              <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64 max-w-[calc(100vw-32px)]">
                 <div className="space-y-2">
                   <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi):</p>
                   <code className="bg-black px-3 py-2 rounded text-[10px] border border-zinc-800 block font-mono text-zinc-400">MYTH-2024</code>
