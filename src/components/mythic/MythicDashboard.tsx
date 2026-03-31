@@ -282,7 +282,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </Badge>
         </div>
 
-        {/* SAÚDE MUNDO PET CTA */}
+        {/* SAÚDE MUNDO PET CTA - DESTAQUE TOTAL */}
         <div className="grid grid-cols-1 gap-6">
           <Button 
             className={`w-full h-16 md:h-20 text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
