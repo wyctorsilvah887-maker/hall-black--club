@@ -12,6 +12,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import Link from 'next/link';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,11 +105,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 <DropdownMenuSeparator className="bg-zinc-800" />
                 <DropdownMenuItem className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
                   <Settings className="w-4 h-4 mr-2" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Editar Perfil Público</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">Configurações</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Ver Perfil Público</span>
+                <DropdownMenuItem asChild className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
+                  <Link href={`/profile/${profile.id}`}>
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Ver Perfil Público</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-zinc-800" />
                 <DropdownMenuItem 
