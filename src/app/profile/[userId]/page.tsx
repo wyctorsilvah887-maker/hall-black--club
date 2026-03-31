@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use } from 'react';
@@ -114,16 +113,10 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
             <CardHeader className="p-0">
               <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500 flex items-center gap-2">
                 <ShieldCheck className={`w-4 h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
-                Dados de Influência
+                Dados da Credencial
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 space-y-4">
-              <div className="flex justify-between items-end p-4 rounded-xl bg-black/40 border border-zinc-800/30">
-                <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Ranking Global</span>
-                <span className={`text-3xl font-black italic ${isLegendary ? 'gold-gradient-text' : isAmber ? 'amber-gradient-text' : 'text-white'}`}>
-                  #{profile.rankingScore || 42}
-                </span>
-              </div>
               <div className="flex justify-between items-center p-4 rounded-xl bg-black/40 border border-zinc-800/30">
                 <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Desde</span>
                 <span className="text-xs font-mono font-bold text-zinc-300">

@@ -4,7 +4,6 @@
 const MYTHIC_CODES = ["MYTH-2024", "RUBY-ELITE", "HALL-BLACK-V1", "ELITE-PET"];
 const AMBER_CODES = ["AMBER-LEGEND"];
 const LEGENDARY_CODES = ["LEGEND-GOLD"];
-const USED_CODES = new Set<string>();
 
 export async function validateMythicCode(code: string) {
   // Simula atraso de rede
@@ -20,8 +19,7 @@ export async function validateMythicCode(code: string) {
       profile: {
         name: "Lenda do Hall",
         status: "LEGENDARY",
-        theme: "legendary",
-        rank: 1,
+        theme: "legendary"
       }
     };
   }
@@ -34,8 +32,7 @@ export async function validateMythicCode(code: string) {
       profile: {
         name: "Guardião de Elite",
         status: "AMBER",
-        theme: "amber",
-        rank: 7,
+        theme: "amber"
       }
     };
   }
@@ -48,8 +45,7 @@ export async function validateMythicCode(code: string) {
       profile: {
         name: "Membro da Elite",
         status: "MYTHIC",
-        theme: "mythic",
-        rank: 42,
+        theme: "mythic"
       }
     };
   }

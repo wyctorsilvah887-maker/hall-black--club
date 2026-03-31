@@ -6,7 +6,7 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Crown, Gem, ShieldCheck, Heart, ArrowLeft, ShieldAlert, User, MapPin, Sparkles } from "lucide-react";
+import { Heart, ArrowLeft, ShieldAlert, User, MapPin, Sparkles, ShieldCheck } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon } from '@/components/mythic/MythicIcons';
@@ -19,13 +19,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const { userId, petId } = use(params);
   const db = useFirestore();
   
-  // Referência para o documento do Pet
   const petRef = React.useMemo(() => {
     if (!db || !userId || !petId) return null;
     return doc(db, 'users', userId, 'pets', petId);
   }, [db, userId, petId]);
 
-  // Referência para o documento do Dono
   const ownerRef = React.useMemo(() => {
     if (!db || !userId) return null;
     return doc(db, 'users', userId);
@@ -66,7 +64,6 @@ export default function PetProfilePage({ params }: PetPageProps) {
           <ArrowLeft className="w-4 h-4" /> Voltar ao Dashboard
         </Link>
 
-        {/* Hero Section - Pet Identity */}
         <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-end">
           <div className={`relative w-48 h-48 md:w-64 md:h-64 rounded-3xl overflow-hidden border-2 shadow-2xl transition-transform hover:scale-[1.02] duration-500
             ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary'}`}>
@@ -95,9 +92,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
           </div>
         </div>
 
-        {/* Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          {/* Owner Info Card */}
           <Card className="md:col-span-2 bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 md:p-8 space-y-6">
             <CardHeader className="p-0">
               <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 flex items-center gap-2">
@@ -118,7 +113,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="p-5 rounded-2xl bg-black/40 border border-zinc-800/30 space-y-2">
                   <div className="flex items-center gap-2 text-zinc-500">
                     <MapPin className="w-3 h-3" />
@@ -126,18 +121,10 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   </div>
                   <p className="font-mono text-zinc-300 text-xs">{owner.emergencyContact || 'RESTRITO'}</p>
                 </div>
-                <div className="p-5 rounded-2xl bg-black/40 border border-zinc-800/30 space-y-2">
-                  <div className="flex items-center gap-2 text-zinc-500">
-                    <Sparkles className="w-3 h-3" />
-                    <span className="text-[9px] font-bold uppercase tracking-widest">Ranking do Guardião</span>
-                  </div>
-                  <p className="font-black text-xl text-white italic">#{owner.rankingScore || '42'}</p>
-                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Sidebar - Security Focus */}
           <div className="space-y-6">
             <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 text-center space-y-4">
               <ShieldCheck className={`w-12 h-12 mx-auto ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />

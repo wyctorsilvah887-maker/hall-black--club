@@ -1,12 +1,11 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { Trophy, User, ShieldCheck, Heart, ArrowUpRight, PlusCircle, Sparkles, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -26,7 +25,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -47,14 +45,12 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profilePicInputRef = useRef<HTMLInputElement>(null);
   
-  // Estados para Adicionar Pet
   const [isAddPetOpen, setIsAddPetOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newPetName, setNewPetName] = useState('');
   const [newPetSpecies, setNewPetSpecies] = useState('');
   const [newPetPhoto, setNewPetPhoto] = useState<string | null>(null);
 
-  // Estados para Configurações do Perfil
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
   const [settingsName, setSettingsName] = useState(profile?.name || '');
@@ -73,16 +69,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     }
   }, [profile]);
 
-  // Busca a coleção de usuários para contar o registro
-  const usersQuery = useMemoFirebase(() => {
-    return collection(db, 'users');
-  }, [db]);
-  
-  const { data: usersData } = useCollection(usersQuery);
-  const userCount = usersData?.length || 0;
-  const formattedRegistration = userCount.toString().padStart(3, '0');
-
-  // Busca os pets do usuário logado
   const petsQuery = useMemoFirebase(() => {
     if (!profile?.id) return null;
     return collection(db, 'users', profile.id, 'pets');
@@ -125,13 +111,8 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       registrationDateTime: new Date().toISOString(),
     });
 
-    const userRef = doc(db, 'users', profile.id);
-    updateDocumentNonBlocking(userRef, {
-      rankingScore: (profile.rankingScore || 0) + 100
-    });
-
     toast({
-      title: "PET REGISTRADO (+100 PTS)",
+      title: "PET REGISTRADO",
       description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.`,
     });
 
@@ -189,12 +170,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               ${isLegendary ? 'gold-gradient-text' : isAmber ? 'amber-gradient-text' : 'text-primary'}`}>
               {isLegendary ? 'HALL BLACK LENDÁRIO' : isAmber ? 'HALL BLACK LEGENDÁRIO' : 'HALL BLACK'}
             </h2>
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="h-4 w-px bg-zinc-800 mx-1" />
-              <span className="text-zinc-500 text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-bold">
-                REGISTRO: #{formattedRegistration}
-              </span>
-            </div>
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
@@ -304,7 +279,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             </CardContent>
           </Card>
 
-          <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="md:col-span-8">
             <Card className={`bg-zinc-900/40 border-zinc-800/50 overflow-hidden group relative flex flex-col ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
               <CardHeader className="pb-3 md:pb-4">
                 <CardTitle className="flex items-center gap-3 text-lg md:text-xl tracking-tight uppercase">
@@ -361,33 +336,10 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 </Button>
               </CardContent>
             </Card>
-
-            <Card className={`bg-zinc-900/40 border-zinc-800/50 relative overflow-hidden ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
-              <CardHeader className="pb-3 md:pb-4">
-                <CardTitle className="flex items-center gap-3 text-lg md:text-xl tracking-tight uppercase">
-                  <Trophy className={`w-4 h-4 md:w-5 md:h-5 ${themeColorClass}`} /> Hall da Fama
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 md:space-y-4">
-                <div className="pt-4 md:pt-6 border-t border-zinc-800/50 mt-2 md:mt-4 text-center">
-                  <p className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-[0.3em] mb-2 md:mb-3">Seu Prestígio Atual</p>
-                  <div className="flex items-center justify-center gap-2 md:gap-3">
-                    <span className={`text-3xl md:text-4xl font-black italic ${isLegendary ? 'gold-gradient-text' : isAmber ? 'amber-gradient-text' : 'text-white'}`}>
-                      {profile.rankingScore || 0}
-                    </span>
-                    <div className="flex flex-col items-start leading-none">
-                      <span className="text-zinc-400 text-[10px] md:text-xs font-bold">PTS</span>
-                      <span className="text-zinc-600 text-[8px] md:text-[10px]">RANKING</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </main>
 
-      {/* DIALOG DE ADICIONAR PET */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
           <DialogHeader>
@@ -420,7 +372,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      {/* DIALOG DE CONFIGURAÇÕES */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md">
           <DialogHeader>
