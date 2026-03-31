@@ -7,8 +7,9 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Crown, Gem, ShieldCheck, Trophy, ArrowLeft, ShieldAlert } from "lucide-react";
+import { Crown, Gem, ShieldCheck, Trophy, ArrowLeft, ShieldAlert, MapPin, User } from "lucide-react";
 import Link from 'next/link';
+import Image from 'next/image';
 import { CollarIcon } from '@/components/mythic/MythicIcons';
 
 interface ProfilePageProps {
@@ -64,13 +65,11 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
   const isAmber = profile.status === 'AMBER';
   const themeClass = isLegendary ? 'theme-legendary' : isAmber ? 'theme-amber' : '';
 
-  const getStatusBadge = () => {
-    if (isLegendary) return { text: 'ACREDITAÇÃO LENDÁRIA', icon: <Crown className="w-4 h-4" />, style: 'border-yellow-500/50 bg-yellow-500/20 text-yellow-500 animate-gold-glow' };
-    if (isAmber) return { text: 'STATUS LEGENDÁRIO', icon: <Gem className="w-4 h-4" />, style: 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' };
-    return { text: 'MEMBRO MÍTICO', icon: <CollarIcon className="w-4 h-4" />, style: 'border-primary/50 bg-primary/10 text-primary' };
-  };
-
-  const badgeInfo = getStatusBadge();
+  const badgeInfo = isLegendary 
+    ? { text: 'ACREDITAÇÃO LENDÁRIA', icon: <Crown className="w-4 h-4" />, style: 'border-yellow-500/50 bg-yellow-500/20 text-yellow-500 animate-gold-glow' }
+    : isAmber 
+    ? { text: 'STATUS LEGENDÁRIO', icon: <Gem className="w-4 h-4" />, style: 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' }
+    : { text: 'MEMBRO MÍTICO', icon: <CollarIcon className="w-4 h-4" />, style: 'border-primary/50 bg-primary/10 text-primary' };
 
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white ${themeClass}`}>
@@ -80,11 +79,31 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
         </Link>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-zinc-900 pb-12">
-          <div className="space-y-2">
-            <p className="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-bold">Membro Verificado</p>
-            <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none">{profile.name}</h1>
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className={`w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 shadow-2xl transition-transform hover:scale-105 duration-500
+              ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary'}`}>
+              {profile.photo ? (
+                <Image src={profile.photo} alt={profile.name} width={160} height={160} className="object-cover w-full h-full" />
+              ) : (
+                <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+                  <User className="w-16 h-16 text-zinc-800" />
+                </div>
+              )}
+            </div>
+            <div className="space-y-2 text-center md:text-left">
+              <p className="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-bold">Membro Verificado</p>
+              <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none">{profile.name}</h1>
+              {(profile.city || profile.state) && (
+                <div className="flex items-center justify-center md:justify-start gap-2 text-zinc-500">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-[12px] font-black uppercase tracking-widest italic">
+                    {profile.city}{profile.city && profile.state ? ', ' : ''}{profile.state}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-          <Badge variant="outline" className={`py-3 px-6 flex items-center gap-3 rounded-full font-black tracking-[0.15em] text-xs w-fit ${badgeInfo.style}`}>
+          <Badge variant="outline" className={`py-3 px-6 flex items-center gap-3 rounded-full font-black tracking-[0.15em] text-xs w-fit mx-auto md:mx-0 ${badgeInfo.style}`}>
             {badgeInfo.icon}
             {badgeInfo.text}
           </Badge>
@@ -118,7 +137,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
             <Trophy className={`w-12 h-12 mb-2 ${isLegendary ? 'text-yellow-500 animate-gold-glow' : isAmber ? 'text-orange-500 animate-amber-glow' : 'text-primary'}`} />
             <h3 className="text-lg font-black uppercase tracking-tighter">Status de Elite</h3>
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest leading-relaxed max-w-xs">
-              Membro certificado com acesso total às funcionalidades de monitoramento biométrico e eventos exclusivos Hall Black.
+              Membro certificado com acesso total às funcionalidades e eventos exclusivos Hall Black em {profile.city || 'sua região'}.
             </p>
           </Card>
         </div>

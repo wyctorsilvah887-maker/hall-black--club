@@ -59,6 +59,18 @@
           "description": "The email address of the club member.",
           "format": "email"
         },
+        "photo": {
+          "type": "string",
+          "description": "Base64 representation of the user's profile photo."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city where the user is located."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state where the user is located."
+        },
         "emergencyContact": {
           "type": "string",
           "description": "Emergency contact phone number for the member."
