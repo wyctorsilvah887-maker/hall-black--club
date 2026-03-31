@@ -117,13 +117,23 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       if (currentTarget === 'profile') setSettingsPhoto(compressed);
       if (currentTarget === 'newPet') setNewPetPhoto(compressed);
       if (currentTarget === 'editPet') setEditPetPhoto(compressed);
-      setEditorState(null);
+      
+      // Fecha o editor com um pequeno delay para garantir que o DOM limpe o bloqueio de cliques
+      setTimeout(() => {
+        setEditorState(null);
+      }, 100);
+
+      toast({
+        title: "IMAGEM PROCESSADA",
+        description: "A foto foi ajustada e otimizada com sucesso.",
+      });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "ERRO NO PROCESSAMENTO",
         description: "Falha ao otimizar a imagem editada.",
       });
+      setEditorState(null);
     }
   };
 
@@ -132,26 +142,30 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     if (!newPetName || !newPetSpecies || !profile?.id) return;
 
     setIsSubmitting(true);
-    const petsRef = collection(db, 'users', profile.id, 'pets');
-    
-    addDocumentNonBlocking(petsRef, {
-      userId: profile.id,
-      name: newPetName,
-      species: newPetSpecies,
-      photo: newPetPhoto,
-      registrationDateTime: new Date().toISOString(),
-    });
+    try {
+      const petsRef = collection(db, 'users', profile.id, 'pets');
+      addDocumentNonBlocking(petsRef, {
+        userId: profile.id,
+        name: newPetName,
+        species: newPetSpecies,
+        photo: newPetPhoto,
+        registrationDateTime: new Date().toISOString(),
+      });
 
-    toast({
-      title: "PET REGISTRADO",
-      description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.`,
-    });
+      toast({
+        title: "PET REGISTRADO",
+        description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.`,
+      });
 
-    setNewPetName('');
-    setNewPetSpecies('');
-    setNewPetPhoto(null);
-    setIsAddPetOpen(false);
-    setIsSubmitting(false);
+      setNewPetName('');
+      setNewPetSpecies('');
+      setNewPetPhoto(null);
+      setIsAddPetOpen(false);
+    } catch (err) {
+      toast({ variant: "destructive", title: "ERRO AO SALVAR", description: "Não foi possível registrar o pet." });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleOpenEditPet = (pet: any) => {
@@ -167,22 +181,26 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     if (!editingPet || !profile?.id) return;
 
     setIsSubmitting(true);
-    const petRef = doc(db, 'users', profile.id, 'pets', editingPet.id);
-    
-    updateDocumentNonBlocking(petRef, {
-      name: editPetName,
-      species: editPetSpecies,
-      photo: editPetPhoto
-    });
+    try {
+      const petRef = doc(db, 'users', profile.id, 'pets', editingPet.id);
+      updateDocumentNonBlocking(petRef, {
+        name: editPetName,
+        species: editPetSpecies,
+        photo: editPetPhoto
+      });
 
-    toast({
-      title: "IDENTIDADE ATUALIZADA",
-      description: `AS CREDENCIAIS DE ${editPetName.toUpperCase()} FORAM SINCRONIZADAS.`,
-    });
+      toast({
+        title: "IDENTIDADE ATUALIZADA",
+        description: `AS CREDENCIAIS DE ${editPetName.toUpperCase()} FORAM SINCRONIZADAS.`,
+      });
 
-    setIsEditPetOpen(false);
-    setEditingPet(null);
-    setIsSubmitting(false);
+      setIsEditPetOpen(false);
+      setEditingPet(null);
+    } catch (err) {
+      toast({ variant: "destructive", title: "ERRO NA ATUALIZAÇÃO", description: "Falha ao sincronizar dados do pet." });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleUpdateSettings = async (e: React.FormEvent) => {
@@ -190,23 +208,27 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     if (!profile?.id) return;
 
     setIsUpdatingSettings(true);
-    const userRef = doc(db, 'users', profile.id);
-    
-    updateDocumentNonBlocking(userRef, {
-      name: settingsName,
-      emergencyContact: settingsPhone,
-      city: settingsCity,
-      state: settingsState,
-      photo: settingsPhoto
-    });
+    try {
+      const userRef = doc(db, 'users', profile.id);
+      updateDocumentNonBlocking(userRef, {
+        name: settingsName,
+        emergencyContact: settingsPhone,
+        city: settingsCity,
+        state: settingsState,
+        photo: settingsPhoto
+      });
 
-    toast({
-      title: "PERFIL ATUALIZADO",
-      description: "Suas credenciais foram sincronizadas com sucesso.",
-    });
+      toast({
+        title: "PERFIL ATUALIZADO",
+        description: "Suas credenciais foram sincronizadas com sucesso.",
+      });
 
-    setIsUpdatingSettings(false);
-    setIsSettingsOpen(false);
+      setIsSettingsOpen(false);
+    } catch (err) {
+      toast({ variant: "destructive", title: "ERRO AO SALVAR", description: "Falha ao atualizar perfil." });
+    } finally {
+      setIsUpdatingSettings(false);
+    }
   };
 
   const handleDeletePet = (petId: string, petName: string) => {
@@ -541,7 +563,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!editorState} onOpenChange={() => setEditorState(null)}>
+      <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[100] rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Ajuste de Imagem</DialogTitle>

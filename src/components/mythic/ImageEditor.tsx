@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { getCroppedImg } from '@/lib/image-utils'
-import { Check, X, RotateCw, ZoomIn } from 'lucide-react'
+import { Check, X, RotateCw, ZoomIn, Loader2 } from 'lucide-react'
 
 interface ImageEditorProps {
   image: string
@@ -21,17 +21,21 @@ export function ImageEditor({ image, cropShape = 'rect', onCancel, onConfirm }: 
   const [zoom, setZoom] = useState(1)
   const [rotation, setRotation] = useState(0)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
 
   const handleConfirm = async () => {
+    if (isProcessing) return
+    setIsProcessing(true)
     try {
       const croppedImage = await getCroppedImg(image, croppedAreaPixels, rotation)
       onConfirm(croppedImage)
     } catch (e) {
       console.error(e)
+      setIsProcessing(false)
     }
   }
 
@@ -97,15 +101,22 @@ export function ImageEditor({ image, cropShape = 'rect', onCancel, onConfirm }: 
         <Button 
           variant="outline" 
           onClick={onCancel}
+          disabled={isProcessing}
           className="flex-1 h-12 rounded-full border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-900 hover:text-white"
         >
           <X className="w-4 h-4 mr-2" /> Cancelar
         </Button>
         <Button 
           onClick={handleConfirm}
+          disabled={isProcessing}
           className="flex-1 h-12 rounded-full bg-primary hover:bg-accent text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
         >
-          <Check className="w-4 h-4 mr-2" /> Aplicar
+          {isProcessing ? (
+            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+          ) : (
+            <Check className="w-4 h-4 mr-2" />
+          )}
+          {isProcessing ? 'Processando...' : 'Aplicar'}
         </Button>
       </div>
     </div>
