@@ -26,11 +26,11 @@ export async function validateMythicCode(code: string) {
     };
   }
 
-  // Verificação Âmbar (Laranja)
+  // Verificação Âmbar (Laranja - Legendário)
   if (AMBER_CODES.includes(normalizedCode)) {
     return {
       success: true,
-      message: "ACESSO ÂMBAR ATIVADO",
+      message: "MODO LEGENDÁRIO ATIVADO, BEM VINDO CLIENTE LEGENDÁRIO",
       profile: {
         name: "Guardião de Elite",
         status: "AMBER",

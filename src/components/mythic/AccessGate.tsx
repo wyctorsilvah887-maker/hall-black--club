@@ -33,7 +33,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
       if (result.success) {
         let title = "💎 STATUS MÍTICO";
         if (result.profile.status === 'LEGENDARY') title = "👑 STATUS LENDÁRIO";
-        if (result.profile.status === 'AMBER') title = "🔥 STATUS ÂMBAR";
+        if (result.profile.status === 'AMBER') title = "🔥 STATUS LEGENDÁRIO";
 
         toast({
           title,
@@ -126,7 +126,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
                   <p className="font-black text-[10px] uppercase text-orange-500 flex items-center gap-2 tracking-widest">
-                    <Gem className="w-3 h-3" /> Âmbar (Laranja):
+                    <Gem className="w-3 h-3" /> Legendário (Laranja):
                   </p>
                   <code className="bg-black px-3 py-2 rounded text-[10px] border border-orange-900/50 block font-mono text-orange-500">AMBER-LEGEND</code>
                 </div>

@@ -22,13 +22,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const getTitleText = () => {
     if (isLegendary) return 'SISTEMA LENDÁRIO ATIVO';
-    if (isAmber) return 'SISTEMA ÂMBAR OPERACIONAL';
+    if (isAmber) return 'SISTEMA LEGENDÁRIO ATIVO';
     return 'BEM-VINDO À ELITE';
   };
 
   const getStatusBadge = () => {
     if (isLegendary) return { text: 'ACREDITAÇÃO LENDÁRIA', icon: <Crown className="w-4 h-4" />, style: 'border-yellow-500/50 bg-yellow-500/20 text-yellow-500 animate-gold-glow' };
-    if (isAmber) return { text: 'STATUS LENDÁRIO ÂMBAR', icon: <Gem className="w-4 h-4" />, style: 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' };
+    if (isAmber) return { text: 'STATUS LEGENDÁRIO', icon: <Gem className="w-4 h-4" />, style: 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' };
     return { text: 'MEMBRO MÍTICO', icon: <CollarIcon className="w-4 h-4" />, style: 'border-primary/50 bg-primary/10 text-primary' };
   };
 
@@ -132,7 +132,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               <div className="absolute bottom-4 left-4 flex flex-col gap-1">
                 <Badge className={`border-none font-bold uppercase tracking-tighter text-[10px] h-6 
                   ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary text-white'}`}>
-                  {isLegendary ? 'OURO LENDÁRIO' : isAmber ? 'ÂMBAR LENDÁRIO' : 'VIP MÍTICO'}
+                  {isLegendary ? 'OURO LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'VIP MÍTICO'}
                 </Badge>
                 <span className="text-white font-bold text-xl tracking-tighter">THOR</span>
               </div>
@@ -154,7 +154,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               >
                 <a href="https://example.com/mundo-pet" target="_blank" rel="noopener noreferrer">
                   <span className="relative z-10 flex items-center justify-center">
-                    {isLegendary || isAmber ? 'CONEXÃO LENDÁRIA' : 'MONITORAR AGORA'}
+                    {isLegendary || isAmber ? 'CONEXÃO LEGENDÁRIA' : 'MONITORAR AGORA'}
                     <ArrowUpRight className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </span>
                 </a>
@@ -216,7 +216,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <div className="h-px w-8 bg-zinc-800" />
         </div>
         <p className="text-zinc-600 text-[10px] uppercase tracking-[0.4em] font-light">
-          &copy; 2024 HALL BLACK CLUB - EXCLUSIVIDADE {isLegendary ? 'LENDÁRIA' : isAmber ? 'ÂMBAR' : 'MÍTICA'}
+          &copy; 2024 HALL BLACK CLUB - EXCLUSIVIDADE {isLegendary ? 'LENDÁRIA' : isAmber ? 'LEGENDÁRIA' : 'MÍTICA'}
         </p>
       </footer>
     </div>
