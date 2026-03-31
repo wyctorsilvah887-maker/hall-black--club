@@ -9,20 +9,6 @@ service cloud.firestore {
      * This ruleset enforces a strict user-ownership model centered around Firebase Authentication UIDs.
      * Access is primarily governed by the document path and denormalized ownership fields to ensure
      * high performance and authorization independence.
-     *
-     * Data Structure:
-     * - /mythicCodes/{mythicCodeId}: Global collection for club access codes.
-     * - /users/{userId}: Root profiles where {userId} matches the Firebase Auth UID.
-     * - /users/{userId}/pets/{petId}: User-specific subcollections for pet data.
-     *
-     * Key Security Decisions:
-     * - Path-Based Ownership: User data and their subcollections are secured by matching the path 
-     *   segment directly to the request.auth.uid.
-     * - Denormalization: Critical fields like 'userId' are required on child documents (Pets) to 
-     *   allow for standalone authorization checks without parent document lookups.
-     * - Prototyping Flexibility: Rules enforce WHO can access data and relational integrity, 
-     *   but do not restrict the specific fields or data types (schema) of the content itself.
-     * - Listing: Permitida para usuários logados na coleção /users para suportar contagem de membros e ranking.
      */
 
     // --- Helper Functions ---
@@ -64,8 +50,9 @@ service cloud.firestore {
      * @path /users/{userId}
      */
     match /users/{userId} {
-      allow get: if isSignedIn();
-      allow list: if isSignedIn(); // Permitido para contagem de membros e ranking
+      // Permite leitura individual e listagem da coleção para membros logados
+      // Isso é necessário para a contagem de membros e ranking global
+      allow get, list: if isSignedIn();
       
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
