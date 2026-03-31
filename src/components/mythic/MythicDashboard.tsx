@@ -106,16 +106,18 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       });
     };
     reader.readAsDataURL(file);
-    // Reset input value so same file can be selected again
     e.target.value = '';
   };
 
   const handleEditorConfirm = async (croppedImage: string) => {
+    if (!editorState) return;
+    const currentTarget = editorState.target;
+    
     try {
       const compressed = await compressImage(croppedImage);
-      if (editorState?.target === 'profile') setSettingsPhoto(compressed);
-      if (editorState?.target === 'newPet') setNewPetPhoto(compressed);
-      if (editorState?.target === 'editPet') setEditPetPhoto(compressed);
+      if (currentTarget === 'profile') setSettingsPhoto(compressed);
+      if (currentTarget === 'newPet') setNewPetPhoto(compressed);
+      if (currentTarget === 'editPet') setEditPetPhoto(compressed);
       setEditorState(null);
     } catch (error) {
       toast({
@@ -180,6 +182,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     });
 
     setIsEditPetOpen(false);
+    setEditingPet(null);
     setIsSubmitting(false);
   };
 
@@ -304,6 +307,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </Badge>
         </div>
 
+        {/* BOTÃO SAÚDE MUNDO PET - DESTAQUE */}
         <div className="grid grid-cols-1 gap-6">
           <Button 
             className={`w-full h-16 md:h-20 text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
@@ -394,7 +398,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                             size="icon" 
                             variant="ghost" 
                             className="h-8 w-8 text-zinc-700 hover:text-primary"
-                            onClick={(e) => { e.preventDefault(); handleOpenEditPet(pet); }}
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenEditPet(pet); }}
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </Button>
@@ -402,7 +406,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                             size="icon" 
                             variant="ghost" 
                             className="h-8 w-8 text-zinc-700 hover:text-red-500 hover:bg-red-950/20"
-                            onClick={(e) => { e.preventDefault(); handleDeletePet(pet.id, pet.name); }}
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDeletePet(pet.id, pet.name); }}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
@@ -420,25 +424,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </div>
       </main>
 
-      {/* Editor Modal */}
-      <Dialog open={!!editorState} onOpenChange={() => setEditorState(null)}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md p-6">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tighter">Ajuste de Imagem</DialogTitle>
-            <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Configure o enquadramento perfeito para a elite.</DialogDescription>
-          </DialogHeader>
-          {editorState && (
-            <ImageEditor 
-              image={editorState.image}
-              cropShape={editorState.target === 'profile' ? 'round' : 'rect'}
-              onCancel={() => setEditorState(null)}
-              onConfirm={handleEditorConfirm}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* DIÁLOGOS */}
+      {/* DIÁLOGOS DE REGISTRO E EDIÇÃO */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
           <DialogHeader>
@@ -471,7 +457,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isEditPetOpen} onOpenChange={setIsEditPetOpen}>
+      <Dialog open={isEditPetOpen} onOpenChange={(open) => { setIsEditPetOpen(open); if(!open) setEditingPet(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Editar Identidade</DialogTitle>
@@ -555,6 +541,24 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* EDITOR DE IMAGEM - SEMPRE POR CIMA */}
+      <Dialog open={!!editorState} onOpenChange={() => setEditorState(null)}>
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-md p-6 z-[100]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tighter">Ajuste de Imagem</DialogTitle>
+            <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Configure o enquadramento perfeito para a elite.</DialogDescription>
+          </DialogHeader>
+          {editorState && (
+            <ImageEditor 
+              image={editorState.image}
+              cropShape={editorState.target === 'profile' ? 'round' : 'rect'}
+              onCancel={() => setEditorState(null)}
+              onConfirm={handleEditorConfirm}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
