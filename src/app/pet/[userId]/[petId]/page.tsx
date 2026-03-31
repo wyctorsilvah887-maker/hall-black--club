@@ -7,7 +7,7 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, Phone, ChevronRight, Siren } from "lucide-react";
+import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, Phone, ChevronRight, Siren, AlertCircle } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon } from '@/components/mythic/MythicIcons';
@@ -60,6 +60,8 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const themeColorClass = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
   const themeBorderClass = isLegendary ? 'border-yellow-500/30' : isAmber ? 'border-orange-500/30' : 'border-primary/30';
 
+  const isSOSActive = pet.isEmergencyActive;
+
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 ${themeClass}`}>
       <div className="max-w-3xl mx-auto px-5 pt-8 md:pt-16 space-y-10">
@@ -69,8 +71,8 @@ export default function PetProfilePage({ params }: PetPageProps) {
 
         {/* Header Compacto Premium */}
         <div className="flex flex-col items-center text-center space-y-6">
-          <div className={`relative w-40 h-40 md:w-56 md:h-56 rounded-[2rem] overflow-hidden border shadow-2xl transition-transform duration-700
-            ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary animate-ruby-glow'}`}>
+          <div className={`relative w-40 h-40 md:w-56 md:h-56 rounded-[2rem] overflow-hidden border shadow-2xl transition-all duration-700
+            ${isSOSActive ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.4)]' : isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary animate-ruby-glow'}`}>
             {pet.photo ? (
               <Image 
                 src={pet.photo} 
@@ -83,6 +85,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
             ) : (
               <div className="w-full h-full bg-zinc-950 flex items-center justify-center">
                 <Heart className="w-12 h-12 text-zinc-900" />
+              </div>
+            )}
+            {isSOSActive && (
+              <div className="absolute top-4 right-4 bg-red-600 p-2 rounded-xl animate-pulse">
+                <Siren className="w-5 h-5 text-white" />
               </div>
             )}
           </div>
@@ -105,7 +112,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
           </div>
         </div>
 
-        {/* Informações Estruturadas em Cards Menores */}
+        {/* Informações Estruturadas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-5 md:p-6 rounded-3xl group overflow-hidden relative">
              <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
@@ -133,7 +140,8 @@ export default function PetProfilePage({ params }: PetPageProps) {
           </Card>
 
           <div className="grid grid-cols-1 gap-4">
-             <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-5 md:p-6 rounded-3xl flex items-center justify-between">
+             <Card className={`bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-5 md:p-6 rounded-3xl flex items-center justify-between transition-all duration-500
+               ${isSOSActive ? 'border-red-600/50 bg-red-950/10' : ''}`}>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-zinc-600">
                     <MapPin className={`w-3 h-3 ${themeColorClass}`} />
@@ -145,20 +153,35 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 </div>
                 <div className="h-8 w-px bg-zinc-900/50" />
                 <div className="text-right">
-                  <div className="flex items-center justify-end gap-2 text-zinc-600">
-                    <Siren className={`w-3 h-3 text-red-500 animate-pulse`} />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Emergência</span>
+                  <div className="flex items-center justify-end gap-2">
+                    <Siren className={`w-3 h-3 ${isSOSActive ? 'text-red-500 animate-pulse' : 'text-zinc-800'}`} />
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${isSOSActive ? 'text-red-500' : 'text-zinc-600'}`}>
+                      {isSOSActive ? 'Emergência Ativa' : 'SOS Privado'}
+                    </span>
                   </div>
-                  <p className="font-mono text-zinc-300 text-xs font-bold">{owner.emergencyContact || 'S/N'}</p>
+                  {isSOSActive ? (
+                    <p className="font-mono text-red-500 text-lg font-black tracking-tight animate-in slide-in-from-right-2">
+                      {owner.emergencyContact || 'S/N'}
+                    </p>
+                  ) : (
+                    <p className="text-[9px] font-bold text-zinc-800 uppercase italic">Protegido</p>
+                  )}
                 </div>
              </Card>
 
-             <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-4 rounded-3xl flex items-center gap-4">
-                <div className={`p-2 rounded-xl bg-black border ${themeBorderClass}`}>
-                  <ShieldCheck className={`w-5 h-5 ${themeColorClass} animate-pulse`} />
+             <Card className={`bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-4 rounded-3xl flex items-center gap-4 transition-colors
+               ${isSOSActive ? 'border-red-600/30' : ''}`}>
+                <div className={`p-2 rounded-xl bg-black border ${isSOSActive ? 'border-red-600' : themeBorderClass}`}>
+                  {isSOSActive ? (
+                    <AlertCircle className="w-5 h-5 text-red-500 animate-pulse" />
+                  ) : (
+                    <ShieldCheck className={`w-5 h-5 ${themeColorClass} opacity-50`} />
+                  )}
                 </div>
                 <div className="space-y-0.5">
-                  <h3 className="text-[9px] font-black uppercase tracking-widest text-white">Segurança Ativa</h3>
+                  <h3 className={`text-[9px] font-black uppercase tracking-widest ${isSOSActive ? 'text-red-500' : 'text-white'}`}>
+                    {isSOSActive ? 'ALERTA DE SEGURANÇA' : 'Segurança Ativa'}
+                  </h3>
                   <p className="text-[8px] text-zinc-600 uppercase tracking-widest">Protocolo Hall Black v2.0</p>
                 </div>
              </Card>

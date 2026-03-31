@@ -152,6 +152,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         species: newPetSpecies,
         photo: newPetPhoto,
         registrationDateTime: new Date().toISOString(),
+        isEmergencyActive: false,
       });
 
       toast({
@@ -240,9 +241,22 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     toast({ title: "PET REMOVIDO", description: `${petName.toUpperCase()} FOI RETIRADO DA LINHAGEM.` });
   };
 
-  const handleOpenEmergency = (pet: any) => {
-    setSelectedPetForSOS(pet);
-    setIsEmergencyOpen(true);
+  const handleToggleEmergency = (pet: any) => {
+    if (!profile?.id) return;
+    const petRef = doc(db, 'users', profile.id, 'pets', pet.id);
+    const newState = !pet.isEmergencyActive;
+    
+    updateDocumentNonBlocking(petRef, {
+      isEmergencyActive: newState
+    });
+
+    toast({
+      variant: newState ? "destructive" : "default",
+      title: newState ? "SOS ATIVADO" : "SOS DESATIVADO",
+      description: newState 
+        ? `PROTOCOLO DE EMERGÊNCIA INICIADO PARA ${pet.name.toUpperCase()}.`
+        : `SITUAÇÃO NORMALIZADA PARA ${pet.name.toUpperCase()}.`,
+    });
   };
 
   const isLegendary = profile.status === 'LEGENDARY';
@@ -403,10 +417,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 ) : (
                   <div className="space-y-3">
                     {petsData.map((pet) => (
-                      <div key={pet.id} className="flex items-center justify-between p-3 rounded-xl bg-black/60 border border-zinc-800/50 group/item hover:border-zinc-700 transition-colors">
+                      <div key={pet.id} className={`flex items-center justify-between p-3 rounded-xl bg-black/60 border group/item transition-all duration-300
+                        ${pet.isEmergencyActive ? 'border-red-600/50 shadow-[0_0_15px_rgba(220,38,38,0.2)]' : 'border-zinc-800/50 hover:border-zinc-700'}`}>
                         <Link href={`/pet/${profile.id}/${pet.id}`} className="flex items-center gap-3 flex-1 min-w-0">
                           <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg border border-zinc-800 overflow-hidden relative flex-shrink-0
-                            ${isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
+                            ${pet.isEmergencyActive ? 'border-red-600' : isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
                             {pet.photo ? (
                               <Image src={pet.photo} alt={pet.name} fill className="object-cover" unoptimized />
                             ) : (
@@ -424,10 +439,10 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                           <Button 
                             size="icon" 
                             variant="ghost" 
-                            className="h-8 w-8 text-zinc-700 hover:text-red-500"
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenEmergency(pet); }}
+                            className={`h-8 w-8 transition-all ${pet.isEmergencyActive ? 'text-red-500 bg-red-950/20' : 'text-zinc-700 hover:text-red-500'}`}
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleEmergency(pet); }}
                           >
-                            <Siren className="w-3.5 h-3.5 animate-pulse" />
+                            <Siren className={`w-3.5 h-3.5 ${pet.isEmergencyActive ? 'animate-pulse' : ''}`} />
                           </Button>
                           <Button 
                             size="icon" 
@@ -578,37 +593,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isEmergencyOpen} onOpenChange={setIsEmergencyOpen}>
-        <DialogContent className="bg-zinc-950 border-red-900/50 text-white w-[90vw] max-w-sm rounded-3xl overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-red-600 animate-pulse" />
-          <DialogHeader className="pt-4">
-            <div className="w-12 h-12 rounded-2xl bg-red-950/30 flex items-center justify-center mb-4 mx-auto border border-red-900/30">
-              <Siren className="w-6 h-6 text-red-500 animate-pulse" />
-            </div>
-            <DialogTitle className="text-xl font-black uppercase tracking-tighter text-center">Protocolo SOS</DialogTitle>
-            <DialogDescription className="text-zinc-500 text-[10px] uppercase tracking-widest text-center">
-              Informação de emergência para {selectedPetForSOS?.name}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="py-6 space-y-6">
-            <div className="p-5 rounded-2xl bg-black/60 border border-zinc-900 text-center space-y-2">
-              <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">Contato do Guardião</p>
-              <p className="text-2xl font-mono font-black text-white tracking-tight">{profile.emergencyContact || 'S/N'}</p>
-            </div>
-            <p className="text-[8px] text-zinc-700 uppercase tracking-widest leading-relaxed text-center px-4">
-              ESTE NÚMERO É EXIBIDO PUBLICAMENTE NO PERFIL DO PET PARA CASOS DE RESGATE IMEDIATO.
-            </p>
-          </div>
-          
-          <DialogFooter className="pb-4">
-            <Button onClick={() => setIsEmergencyOpen(false)} variant="outline" className="w-full border-zinc-800 text-zinc-500 hover:text-white rounded-full font-black uppercase text-[10px] tracking-widest">
-              Fechar Protocolo
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[100] rounded-2xl">
           <DialogHeader>
@@ -628,4 +612,3 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     </div>
   );
 }
-

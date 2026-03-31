@@ -135,6 +135,10 @@
           "type": "string",
           "description": "Timestamp when the pet was registered.",
           "format": "date-time"
+        },
+        "isEmergencyActive": {
+          "type": "boolean",
+          "description": "Indicates if the emergency protocol is currently active for this pet."
         }
       },
       "required": [
