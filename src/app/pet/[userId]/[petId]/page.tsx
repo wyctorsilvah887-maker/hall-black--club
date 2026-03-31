@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use } from 'react';
@@ -68,7 +69,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
           <div className={`relative w-48 h-48 md:w-64 md:h-64 rounded-3xl overflow-hidden border-2 shadow-2xl transition-transform hover:scale-[1.02] duration-500
             ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary'}`}>
             {pet.photo ? (
-              <Image src={pet.photo} alt={pet.name} fill className="object-cover" priority />
+              <Image src={pet.photo} alt={pet.name} fill className="object-cover" priority unoptimized />
             ) : (
               <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
                 <Heart className="w-16 h-16 text-zinc-800" />

@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -52,7 +53,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Editor State
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
     image: string;
@@ -306,7 +306,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </Badge>
         </div>
 
-        {/* BOTÃO SAÚDE MUNDO PET - DESTAQUE */}
         <div className="grid grid-cols-1 gap-6">
           <Button 
             className={`w-full h-14 md:h-20 text-xs sm:text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
@@ -423,7 +422,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </div>
       </main>
 
-      {/* DIÁLOGOS DE REGISTRO E EDIÇÃO */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl">
           <DialogHeader>
@@ -543,7 +541,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      {/* EDITOR DE IMAGEM - SEMPRE POR CIMA */}
       <Dialog open={!!editorState} onOpenChange={() => setEditorState(null)}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[100] rounded-2xl">
           <DialogHeader>

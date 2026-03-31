@@ -32,7 +32,7 @@ export default function Home() {
     return doc(db, 'users', user.uid);
   }, [user, db]);
 
-  // Hook de tempo real para o perfil do usuário
+  // Hook de tempo real para o perfil do usuário - GARANTE SINCRONIZAÇÃO GLOBAL
   const { data: userProfileData, isLoading: isProfileLoading } = useDoc(userRef);
 
   const handleCodeSuccess = (profile: any) => {
@@ -49,7 +49,7 @@ export default function Home() {
     );
   }
 
-  // Prioriza dados do Firestore, senão usa o perfil temporário da validação do código
+  // Prioriza dados do Firestore para refletir mudanças globais imediatamente
   const activeProfile = userProfileData || (user ? {
     ...tempProfile,
     id: user.uid,
