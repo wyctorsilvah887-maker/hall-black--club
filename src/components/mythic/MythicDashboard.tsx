@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef } from 'react';
@@ -31,7 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/image-utils';
 
@@ -91,6 +92,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     setIsSubmitting(true);
     const petsRef = collection(db, 'users', profile.id, 'pets');
     
+    // Adiciona o Pet
     addDocumentNonBlocking(petsRef, {
       userId: profile.id,
       name: newPetName,
@@ -99,9 +101,15 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       registrationDateTime: new Date().toISOString(),
     });
 
+    // Incrementa a pontuação do usuário (Ganha 100 pontos por pet)
+    const userRef = doc(db, 'users', profile.id);
+    updateDocumentNonBlocking(userRef, {
+      rankingScore: (profile.rankingScore || 0) + 100
+    });
+
     toast({
-      title: "PET REGISTRADO",
-      description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.`,
+      title: "PET REGISTRADO (+100 PTS)",
+      description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE. SEU PRESTÍGIO AUMENTOU.`,
     });
 
     setNewPetName('');
@@ -458,14 +466,14 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 ))}
                 
                 <div className="pt-4 md:pt-6 border-t border-zinc-800/50 mt-2 md:mt-4 text-center">
-                  <p className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-[0.3em] mb-2 md:mb-3">Ranking Atual</p>
+                  <p className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-[0.3em] mb-2 md:mb-3">Seu Prestígio Atual</p>
                   <div className="flex items-center justify-center gap-2 md:gap-3">
                     <span className={`text-3xl md:text-4xl font-black italic ${isLegendary ? 'gold-gradient-text' : isAmber ? 'amber-gradient-text' : 'text-white'}`}>
-                      {isLegendary || isAmber ? '#1' : '#42'}
+                      {profile.rankingScore || 0}
                     </span>
                     <div className="flex flex-col items-start leading-none">
-                      <span className="text-zinc-400 text-[10px] md:text-xs font-bold">TOP</span>
-                      <span className="text-zinc-600 text-[8px] md:text-[10px]">GLOBAL</span>
+                      <span className="text-zinc-400 text-[10px] md:text-xs font-bold">PTS</span>
+                      <span className="text-zinc-600 text-[8px] md:text-[10px]">RANKING</span>
                     </div>
                   </div>
                 </div>
