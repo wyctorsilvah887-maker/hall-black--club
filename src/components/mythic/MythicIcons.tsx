@@ -54,6 +54,9 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
   
   const scale = size === 'sm' ? 'scale-[0.6]' : size === 'lg' ? 'scale-125' : 'scale-100';
 
+  // Usar o ID do usuário para tornar os IDs do SVG únicos e evitar conflitos de renderização
+  const uniqueId = id ? id.replace(/\W/g, '') : Math.random().toString(36).substring(7);
+
   const colors = {
     primary: isLegendary ? '#FFD700' : isAmber ? '#F59E0B' : '#ff1a1a',
     secondary: isLegendary ? '#B8860B' : isAmber ? '#D97706' : '#660000',
@@ -65,7 +68,6 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
   const starsCount = isMythic ? 6 : 5;
   
-  // Gera um número determinístico apenas como fallback se regNumber não existir
   const getFallbackRegNumber = (uid?: string) => {
     if (!uid) return '00';
     let hash = 0;
@@ -98,26 +100,26 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
         className="relative drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]"
       >
         <defs>
-          <linearGradient id="metal-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id={`metal-gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor={colors.primary} />
             <stop offset="30%" stopColor={colors.vibrant} />
             <stop offset="50%" stopColor={colors.deep} />
             <stop offset="100%" stopColor={colors.secondary} />
           </linearGradient>
 
-          <linearGradient id="dark-chrome-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id={`dark-chrome-gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#444" />
             <stop offset="50%" stopColor="#111" />
             <stop offset="100%" stopColor="#000" />
           </linearGradient>
 
-          <linearGradient id="text-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id={`text-gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#fff" />
             <stop offset="50%" stopColor={isMythic ? '#ffcccc' : '#fff2ac'} />
             <stop offset="100%" stopColor={colors.primary} />
           </linearGradient>
 
-          <linearGradient id="sweep-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id={`sweep-gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="white" stopOpacity="0" />
             <stop offset="40%" stopColor="white" stopOpacity="0" />
             <stop offset="50%" stopColor="white" stopOpacity="0.9" />
@@ -125,7 +127,7 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
             <stop offset="100%" stopColor="white" stopOpacity="0" />
           </linearGradient>
 
-          <mask id="text-flash-mask">
+          <mask id={`text-flash-mask-${uniqueId}`}>
             <text 
               x="130" 
               y="58" 
@@ -144,20 +146,20 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
         </defs>
 
         <g opacity="1">
-          <path d="M70 45 L20 25 L45 50 L15 40 L40 55 L10 60 L70 65 Z" fill="url(#metal-gradient)" stroke={colors.secondary} strokeWidth="1" />
-          <path d="M190 45 L240 25 L215 50 L245 40 L220 55 L250 60 L190 65 Z" fill="url(#metal-gradient)" stroke={colors.secondary} strokeWidth="1" />
+          <path d="M70 45 L20 25 L45 50 L15 40 L40 55 L10 60 L70 65 Z" fill={`url(#metal-gradient-${uniqueId})`} stroke={colors.secondary} strokeWidth="1" />
+          <path d="M190 45 L240 25 L215 50 L245 40 L220 55 L250 60 L190 65 Z" fill={`url(#metal-gradient-${uniqueId})`} stroke={colors.secondary} strokeWidth="1" />
         </g>
 
-        <path d="M60 35 L200 35 L215 70 L45 70 Z" fill="url(#dark-chrome-gradient)" stroke="#000" strokeWidth="2" />
-        <path d="M65 38 L195 38 L208 67 L52 67 Z" fill="none" stroke="url(#metal-gradient)" strokeWidth="1.5" strokeOpacity="0.6" />
+        <path d="M60 35 L200 35 L215 70 L45 70 Z" fill={`url(#dark-chrome-gradient-${uniqueId})`} stroke="#000" strokeWidth="2" />
+        <path d="M65 38 L195 38 L208 67 L52 67 Z" fill="none" stroke={`url(#metal-gradient-${uniqueId})`} strokeWidth="1.5" strokeOpacity="0.6" />
 
-        <path d="M100 65 L130 95 L160 65 Z" fill="url(#dark-chrome-gradient)" stroke="url(#metal-gradient)" strokeWidth="2" />
+        <path d="M100 65 L130 95 L160 65 Z" fill={`url(#dark-chrome-gradient-${uniqueId})`} stroke={`url(#metal-gradient-${uniqueId})`} strokeWidth="2" />
 
         <text 
           x="130" 
           y="58" 
           textAnchor="middle" 
-          fill="url(#text-gradient)" 
+          fill={`url(#text-gradient-${uniqueId})`} 
           style={{ 
             fontFamily: 'system-ui, sans-serif', 
             fontWeight: '900', 
@@ -186,13 +188,13 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
           {regDisplay}
         </text>
 
-        <g mask="url(#text-flash-mask)">
+        <g mask={`url(#text-flash-mask-${uniqueId})`}>
             <rect 
               x="0" 
               y="35" 
               width="260" 
               height="35" 
-              fill="url(#sweep-gradient)" 
+              fill={`url(#sweep-gradient-${uniqueId})`} 
               className="mythic-shine-sweep"
             />
         </g>

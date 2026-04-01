@@ -78,12 +78,14 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
 
   // Protocolo de Desbloqueio de Interface: 
-  // Corrige o bug do Radix UI onde o pointer-events: none trava o body após múltiplos diálogos.
+  // Garante que o body nunca fique travado após o fechamento de múltiplos modais.
   useEffect(() => {
     const isAnyModalOpen = isAddPetOpen || isEditPetOpen || isSettingsOpen || !!editorState;
     if (!isAnyModalOpen) {
-      document.body.style.pointerEvents = 'auto';
-      document.body.style.overflow = 'auto';
+      setTimeout(() => {
+        document.body.style.pointerEvents = 'auto';
+        document.body.style.overflow = 'auto';
+      }, 100);
     }
   }, [isAddPetOpen, isEditPetOpen, isSettingsOpen, editorState]);
 
@@ -100,8 +102,12 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   useEffect(() => {
     const fetchMemberCount = async () => {
       if (db) {
-        const snapshot = await getCountFromServer(collection(db, 'users'));
-        setMemberCount(snapshot.data().count);
+        try {
+          const snapshot = await getCountFromServer(collection(db, 'users'));
+          setMemberCount(snapshot.data().count);
+        } catch (e) {
+          // Ignorar erro silenciosamente para evitar poluição do console em ambiente dev
+        }
       }
     };
     fetchMemberCount();
@@ -140,9 +146,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       if (currentTarget === 'newPet') setNewPetPhoto(compressed);
       if (currentTarget === 'editPet') setEditPetPhoto(compressed);
       
-      // Limpar estado do editor
       setEditorState(null);
-
       toast({
         title: "IMAGEM PROCESSADA",
         description: "A foto foi ajustada e otimizada com sucesso.",
