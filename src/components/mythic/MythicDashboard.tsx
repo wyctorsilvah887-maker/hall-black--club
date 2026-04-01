@@ -581,7 +581,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
             <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
               <p className="text-zinc-400 text-xs leading-relaxed text-center font-medium">
-                Para acessar os <span className="text-white font-bold">serviços, prontuario digital e gestão de pet entre outros beneficios do mundo pet.</span>, histórico clínico de elite e monitoramento preventivo, você e seu pet precisam estar devidamente registrados no ecossistema Mundo Pet.
+                Para acessar os <span className="text-white font-bold">serviços, prontuario digital e gestão de pet entre outros beneficios do mundo pet.</span>, você e seu pet precisam estar devidamente registrados no ecossistema Mundo Pet.
               </p>
               <div className="h-px w-full bg-zinc-800/50" />
               <p className="text-zinc-500 text-[10px] text-center uppercase tracking-widest font-black italic">
