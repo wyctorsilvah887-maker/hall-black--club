@@ -22,18 +22,17 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const [introPhase, setIntroPhase] = useState<'initial' | 'shutdown' | 'reveal' | 'done'>('initial');
 
   useEffect(() => {
-    // Sequência Cinematográfica Direta
-    // Começa imediatamente o efeito de desligamento para criar o suspense
+    // Inicia imediatamente o shutdown lento
     setIntroPhase('shutdown');
     
-    // O efeito de TV Shutdown agora dura 2 segundos (definido no CSS)
+    // O shutdown dura 2.5s. Aguardamos um pouco mais para garantir que a tela ficou preta.
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
-    }, 2200); // Aguarda o fim do shutdown lento + pequena pausa dramática
+    }, 2800); 
 
     const tDone = setTimeout(() => {
       setIntroPhase('done');
-    }, 5500); // Finaliza o ciclo de animação após a revelação lenta
+    }, 7000); // A revelação leva 4s agora, totalizando ~7s para o fim do ciclo
 
     return () => {
       clearTimeout(tReveal);
@@ -92,7 +91,6 @@ export default function PetProfilePage({ params }: PetPageProps) {
       {/* OVERLAY DE ANIMAÇÃO ELITE */}
       {introPhase !== 'done' && (
         <div className={`fixed inset-0 z-[100] pointer-events-none flex items-center justify-center bg-black transition-opacity duration-1000 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
-          {/* O desfoque inicial foi removido para um impacto mais limpo */}
           {introPhase === 'shutdown' && (
             <div className="w-full h-full bg-white animate-tv-shutdown" />
           )}
@@ -241,7 +239,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 <Button asChild className="flex-1 h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-[11px] rounded-2xl group">
                   <a href={telUrl} className="flex items-center justify-center gap-2">
                     <PhoneCall className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    Ligar para o Dono
+                    Lugar para o Dono
                   </a>
                 </Button>
                 <Button asChild className="flex-1 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase tracking-widest text-[11px] rounded-2xl group">
