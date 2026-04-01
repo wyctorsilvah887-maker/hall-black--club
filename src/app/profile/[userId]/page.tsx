@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use } from 'react';
@@ -93,7 +92,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
                   </div>
                 )}
               </div>
-              <RankBadge status={profile.status} className="-mt-12 scale-75 md:scale-100" />
+              <RankBadge status={profile.status} id={profile.id} className="-mt-12 scale-75 md:scale-100" />
             </div>
             
             <div className="space-y-2 text-center md:text-left">

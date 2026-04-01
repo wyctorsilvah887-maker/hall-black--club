@@ -42,9 +42,10 @@ interface RankBadgeProps {
   status?: string;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  id?: string;
 }
 
-export const RankBadge = ({ status, className, size = 'md' }: RankBadgeProps) => {
+export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps) => {
   const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
   const isMythic = status === 'MYTHIC' || !status;
@@ -62,6 +63,7 @@ export const RankBadge = ({ status, className, size = 'md' }: RankBadgeProps) =>
 
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
   const starsCount = isMythic ? 6 : 5;
+  const displayId = id ? `HB-${id.slice(0, 5).toUpperCase()}` : 'HB-XXXXX';
 
   return (
     <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>
@@ -159,6 +161,23 @@ export const RankBadge = ({ status, className, size = 'md' }: RankBadgeProps) =>
           {labelText}
         </text>
 
+        {/* Numeração do Usuário */}
+        <text 
+          x="130" 
+          y="74" 
+          textAnchor="middle" 
+          fill={colors.primary} 
+          style={{ 
+            fontFamily: 'monospace', 
+            fontWeight: 'bold', 
+            fontSize: '8px', 
+            letterSpacing: '2px',
+            opacity: 0.8
+          }}
+        >
+          {displayId}
+        </text>
+
         {/* EFEITO FLASH Sweep */}
         <g mask="url(#text-flash-mask)">
             <rect 
@@ -172,12 +191,13 @@ export const RankBadge = ({ status, className, size = 'md' }: RankBadgeProps) =>
         </g>
 
         {/* Estrelas de Rank */}
-        <g transform={`translate(${130 - (starsCount * 6)}, 75)`}>
+        <g transform={`translate(${130 - (starsCount * 6)}, 84)`}>
             {Array.from({ length: starsCount }).map((_, i) => (
                 <path 
                   key={i} 
                   className="animate-star-fill-loop"
                   style={{ 
+                    paddingTop: '4px',
                     animationDelay: `${i * 0.4}s`,
                     color: colors.primary
                   }}

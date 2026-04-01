@@ -114,7 +114,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
           {/* Carimbo da Badge - GPU Accelerated */}
           {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
             <div className={`flex flex-col items-center gap-10 backface-hidden ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
-              <RankBadge status={owner.status} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)]" />
+              <RankBadge status={owner.status} id={owner.id} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)]" />
               <div className="space-y-3 text-center">
                 <p className={`text-[13px] font-black uppercase tracking-[1em] ${themeColorClass} animate-pulse`}>Identidade Confirmada</p>
                 <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-widest italic opacity-60">Hall Black Elite Identity</p>
@@ -160,7 +160,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   </div>
                 )}
               </div>
-              <RankBadge status={owner.status} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+              <RankBadge status={owner.status} id={owner.id} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             </div>
             
             <div className="space-y-3">
