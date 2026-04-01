@@ -42,29 +42,29 @@ export const RankBadge = ({ status, className }: { status?: string, className?: 
   const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
   
-  // Cores dinâmicas baseadas no status
+  // Paleta de cores baseada na descrição de luxo
   const primaryColor = isLegendary ? '#FFD700' : isAmber ? '#F59E0B' : '#8B0000';
-  const secondaryColor = isLegendary ? '#B8860B' : isAmber ? '#D97706' : '#000000';
-  const textColor = isLegendary ? '#4B3621' : isAmber ? '#4B3621' : '#FFFFFF';
+  const secondaryColor = isLegendary ? '#B8860B' : isAmber ? '#D97706' : '#2A0000';
+  const textColor = isLegendary || isAmber ? '#4B3621' : '#FFFFFF';
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
 
   return (
     <div className={`relative flex flex-col items-center justify-center animate-in zoom-in-95 duration-1000 ${className}`}>
-      <svg width="220" height="100" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
-        {/* Definições de Gradientes para Metal Realista */}
+      <svg width="260" height="120" viewBox="0 0 260 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_25px_rgba(0,0,0,0.9)]">
         <defs>
-          <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="metalGold" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor={primaryColor} />
             <stop offset="50%" stopColor="#FFF2AC" />
             <stop offset="100%" stopColor={secondaryColor} />
           </linearGradient>
-          <linearGradient id="wingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={secondaryColor} />
-            <stop offset="50%" stopColor={primaryColor} />
-            <stop offset="100%" stopColor={secondaryColor} />
+          
+          <linearGradient id="wingGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={primaryColor} stopOpacity="0.8" />
+            <stop offset="100%" stopColor={secondaryColor} stopOpacity="0.4" />
           </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+
+          <filter id="volumetricGlow">
+            <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
             <feMerge>
               <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
@@ -72,27 +72,39 @@ export const RankBadge = ({ status, className }: { status?: string, className?: 
           </filter>
         </defs>
 
-        {/* Asas Spread - Esquerda */}
-        <path d="M100 40 Q70 20 40 40 L30 35 Q60 10 100 30 Z" fill="url(#wingGradient)" stroke={secondaryColor} strokeWidth="0.5" />
-        <path d="M90 45 Q60 25 35 45 L25 40 Q50 15 90 35 Z" fill="url(#wingGradient)" stroke={secondaryColor} strokeWidth="0.5" />
-        
-        {/* Asas Spread - Direita */}
-        <path d="M120 40 Q150 20 180 40 L190 35 Q160 10 120 30 Z" fill="url(#wingGradient)" stroke={secondaryColor} strokeWidth="0.5" />
-        <path d="M130 45 Q160 25 185 45 L195 40 Q170 15 130 35 Z" fill="url(#wingGradient)" stroke={secondaryColor} strokeWidth="0.5" />
+        {/* ASAS MAJESTOSAS - Lado Esquerdo (Detalhamento Intricado) */}
+        <g className="animate-pulse" style={{ animationDuration: '5s' }}>
+          {/* Camada Superior da Asa */}
+          <path d="M110 45 Q70 10 30 40 L20 35 Q60 5 110 35 Z" fill="url(#metalGold)" stroke={secondaryColor} strokeWidth="0.5" />
+          {/* Penas do Meio */}
+          <path d="M100 55 Q60 25 35 55 L25 50 Q55 20 100 45 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
+          {/* Penas Inferiores */}
+          <path d="M90 65 Q50 40 40 70 L30 65 Q45 30 90 55 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
+        </g>
 
-        {/* Estrutura Central - Multi-tiered Shield */}
-        <path d="M60 30 L160 30 L170 50 L110 85 L50 50 Z" fill="url(#goldGradient)" stroke={secondaryColor} strokeWidth="1" />
-        <path d="M65 35 L155 35 L162 48 L110 78 L58 48 Z" fill="rgba(0,0,0,0.1)" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
+        {/* ASAS MAJESTOSAS - Lado Direito (Espelhamento) */}
+        <g className="animate-pulse" style={{ animationDuration: '5s' }}>
+          <path d="M150 45 Q190 10 230 40 L240 35 Q200 5 150 35 Z" fill="url(#metalGold)" stroke={secondaryColor} strokeWidth="0.5" />
+          <path d="M160 55 Q200 25 225 55 L235 50 Q205 20 160 45 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
+          <path d="M170 65 Q210 40 220 70 L230 65 Q215 30 170 55 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
+        </g>
 
-        {/* Placa Convexa Central */}
-        <path d="M70 42 C80 38, 140 38, 150 42 L155 58 C145 62, 75 62, 65 58 Z" fill="url(#goldGradient)" filter="url(#glow)" />
+        {/* ESTRUTURA CENTRAL DO ESCUDO (Multi-tiered Gold) */}
+        <path d="M75 35 L185 35 L195 55 L130 95 L65 55 Z" fill="url(#metalGold)" stroke={secondaryColor} strokeWidth="2" filter="url(#volumetricGlow)" />
         
-        {/* Textos Engraved */}
-        <text x="110" y="52" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="11" fill={textColor} textAnchor="middle" style={{ letterSpacing: '1px' }}>{labelText}</text>
-        <text x="110" y="65" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5" fill={textColor} opacity="0.8" textAnchor="middle" style={{ letterSpacing: '2px' }}>STATUS ESPECIAL</text>
+        {/* Camada de Profundidade Interna */}
+        <path d="M82 40 L178 40 L186 53 L130 88 L74 53 Z" fill="rgba(0,0,0,0.15)" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
+
+        {/* PLACA CONVEXA CENTRAL (Onde o nome é gravado) */}
+        <path d="M85 46 C95 42, 165 42, 175 46 L180 62 C170 66, 90 66, 80 62 Z" fill="url(#metalGold)" filter="url(#volumetricGlow)" />
         
-        {/* Detalhe de Brilho Inferior */}
-        <path d="M100 80 L110 85 L120 80" stroke="#FFF" strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+        {/* TEXTO ENGRAVED - Tipografia de Autoridade */}
+        <text x="130" y="56" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="12" fill={textColor} textAnchor="middle" style={{ letterSpacing: '2px', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>{labelText}</text>
+        <text x="130" y="68" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="6" fill={textColor} opacity="0.8" textAnchor="middle" style={{ letterSpacing: '4px' }}>STATUS ESPECIAL</text>
+        
+        {/* DETALHES DE BRILHO E ACABAMENTO */}
+        <path d="M120 88 L130 95 L140 88" stroke="#FFF" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+        <circle cx="130" cy="35" r="3" fill="#FFF" opacity="0.2" />
       </svg>
     </div>
   );
