@@ -6,10 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, query, orderBy, limit } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import {
@@ -93,9 +93,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
 
-  // Monitor de Membros Ativos
-  const allUsersQuery = useMemoFirebase(() => collection(db, 'users'), [db]);
-  const { data: allUsersData } = useCollection(allUsersQuery);
+  // Monitor de Membros Ativos e Ranking
+  const allUsersQuery = useMemoFirebase(() => {
+    return query(collection(db, 'users'), orderBy('memberNumber', 'asc'), limit(60));
+  }, [db]);
+  const { data: allUsersData, isLoading: isRankingLoading } = useCollection(allUsersQuery);
   const memberCount = allUsersData?.length || 0;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'profile' | 'newPet' | 'editPet') => {
@@ -269,7 +271,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                           isAmber ? 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' : 
                           'border-primary/50 bg-primary/10 text-primary';
 
-  // ID de Membro formatado
   const memberRegistrationId = `HB-${profile.id?.slice(0, 5).toUpperCase() || 'XXXXX'}`;
 
   return (
@@ -393,55 +394,105 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
-          <Card className={`md:col-span-4 bg-zinc-900/40 border-zinc-800/50 backdrop-blur-xl relative overflow-hidden group 
-            ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
-            <div className={`absolute -top-4 -right-4 p-8 opacity-10 group-hover:opacity-30 transition-opacity rotate-12 pointer-events-none ${themeColorClass}`}>
-              {isLegendary ? <Crown className="w-16 h-16 md:w-24 md:h-24" /> : isAmber ? <Gem className="w-16 h-16 md:w-24 md:h-24" /> : <RubyShield className="w-16 h-16 md:w-24 md:h-24" />}
-            </div>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-lg md:text-xl tracking-tight">
-                <ShieldCheck className={`w-4 h-4 md:w-5 md:h-5 ${themeColorClass}`} />
-                Credencial de Membro
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 md:space-y-6">
-              <div className="flex flex-col items-center justify-center py-4">
-                <RankBadge status={profile.status} id={profile.id} regNumber={profile.memberNumber} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+          <div className="lg:col-span-4 space-y-6">
+            <Card className={`bg-zinc-900/40 border-zinc-800/50 backdrop-blur-xl relative overflow-hidden group 
+              ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
+              <div className={`absolute -top-4 -right-4 p-8 opacity-10 group-hover:opacity-30 transition-opacity rotate-12 pointer-events-none ${themeColorClass}`}>
+                {isLegendary ? <Crown className="w-16 h-16 md:w-24 md:h-24" /> : isAmber ? <Gem className="w-16 h-16 md:w-24 md:h-24" /> : <RubyShield className="w-16 h-16 md:w-24 md:h-24" />}
               </div>
-
-              <div className="flex items-center gap-4 p-4 md:p-5 rounded-xl bg-black/60 border border-zinc-800/50">
-                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative flex-shrink-0">
-                  {profile.photo ? <Image src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-3 text-lg md:text-xl tracking-tight">
+                  <ShieldCheck className={`w-4 h-4 md:w-5 md:h-5 ${themeColorClass}`} />
+                  Credencial de Membro
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 md:space-y-6">
+                <div className="flex flex-col items-center justify-center py-4">
+                  <RankBadge status={profile.status} id={profile.id} regNumber={profile.memberNumber} />
                 </div>
-                <div className="text-sm space-y-0.5 min-w-0">
-                  <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest font-semibold">Titular da Conta</p>
-                  <p className="font-bold text-base md:text-xl truncate">{profile.name}</p>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 gap-3">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-black/40 border border-zinc-800/30">
-                  <div className="text-sm min-w-0">
-                    <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Nº Registro</p>
-                    <p className="font-mono text-white text-[11px] sm:text-sm font-black">{memberRegistrationId}</p>
+                <div className="flex items-center gap-4 p-4 md:p-5 rounded-xl bg-black/60 border border-zinc-800/50">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative flex-shrink-0">
+                    {profile.photo ? <Image src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
+                  </div>
+                  <div className="text-sm space-y-0.5 min-w-0">
+                    <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest font-semibold">Titular da Conta</p>
+                    <p className="font-bold text-base md:text-xl truncate">{profile.name}</p>
                   </div>
                 </div>
 
-                {profile.emergencyContact && (
+                <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-black/40 border border-zinc-800/30">
-                    <Phone className={`w-4 h-4 flex-shrink-0 ${themeColorClass}`} />
                     <div className="text-sm min-w-0">
-                      <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Contato Emergencial</p>
-                      <p className="font-mono text-white text-[11px] sm:text-sm">{profile.emergencyContact}</p>
+                      <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Nº Registro</p>
+                      <p className="font-mono text-white text-[11px] sm:text-sm font-black">{memberRegistrationId}</p>
                     </div>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
 
-          <div className="md:col-span-8">
+                  {profile.emergencyContact && (
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-black/40 border border-zinc-800/30">
+                      <Phone className={`w-4 h-4 flex-shrink-0 ${themeColorClass}`} />
+                      <div className="text-sm min-w-0">
+                        <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Contato Emergencial</p>
+                        <p className="font-mono text-white text-[11px] sm:text-sm">{profile.emergencyContact}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-xl rounded-2xl overflow-hidden">
+              <CardHeader className="p-5 border-b border-zinc-900 bg-zinc-900/20">
+                <CardTitle className="flex items-center gap-3 text-sm font-black uppercase tracking-widest">
+                  <Trophy className="w-4 h-4 text-primary" />
+                  Hall da Linhagem (Elite 60)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                {isRankingLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-5 h-5 animate-spin text-zinc-800" />
+                  </div>
+                ) : (
+                  <div className="divide-y divide-zinc-900">
+                    {allUsersData?.map((user) => (
+                      <Link 
+                        key={user.id} 
+                        href={`/profile/${user.id}`}
+                        className="flex items-center justify-between p-4 hover:bg-zinc-900/40 transition-colors group"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className={`text-[10px] font-mono font-black ${user.id === profile.id ? themeColorClass : 'text-zinc-700'}`}>
+                            #{user.memberNumber?.toString().padStart(2, '0') || '--'}
+                          </span>
+                          <div className="w-7 h-7 rounded-full overflow-hidden border border-zinc-800 bg-zinc-900">
+                            {user.photo ? (
+                              <Image src={user.photo} alt={user.name} width={28} height={28} className="object-cover" unoptimized />
+                            ) : (
+                              <User className="w-full h-full p-1.5 text-zinc-800" />
+                            )}
+                          </div>
+                          <p className={`text-[11px] font-bold uppercase tracking-tight truncate ${user.id === profile.id ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-300'}`}>
+                            {user.name}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className={`py-0.5 px-2 text-[8px] font-black border-zinc-800 bg-zinc-950/50 ${user.status === 'LEGENDARY' ? 'text-yellow-500' : user.status === 'AMBER' ? 'text-orange-500' : 'text-zinc-600'}`}>
+                            {user.status || 'MÍTICO'}
+                          </Badge>
+                          <ChevronRight className="w-3 h-3 text-zinc-800 group-hover:text-zinc-600" />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="lg:col-span-8">
             <Card className={`bg-zinc-900/40 border-zinc-800/50 overflow-hidden group relative flex flex-col ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
               <CardHeader className="pb-3 md:pb-4">
                 <CardTitle className="flex items-center gap-3 text-lg md:text-xl tracking-tight uppercase">
