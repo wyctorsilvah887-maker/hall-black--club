@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, Phone, ChevronRight, Siren, AlertCircle, MessageSquare, PhoneCall } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
-import { CollarIcon } from '@/components/mythic/MythicIcons';
+import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
 
 interface PetPageProps {
   params: Promise<{ userId: string; petId: string }>;
@@ -76,27 +76,30 @@ export default function PetProfilePage({ params }: PetPageProps) {
 
         {/* Header Compacto Premium */}
         <div className="flex flex-col items-center text-center space-y-6">
-          <div className={`relative w-40 h-40 md:w-56 md:h-56 rounded-[2rem] overflow-hidden border shadow-2xl transition-all duration-700
-            ${isSOSActive ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.4)]' : isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary animate-ruby-glow'}`}>
-            {pet.photo ? (
-              <Image 
-                src={pet.photo} 
-                alt={pet.name} 
-                fill 
-                className="object-cover" 
-                priority 
-                unoptimized 
-              />
-            ) : (
-              <div className="w-full h-full bg-zinc-950 flex items-center justify-center">
-                <Heart className="w-12 h-12 text-zinc-900" />
-              </div>
-            )}
-            {isSOSActive && (
-              <div className="absolute top-4 right-4 bg-red-600 p-2 rounded-xl animate-pulse">
-                <Siren className="w-5 h-5 text-white" />
-              </div>
-            )}
+          <div className="flex flex-col items-center gap-2">
+            <div className={`relative w-40 h-40 md:w-56 md:h-56 rounded-[2rem] overflow-hidden border shadow-2xl transition-all duration-700
+              ${isSOSActive ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.4)]' : isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary animate-ruby-glow'}`}>
+              {pet.photo ? (
+                <Image 
+                  src={pet.photo} 
+                  alt={pet.name} 
+                  fill 
+                  className="object-cover" 
+                  priority 
+                  unoptimized 
+                />
+              ) : (
+                <div className="w-full h-full bg-zinc-950 flex items-center justify-center">
+                  <Heart className="w-12 h-12 text-zinc-900" />
+                </div>
+              )}
+              {isSOSActive && (
+                <div className="absolute top-4 right-4 bg-red-600 p-2 rounded-xl animate-pulse">
+                  <Siren className="w-5 h-5 text-white" />
+                </div>
+              )}
+            </div>
+            <RankBadge status={owner.status} className="-mt-14 scale-75 md:scale-100" />
           </div>
           
           <div className="space-y-3">

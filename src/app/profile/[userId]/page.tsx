@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use } from 'react';
@@ -9,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Crown, Gem, ShieldCheck, Trophy, ArrowLeft, ShieldAlert, MapPin, User } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
-import { CollarIcon } from '@/components/mythic/MythicIcons';
+import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
 
 interface ProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -80,17 +81,21 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
         </Link>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-zinc-900 pb-10 md:pb-12">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className={`w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 shadow-2xl transition-transform hover:scale-105 duration-500 flex-shrink-0
-              ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary'}`}>
-              {profile.photo ? (
-                <Image src={profile.photo} alt={profile.name} width={160} height={160} className="object-cover w-full h-full" unoptimized />
-              ) : (
-                <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
-                  <User className="w-12 h-12 md:w-16 md:h-16 text-zinc-800" />
-                </div>
-              )}
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex flex-col items-center gap-2">
+              <div className={`w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 shadow-2xl transition-transform hover:scale-105 duration-500 flex-shrink-0
+                ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary'}`}>
+                {profile.photo ? (
+                  <Image src={profile.photo} alt={profile.name} width={160} height={160} className="object-cover w-full h-full" unoptimized />
+                ) : (
+                  <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+                    <User className="w-12 h-12 md:w-16 md:h-16 text-zinc-800" />
+                  </div>
+                )}
+              </div>
+              <RankBadge status={profile.status} className="-mt-12 scale-75 md:scale-100" />
             </div>
+            
             <div className="space-y-2 text-center md:text-left">
               <p className="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-bold">Membro Verificado</p>
               <h1 className="text-3xl sm:text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none break-words max-w-md">{profile.name}</h1>
