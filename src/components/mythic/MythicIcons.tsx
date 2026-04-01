@@ -67,7 +67,9 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
 
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
   const starsCount = isMythic ? 6 : 5;
-  const labelFontSize = labelText === 'LEGENDÁRIO' ? '18px' : '22px';
+  
+  // Ajuste fino do tamanho da fonte e posicionamento para nomes longos
+  const labelFontSize = labelText === 'LEGENDÁRIO' ? '16px' : '22px';
   const labelYPosition = labelText === 'LEGENDÁRIO' ? '57' : '58';
   
   const getFallbackRegNumber = (uid?: string) => {
