@@ -77,6 +77,16 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [settingsState, setSettingsState] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
 
+  // Protocolo de Desbloqueio de Interface: 
+  // Corrige o bug do Radix UI onde o pointer-events: none trava o body após múltiplos diálogos.
+  useEffect(() => {
+    const isAnyModalOpen = isAddPetOpen || isEditPetOpen || isSettingsOpen || !!editorState;
+    if (!isAnyModalOpen) {
+      document.body.style.pointerEvents = 'auto';
+      document.body.style.overflow = 'auto';
+    }
+  }, [isAddPetOpen, isEditPetOpen, isSettingsOpen, editorState]);
+
   useEffect(() => {
     if (profile && isSettingsOpen) {
       setSettingsName(profile.name || '');
@@ -130,9 +140,8 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       if (currentTarget === 'newPet') setNewPetPhoto(compressed);
       if (currentTarget === 'editPet') setEditPetPhoto(compressed);
       
-      setTimeout(() => {
-        setEditorState(null);
-      }, 100);
+      // Limpar estado do editor
+      setEditorState(null);
 
       toast({
         title: "IMAGEM PROCESSADA",
@@ -328,7 +337,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                   </p>
                 </div>
                 <DropdownMenuSeparator className="bg-zinc-800" />
-                <DropdownMenuItem onClick={() => setIsSettingsOpen(true)} className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
+                <DropdownMenuItem 
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setIsSettingsOpen(true);
+                  }}
+                  className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5"
+                >
                   <Settings className="w-4 h-4 mr-2" />
                   <span className="text-xs font-bold uppercase tracking-wider">Configurações</span>
                 </DropdownMenuItem>
