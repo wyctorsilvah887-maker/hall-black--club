@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use } from 'react';
@@ -68,17 +67,26 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const telUrl = `tel:${cleanPhone}`;
 
   return (
-    <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 ${themeClass}`}>
-      <div className="max-w-3xl mx-auto px-5 pt-8 md:pt-16 space-y-10">
-        <Link href="/" className="inline-flex items-center gap-2 text-zinc-600 hover:text-white transition-colors text-[9px] font-bold uppercase tracking-[0.4em]">
+    <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 overflow-x-hidden ${themeClass}`}>
+      {/* Camada de Partículas de Fundo Sutil */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[160px] opacity-20" />
+      </div>
+
+      <div className="max-w-3xl mx-auto px-5 pt-8 md:pt-16 space-y-10 relative z-10">
+        <Link href="/" className="inline-flex items-center gap-2 text-zinc-600 hover:text-white transition-colors text-[9px] font-bold uppercase tracking-[0.4em] animate-elite-reveal">
           <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao Início
         </Link>
 
-        {/* Header Compacto Premium */}
+        {/* Header Compacto Premium com Revelação Escalonada */}
         <div className="flex flex-col items-center text-center space-y-6">
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-2 animate-elite-reveal delay-100">
             <div className={`relative w-40 h-40 md:w-56 md:h-56 rounded-[2rem] overflow-hidden border shadow-2xl transition-all duration-700
               ${isSOSActive ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.4)]' : isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary animate-ruby-glow'}`}>
+              
+              {/* Scanline Holográfico */}
+              <div className={`absolute inset-0 z-20 pointer-events-none opacity-50 bg-gradient-to-b from-transparent via-current to-transparent h-1 w-full animate-scanline ${themeColorClass}`} />
+              
               {pet.photo ? (
                 <Image 
                   src={pet.photo} 
@@ -94,15 +102,15 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 </div>
               )}
               {isSOSActive && (
-                <div className="absolute top-4 right-4 bg-red-600 p-2 rounded-xl animate-pulse">
+                <div className="absolute top-4 right-4 z-30 bg-red-600 p-2 rounded-xl animate-pulse">
                   <Siren className="w-5 h-5 text-white" />
                 </div>
               )}
             </div>
-            <RankBadge status={owner.status} className="-mt-14 scale-75 md:scale-100" />
+            <RankBadge status={owner.status} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-3 animate-elite-reveal delay-200">
             <div className="flex items-center justify-center gap-2">
               <span className="h-px w-4 bg-zinc-800" />
               <p className="text-zinc-500 text-[9px] uppercase tracking-[0.6em] font-black">Linhagem de Elite</p>
@@ -120,8 +128,8 @@ export default function PetProfilePage({ params }: PetPageProps) {
           </div>
         </div>
 
-        {/* Informações Estruturadas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Informações Estruturadas com Revelação */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-elite-reveal delay-300">
           <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-5 md:p-6 rounded-3xl group overflow-hidden relative">
              <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                 <User className={`w-24 h-24 ${themeColorClass}`} />
@@ -192,9 +200,9 @@ export default function PetProfilePage({ params }: PetPageProps) {
           </div>
         </div>
 
-        {/* Seção de Emergência Expandida */}
+        {/* Seção de Emergência Expandida com Revelação */}
         {isSOSActive && (
-          <Card className="bg-red-950/10 border-red-600/30 backdrop-blur-2xl p-6 md:p-8 rounded-[2.5rem] space-y-6 animate-in zoom-in-95 duration-500">
+          <Card className="bg-red-950/10 border-red-600/30 backdrop-blur-2xl p-6 md:p-8 rounded-[2.5rem] space-y-6 animate-elite-reveal delay-400">
             <div className="text-center space-y-2">
               <h2 className="text-red-500 font-black text-2xl uppercase tracking-tighter italic">PET ENCONTRA-SE PERDIDO</h2>
               <p className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold max-w-sm mx-auto leading-relaxed">
@@ -219,15 +227,15 @@ export default function PetProfilePage({ params }: PetPageProps) {
           </Card>
         )}
 
-        {/* Selo de Autenticidade */}
-        <div className="pt-8 flex flex-col items-center text-center">
+        {/* Selo de Autenticidade com Revelação Final */}
+        <div className="pt-8 flex flex-col items-center text-center animate-elite-reveal delay-500">
            <CollarIcon className="w-8 h-8 text-zinc-900 mb-4" />
            <p className="text-[8px] text-zinc-700 uppercase tracking-[0.6em] font-medium max-w-[200px] leading-relaxed">
              ESTE DOCUMENTO DIGITAL CERTIFICA A IDENTIDADE DE ELITE DO ANIMAL NO ECOSSISTEMA HALL BLACK.
            </p>
         </div>
 
-        <footer className="pt-12 text-center">
+        <footer className="pt-12 text-center opacity-30">
           <p className="text-[8px] text-zinc-800 uppercase tracking-[0.5em] font-black">
             HALL BLACK PET IDENTITY PROTOCOL © {new Date().getFullYear()}
           </p>
