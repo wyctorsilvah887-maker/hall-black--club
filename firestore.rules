@@ -23,27 +23,33 @@ service cloud.firestore {
 
     /**
      * @description Rules for unique access codes.
-     * Permite leitura individual para validação antes do login.
-     * Impede a listagem de todos os códigos para segurança.
      */
     match /mythicCodes/{mythicCodeId} {
-      allow get: if true; // Permite get para validação de chave no Gate
-      allow list: if false; // Ninguém lista todas as chaves
-      allow create: if false; // Apenas via console ou admin
-      allow update: if isSignedIn(); // Permite atualizar para 'activated' durante o registro
+      allow get: if true;
+      allow list: if false;
+      allow create: if false;
+      allow update: if isSignedIn();
       allow delete: if false;
     }
 
+    /**
+     * @description Regras para perfis de usuários.
+     * Permite listagem pública (list) para o contador de 60 membros.
+     * Leitura individual (get) restrita a membros logados ou perfis públicos.
+     */
     match /users/{userId} {
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
+      // Permitir listagem pública para o contador de slots (Elite 60)
+      allow list: if true; 
+      
+      // Leitura permitida se logado ou se o perfil for explicitamente público
+      allow get: if isSignedIn() || (resource != null && resource.data.isPublicProfile == true);
       
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(userId);
 
       match /pets/{petId} {
-        allow get: if isSignedIn();
+        allow get: if true; // Permitir visualização pública de pets (via QR Code/Identidade)
         allow list: if isSignedIn();
         
         allow create: if isOwner(userId) && request.resource.data.userId == userId;

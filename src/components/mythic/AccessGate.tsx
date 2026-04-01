@@ -28,8 +28,14 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
   const db = useFirestore();
 
   // Monitor de Membros Ativos (Contagem Global)
-  const usersQuery = useMemoFirebase(() => collection(db, 'users'), [db]);
-  const { data: usersData } = useCollection(usersQuery);
+  // Nota: Agora permitido publicamente via firestore.rules para sustentar o contador de slots
+  const usersQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return collection(db, 'users');
+  }, [db]);
+  
+  const { data: usersData, error: usersError } = useCollection(usersQuery);
+  
   const memberCount = usersData?.length || 0;
   const slotsLeft = Math.max(0, 60 - memberCount);
 
@@ -72,7 +78,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black overflow-hidden relative">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/10 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
       
-      <div className="w-full max-w-md space-y-8 md:space-y-10 relative z-10 text-center">
+      <div className="w-full max-md space-y-8 md:space-y-10 relative z-10 text-center">
         <div className="space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
@@ -89,7 +95,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
             <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full border border-zinc-900 bg-zinc-950/40">
               <Users className="w-3 h-3 text-primary/60" />
               <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
-                {memberCount.toString().padStart(2, '0')} / 60 SLOTS OCUPADOS
+                {usersError ? "CONTADOR INDISPONÍVEL" : `${memberCount.toString().padStart(2, '0')} / 60 SLOTS OCUPADOS`}
               </span>
             </div>
           </div>
