@@ -67,6 +67,8 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
 
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
   const starsCount = isMythic ? 6 : 5;
+  const labelFontSize = labelText === 'LEGENDÁRIO' ? '18px' : '22px';
+  const labelYPosition = labelText === 'LEGENDÁRIO' ? '57' : '58';
   
   const getFallbackRegNumber = (uid?: string) => {
     if (!uid) return '00';
@@ -130,13 +132,13 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
           <mask id={`text-flash-mask-${uniqueId}`}>
             <text 
               x="130" 
-              y="58" 
+              y={labelYPosition}
               textAnchor="middle" 
               fill="white"
               style={{ 
                 fontFamily: 'system-ui, sans-serif', 
                 fontWeight: '900', 
-                fontSize: '22px', 
+                fontSize: labelFontSize, 
                 letterSpacing: '4px'
               }}
             >
@@ -157,13 +159,13 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
 
         <text 
           x="130" 
-          y="58" 
+          y={labelYPosition}
           textAnchor="middle" 
           fill={`url(#text-gradient-${uniqueId})`} 
           style={{ 
             fontFamily: 'system-ui, sans-serif', 
             fontWeight: '900', 
-            fontSize: '22px', 
+            fontSize: labelFontSize, 
             letterSpacing: '4px',
             filter: `drop-shadow(0 0 10px ${colors.aura})`
           }}
