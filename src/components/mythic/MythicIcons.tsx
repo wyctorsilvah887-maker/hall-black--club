@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 export const CollarIcon = ({ className }: { className?: string }) => (
   <svg 
@@ -38,73 +38,155 @@ export const RubyShield = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const RankBadge = ({ status, className }: { status?: string, className?: string }) => {
+interface RankBadgeProps {
+  status?: string;
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export const RankBadge = ({ status, className, size = 'md' }: RankBadgeProps) => {
   const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
+  const isMythic = status === 'MYTHIC' || !status;
   
-  // Paleta de cores baseada na descrição de luxo
-  const primaryColor = isLegendary ? '#FFD700' : isAmber ? '#F59E0B' : '#8B0000';
-  const secondaryColor = isLegendary ? '#B8860B' : isAmber ? '#D97706' : '#2A0000';
-  const textColor = isLegendary || isAmber ? '#4B3621' : '#FFFFFF';
+  const scale = size === 'sm' ? 'scale-[0.6]' : size === 'lg' ? 'scale-125' : 'scale-100';
+
+  // Configuração de cores baseada no status
+  const colors = {
+    primary: isLegendary ? '#FFD700' : isAmber ? '#F59E0B' : '#ff1a1a',
+    secondary: isLegendary ? '#B8860B' : isAmber ? '#D97706' : '#660000',
+    vibrant: isLegendary ? '#FFF2AC' : isAmber ? '#fbbf24' : '#ff4d4d',
+    deep: isLegendary ? '#bf953f' : isAmber ? '#d97706' : '#b30000',
+    aura: isLegendary ? 'rgba(255,215,0,0.2)' : isAmber ? 'rgba(245,158,11,0.2)' : 'rgba(255,0,0,0.3)',
+  };
+
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
+  const starsCount = isMythic ? 6 : 5;
 
   return (
-    <div className={`relative flex flex-col items-center justify-center animate-in zoom-in-95 duration-1000 ${className}`}>
-      <svg width="260" height="120" viewBox="0 0 260 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_25px_rgba(0,0,0,0.9)]">
+    <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>
+      {/* Pulsating Aura */}
+      <div 
+        className="absolute inset-0 blur-[50px] rounded-full animate-pulse" 
+        style={{ backgroundColor: colors.aura }}
+      />
+      
+      <svg 
+        width="260" 
+        height="100" 
+        viewBox="0 0 260 100" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+        className="relative drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]"
+      >
         <defs>
-          <linearGradient id="metalGold" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={primaryColor} />
-            <stop offset="50%" stopColor="#FFF2AC" />
-            <stop offset="100%" stopColor={secondaryColor} />
-          </linearGradient>
-          
-          <linearGradient id="wingGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={primaryColor} stopOpacity="0.8" />
-            <stop offset="100%" stopColor={secondaryColor} stopOpacity="0.4" />
+          {/* Metal Gradiente */}
+          <linearGradient id="metal-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={colors.primary} />
+            <stop offset="30%" stopColor={colors.vibrant} />
+            <stop offset="50%" stopColor={colors.deep} />
+            <stop offset="100%" stopColor={colors.secondary} />
           </linearGradient>
 
-          <filter id="volumetricGlow">
-            <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
+          {/* Cromo Negro Profundo */}
+          <linearGradient id="dark-chrome-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#444" />
+            <stop offset="50%" stopColor="#111" />
+            <stop offset="100%" stopColor="#000" />
+          </linearGradient>
+
+          {/* Brilho do Texto */}
+          <linearGradient id="text-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#fff" />
+            <stop offset="50%" stopColor={isMythic ? '#ffcccc' : '#fff2ac'} />
+            <stop offset="100%" stopColor={colors.primary} />
+          </linearGradient>
+
+          {/* Máscara de Brilho Metálico (Sweep) */}
+          <linearGradient id="sweep-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="white" stopOpacity="0" />
+            <stop offset="40%" stopColor="white" stopOpacity="0" />
+            <stop offset="50%" stopColor="white" stopOpacity="0.9" />
+            <stop offset="60%" stopColor="white" stopOpacity="0" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </linearGradient>
+
+          <mask id="text-flash-mask">
+            <text 
+              x="130" 
+              y="58" 
+              textAnchor="middle" 
+              fill="white"
+              style={{ 
+                fontFamily: 'system-ui, sans-serif', 
+                fontWeight: '900', 
+                fontSize: '22px', 
+                letterSpacing: '4px'
+              }}
+            >
+              {labelText}
+            </text>
+          </mask>
         </defs>
 
-        {/* ASAS MAJESTOSAS - Lado Esquerdo (Detalhamento Intricado) */}
-        <g className="animate-pulse" style={{ animationDuration: '5s' }}>
-          {/* Camada Superior da Asa */}
-          <path d="M110 45 Q70 10 30 40 L20 35 Q60 5 110 35 Z" fill="url(#metalGold)" stroke={secondaryColor} strokeWidth="0.5" />
-          {/* Penas do Meio */}
-          <path d="M100 55 Q60 25 35 55 L25 50 Q55 20 100 45 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
-          {/* Penas Inferiores */}
-          <path d="M90 65 Q50 40 40 70 L30 65 Q45 30 90 55 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
+        {/* Estrutura Alada Metálica */}
+        <g opacity="1">
+          <path d="M70 45 L20 25 L45 50 L15 40 L40 55 L10 60 L70 65 Z" fill="url(#metal-gradient)" stroke={colors.secondary} strokeWidth="1" />
+          <path d="M190 45 L240 25 L215 50 L245 40 L220 55 L250 60 L190 65 Z" fill="url(#metal-gradient)" stroke={colors.secondary} strokeWidth="1" />
         </g>
 
-        {/* ASAS MAJESTOSAS - Lado Direito (Espelhamento) */}
-        <g className="animate-pulse" style={{ animationDuration: '5s' }}>
-          <path d="M150 45 Q190 10 230 40 L240 35 Q200 5 150 35 Z" fill="url(#metalGold)" stroke={secondaryColor} strokeWidth="0.5" />
-          <path d="M160 55 Q200 25 225 55 L235 50 Q205 20 160 45 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
-          <path d="M170 65 Q210 40 220 70 L230 65 Q215 30 170 55 Z" fill="url(#wingGlow)" stroke={secondaryColor} strokeWidth="0.5" />
+        {/* Banner Central (Corpo) */}
+        <path d="M60 35 L200 35 L215 70 L45 70 Z" fill="url(#dark-chrome-gradient)" stroke="#000" strokeWidth="2" />
+        <path d="M65 38 L195 38 L208 67 L52 67 Z" fill="none" stroke="url(#metal-gradient)" strokeWidth="1.5" strokeOpacity="0.6" />
+
+        {/* Ponta Inferior V */}
+        <path d="M100 65 L130 95 L160 65 Z" fill="url(#dark-chrome-gradient)" stroke="url(#metal-gradient)" strokeWidth="2" />
+
+        {/* Texto de Rank */}
+        <text 
+          x="130" 
+          y="58" 
+          textAnchor="middle" 
+          fill="url(#text-gradient)" 
+          style={{ 
+            fontFamily: 'system-ui, sans-serif', 
+            fontWeight: '900', 
+            fontSize: '22px', 
+            letterSpacing: '4px',
+            filter: `drop-shadow(0 0 10px ${colors.aura})`
+          }}
+        >
+          {labelText}
+        </text>
+
+        {/* EFEITO FLASH Sweep */}
+        <g mask="url(#text-flash-mask)">
+            <rect 
+              x="0" 
+              y="35" 
+              width="260" 
+              height="35" 
+              fill="url(#sweep-gradient)" 
+              className="mythic-shine-sweep"
+            />
         </g>
 
-        {/* ESTRUTURA CENTRAL DO ESCUDO (Multi-tiered Gold) */}
-        <path d="M75 35 L185 35 L195 55 L130 95 L65 55 Z" fill="url(#metalGold)" stroke={secondaryColor} strokeWidth="2" filter="url(#volumetricGlow)" />
-        
-        {/* Camada de Profundidade Interna */}
-        <path d="M82 40 L178 40 L186 53 L130 88 L74 53 Z" fill="rgba(0,0,0,0.15)" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
-
-        {/* PLACA CONVEXA CENTRAL (Onde o nome é gravado) */}
-        <path d="M85 46 C95 42, 165 42, 175 46 L180 62 C170 66, 90 66, 80 62 Z" fill="url(#metalGold)" filter="url(#volumetricGlow)" />
-        
-        {/* TEXTO ENGRAVED - Tipografia de Autoridade */}
-        <text x="130" y="56" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="12" fill={textColor} textAnchor="middle" style={{ letterSpacing: '2px', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>{labelText}</text>
-        <text x="130" y="68" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="6" fill={textColor} opacity="0.8" textAnchor="middle" style={{ letterSpacing: '4px' }}>STATUS ESPECIAL</text>
-        
-        {/* DETALHES DE BRILHO E ACABAMENTO */}
-        <path d="M120 88 L130 95 L140 88" stroke="#FFF" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-        <circle cx="130" cy="35" r="3" fill="#FFF" opacity="0.2" />
+        {/* Estrelas de Rank */}
+        <g transform={`translate(${130 - (starsCount * 6)}, 75)`}>
+            {Array.from({ length: starsCount }).map((_, i) => (
+                <path 
+                  key={i} 
+                  className="animate-star-fill-loop"
+                  style={{ 
+                    animationDelay: `${i * 0.4}s`,
+                    color: colors.primary
+                  }}
+                  d={`M${i * 12} 0 L${i * 12 + 2} 4 L${i * 12 + 7} 4 L${i * 12 + 3} 7 L${i * 12 + 5} 12 L${i * 12} 9 L${i * 12 - 5} 12 L${i * 12 - 3} 7 L${i * 12 - 7} 4 L${i * 12 - 2} 4 Z`} 
+                  stroke="currentColor" 
+                  strokeWidth="0.5"
+                />
+            ))}
+        </g>
       </svg>
     </div>
   );

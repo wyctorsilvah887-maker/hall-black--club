@@ -91,6 +91,17 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes shine-sweep {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes star-fill {
+  0%, 100% { fill: transparent; stroke-opacity: 0.5; }
+  50% { fill: currentColor; stroke-opacity: 1; }
+}
+
 .animate-ruby-glow {
   animation: ruby-glow 3s infinite ease-in-out;
 }
@@ -113,6 +124,14 @@
 
 .animate-text-amber-glow {
   animation: text-amber-glow 2.5s infinite ease-in-out;
+}
+
+.mythic-shine-sweep {
+  animation: shine-sweep 3s infinite ease-in-out;
+}
+
+.animate-star-fill-loop {
+  animation: star-fill 2s infinite ease-in-out;
 }
 
 .gold-gradient-text {
