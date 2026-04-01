@@ -172,7 +172,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
             fontFamily: 'monospace', 
             fontWeight: 'bold', 
             fontSize: '9px', 
-            letterSpacing: '2px',
+            letterSpacing: '0.5px',
             opacity: 0.9,
             filter: 'brightness(1.5)'
           }}
