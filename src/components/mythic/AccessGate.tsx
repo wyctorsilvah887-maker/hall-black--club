@@ -107,7 +107,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
         <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-5 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md shadow-2xl">
           <div className="space-y-2 md:space-y-3">
-            <Label htmlFor="mythic-code" className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Chave de Acesso</Label>
+            <Label htmlFor="mythic-code" className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Chave de Acesso</Label>
             <Input
               id="mythic-code"
               placeholder="XXXXXXXX-XXXX"
@@ -169,6 +169,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
                   <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi) - Chaves Ativas:</p>
                   <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-TEST</code>
                   <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-8X2K</code>
+                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-4P9L</code>
                   <p className="text-[8px] text-zinc-600 italic mt-1">Limite global de 60 chaves únicas.</p>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
