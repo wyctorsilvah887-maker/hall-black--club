@@ -96,7 +96,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           const snapshot = await getCountFromServer(collection(db, 'users'));
           setMemberCount(snapshot.data().count);
         } catch (e) {
-          // Ignorar erro silenciosamente
+          // Ignorar erro
         }
       }
     };
@@ -309,7 +309,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const memberRegistrationId = `HB-${profile.id?.slice(0, 5).toUpperCase() || 'XXXXX'}`;
 
   return (
-    <div className={`min-h-screen bg-black text-white animate-in fade-in duration-1000 overflow-x-hidden`}>
+    <div className="min-h-screen bg-black text-white animate-in fade-in duration-1000 overflow-x-hidden">
       <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-800/50">
         <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -566,7 +566,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
       {/* DIÁLOGO SAÚDE MUNDO PET */}
       <Dialog open={isHealthDialogOpen} onOpenChange={setIsHealthDialogOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-3xl overflow-hidden relative p-0">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-3xl overflow-hidden p-0 z-[200]">
           <div className={`absolute top-0 inset-x-0 h-1.5 ${isLegendary ? 'bg-yellow-500' : isAmber ? 'bg-orange-500' : 'bg-primary'}`} />
           <div className="p-8 space-y-6">
             <div className="flex flex-col items-center text-center space-y-4">
@@ -589,7 +589,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </p>
             </div>
 
-            <DialogFooter className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button 
                 onClick={() => setIsHealthDialogOpen(false)}
                 variant="ghost" 
@@ -606,13 +606,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               >
                 Cadastrar Agora
               </Button>
-            </DialogFooter>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
 
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-sm rounded-2xl">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-sm rounded-2xl z-[200]">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Registrar Novo Pet</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Adicione uma nova identidade à sua linhagem.</DialogDescription>
@@ -644,7 +644,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </Dialog>
 
       <Dialog open={isEditPetOpen} onOpenChange={(open) => { setIsEditPetOpen(open); if(!open) setEditingPet(null); }}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl z-[200]">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Editar Identidade</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Atualize as credenciais do seu pet.</DialogDescription>
@@ -676,7 +676,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </Dialog>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200]">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Configurações de Elite</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Gerencie suas credenciais e identidade mística.</DialogDescription>
@@ -731,7 +731,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </Dialog>
 
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[100] rounded-2xl">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[300] rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Ajuste de Imagem</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Configure o enquadramento perfeito para a elite.</DialogDescription>

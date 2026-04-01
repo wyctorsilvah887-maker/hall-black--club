@@ -25,25 +25,21 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
   useEffect(() => {
-    // Sequência de animação otimizada para fluidez 60fps - Início Automático
+    // Sequência de animação otimizada
     setIntroPhase('shutdown');
     
-    // 1. Início da Badge após TV Shutdown (2.2s)
     const tStamp = setTimeout(() => {
       setIntroPhase('stamp');
     }, 2300); 
 
-    // 2. Tempo de exposição estática da badge (aprox. 4.5s)
     const tFadeStamp = setTimeout(() => {
       setIntroPhase('fade_stamp');
     }, 6800);
 
-    // 3. Início da revelação do conteúdo (após fade de 1.8s)
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
     }, 8600);
 
-    // 4. Conclusão total do protocolo
     const tDone = setTimeout(() => {
       setIntroPhase('done');
     }, 12100);
@@ -112,7 +108,8 @@ export default function PetProfilePage({ params }: PetPageProps) {
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 overflow-x-hidden relative ${themeClass}`}>
       {/* OVERLAY CINEMATOGRÁFICO */}
       {introPhase !== 'done' && (
-        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-700 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-700 
+          ${introPhase === 'reveal' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           
           <button 
             onClick={handleSkip}
