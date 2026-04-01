@@ -9,6 +9,7 @@ import { collection, query, where, getDocs, Firestore } from 'firebase/firestore
 
 const AMBER_CODES = ["AMBER-LEGEND"];
 const LEGENDARY_CODES = ["LEGEND-GOLD"];
+const MYTHIC_TEST_CODES = ["HB-MYTH-TEST", "HB-MYTH-8X2K", "HB-MYTH-4P9L"];
 
 export async function validateMythicCode(db: Firestore, code: string) {
   // Simula processamento de segurança para feedback visual de elite
@@ -41,7 +42,20 @@ export async function validateMythicCode(db: Firestore, code: string) {
     };
   }
 
-  // 2. Verificação de Chaves Míticas Únicas (Firestore)
+  // 2. Verificação de Chaves Míticas de Teste (Hardcoded)
+  if (MYTHIC_TEST_CODES.includes(normalizedCode)) {
+    return {
+      success: true,
+      message: "ACESSO MÍTICO DE TESTE CONCEDIDO",
+      profile: {
+        name: "Membro de Teste",
+        status: "MYTHIC",
+        theme: "mythic"
+      }
+    };
+  }
+
+  // 3. Verificação de Chaves Míticas Únicas (Firestore)
   try {
     const codesRef = collection(db, 'mythicCodes');
     const q = query(codesRef, where('code', '==', normalizedCode));

@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -82,7 +81,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
         <div className="space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
-            <Crown className="w-5 h-5 md:w-6 md:h-6 text-primary animate-pulse" />
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white font-headline">
@@ -153,8 +152,8 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64 max-w-[calc(100vw-32px)]">
                 <div className="space-y-2">
                   <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi) - Chaves Ativas:</p>
+                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-TEST</code>
                   <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-8X2K</code>
-                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-4P9L</code>
                   <p className="text-[8px] text-zinc-600 italic mt-1">Limite global de 60 chaves únicas.</p>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
