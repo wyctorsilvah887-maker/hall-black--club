@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
@@ -24,29 +25,30 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
   useEffect(() => {
-    // Sequência de animação AAA de Alta Fidelidade
+    // Sequência de animação AAA de Alta Fidelidade com tempos de leitura estendidos
     setIntroPhase('shutdown');
     
-    // 1. TV Shutdown termina em 2.5s. Deixamos 100ms de tela preta absoluta.
+    // 1. TV Shutdown termina em 2.5s.
     const tStamp = setTimeout(() => {
       setIntroPhase('stamp');
     }, 2600); 
 
-    // 2. O Carimbo (stamp) agora é mais lento (1.2s) e fica estático por um tempo.
-    // Damos 2.4s totais para apreciação do brasão.
+    // 2. O Carimbo (stamp) ocorre. Aumentamos o tempo de exibição estática 
+    // para garantir que o membro possa ler o texto "LENDÁRIO" ou "MÍTICO".
+    // Agora a badge fica visível por aproximadamente 4.5 segundos.
     const tFadeStamp = setTimeout(() => {
       setIntroPhase('fade_stamp');
-    }, 5000);
+    }, 7500);
 
     // 3. O desvanecimento da badge (fade_stamp) leva 2s.
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
-    }, 7000);
+    }, 9500);
 
     // 4. Revelação final concluída após a animação de slow-reveal (4s).
     const tDone = setTimeout(() => {
       setIntroPhase('done');
-    }, 11000);
+    }, 13500);
 
     return () => {
       clearTimeout(tStamp);
@@ -112,7 +114,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
             <div className="w-full h-full bg-white animate-tv-shutdown" />
           )}
 
-          {/* Carimbo da Badge no Escuro - Agora com tempo de exposição estendido */}
+          {/* Carimbo da Badge no Escuro - Com tempo de leitura ampliado */}
           {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
             <div className={`flex flex-col items-center gap-8 ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
               <RankBadge status={owner.status} size="lg" className="drop-shadow-[0_0_50px_rgba(var(--primary),0.6)]" />
