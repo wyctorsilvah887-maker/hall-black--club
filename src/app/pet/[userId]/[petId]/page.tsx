@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
@@ -6,7 +7,7 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, ChevronRight, Siren, AlertCircle, MessageSquare, PhoneCall } from "lucide-react";
+import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, ChevronRight, Siren, AlertCircle, MessageSquare, PhoneCall, FastForward } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
@@ -32,20 +33,20 @@ export default function PetProfilePage({ params }: PetPageProps) {
       setIntroPhase('stamp');
     }, 2300); 
 
-    // 2. Tempo de exposição estática da badge (aprox. 5s)
+    // 2. Tempo de exposição estática da badge (aprox. 4.5s)
     const tFadeStamp = setTimeout(() => {
       setIntroPhase('fade_stamp');
-    }, 7300);
+    }, 6800);
 
     // 3. Início da revelação do conteúdo (após fade de 1.8s)
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
-    }, 9100);
+    }, 8600);
 
     // 4. Conclusão total do protocolo
     const tDone = setTimeout(() => {
       setIntroPhase('done');
-    }, 12600);
+    }, 12100);
 
     return () => {
       clearTimeout(tStamp);
@@ -54,6 +55,10 @@ export default function PetProfilePage({ params }: PetPageProps) {
       clearTimeout(tDone);
     };
   }, []);
+
+  const handleSkip = () => {
+    setIntroPhase('done');
+  };
 
   const petRef = React.useMemo(() => {
     if (!db || !userId || !petId) return null;
@@ -106,6 +111,16 @@ export default function PetProfilePage({ params }: PetPageProps) {
       {/* OVERLAY CINEMATOGRÁFICO OTOMIZADO */}
       {introPhase !== 'done' && (
         <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-700 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
+          
+          {/* Botão de Skip - Elite Style */}
+          <button 
+            onClick={handleSkip}
+            className="absolute top-8 right-8 z-[110] flex items-center gap-2 px-4 py-2 border border-zinc-800 rounded-full bg-black/40 text-zinc-600 hover:text-white hover:border-zinc-600 transition-all active:scale-95 group"
+          >
+            <span className="text-[9px] font-black uppercase tracking-[0.3em] ml-1">Pular Protocolo</span>
+            <FastForward className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </button>
+
           {/* Shutdown da TV - Fluido */}
           {introPhase === 'shutdown' && (
             <div className="w-full h-full bg-white animate-tv-shutdown" />
