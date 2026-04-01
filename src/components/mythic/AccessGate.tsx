@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -8,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode } from "@/lib/mythic-service";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from 'firebase/firestore';
-import { Loader2, Info, Crown, Gem, Users } from "lucide-react";
+import { Loader2, Info, Crown, Gem, Users, LogIn } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -27,7 +28,6 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
   const db = useFirestore();
 
   // Monitor de Membros Ativos (Contagem Global)
-  // Nota: Agora permitido publicamente via firestore.rules para sustentar o contador de slots
   const usersQuery = useMemoFirebase(() => {
     if (!db) return null;
     return collection(db, 'users');
@@ -73,11 +73,16 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
     }
   };
 
+  const handleBypassToLogin = () => {
+    // Permite que membros existentes pulem a validação de código para ir à tela de login
+    onSuccess({ status: 'MYTHIC', theme: 'mythic', name: 'Membro Elite' });
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black overflow-hidden relative">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/10 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
       
-      <div className="w-full max-md space-y-8 md:space-y-10 relative z-10 text-center">
+      <div className="w-full max-w-md space-y-8 md:space-y-10 relative z-10 text-center">
         <div className="space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
@@ -100,7 +105,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           </div>
         </div>
 
-        <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-5 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md">
+        <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-5 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md shadow-2xl">
           <div className="space-y-2 md:space-y-3">
             <Label htmlFor="mythic-code" className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Chave de Acesso</Label>
             <Input
@@ -116,11 +121,11 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <Button 
             type="submit" 
             className="w-full h-14 md:h-16 text-base md:text-lg font-black bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow group relative overflow-hidden"
-            disabled={isLoading || !code || slotsLeft === 0}
+            disabled={isLoading || !code || (slotsLeft === 0 && !code.startsWith('LEGEND'))}
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" />
-            ) : slotsLeft === 0 ? (
+            ) : slotsLeft === 0 && !code.startsWith('LEGEND') ? (
               "CAPACIDADE MÁXIMA"
             ) : (
               <span className="flex items-center justify-center gap-2">
@@ -129,6 +134,16 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               </span>
             )}
           </Button>
+
+          <button 
+            type="button"
+            onClick={handleBypassToLogin}
+            className="w-full text-zinc-500 hover:text-white transition-colors text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-black flex items-center justify-center gap-2 py-2"
+          >
+            <LogIn className="w-3 h-3" />
+            Já sou membro da elite? Autenticar
+          </button>
+
           {slotsLeft <= 5 && slotsLeft > 0 && (
             <p className="text-red-500 text-[9px] font-black uppercase animate-pulse tracking-widest">
               Alerta: Apenas {slotsLeft} vagas restantes!
