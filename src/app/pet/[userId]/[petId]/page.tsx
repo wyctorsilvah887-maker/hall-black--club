@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
@@ -25,30 +24,28 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
   useEffect(() => {
-    // Sequência de animação AAA de Alta Fidelidade com tempos de leitura estendidos
+    // Sequência de animação otimizada para fluidez 60fps
     setIntroPhase('shutdown');
     
-    // 1. TV Shutdown termina em 2.5s.
+    // 1. Início da Badge após TV Shutdown (2.2s)
     const tStamp = setTimeout(() => {
       setIntroPhase('stamp');
-    }, 2600); 
+    }, 2300); 
 
-    // 2. O Carimbo (stamp) ocorre. Aumentamos o tempo de exibição estática 
-    // para garantir que o membro possa ler o texto "LENDÁRIO" ou "MÍTICO".
-    // Agora a badge fica visível por aproximadamente 4.5 segundos.
+    // 2. Tempo de exposição estática da badge (aprox. 5s)
     const tFadeStamp = setTimeout(() => {
       setIntroPhase('fade_stamp');
-    }, 7500);
+    }, 7300);
 
-    // 3. O desvanecimento da badge (fade_stamp) leva 2s.
+    // 3. Início da revelação do conteúdo (após fade de 1.8s)
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
-    }, 9500);
+    }, 9100);
 
-    // 4. Revelação final concluída após a animação de slow-reveal (4s).
+    // 4. Conclusão total do protocolo
     const tDone = setTimeout(() => {
       setIntroPhase('done');
-    }, 13500);
+    }, 12600);
 
     return () => {
       clearTimeout(tStamp);
@@ -106,21 +103,21 @@ export default function PetProfilePage({ params }: PetPageProps) {
 
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 overflow-x-hidden relative ${themeClass}`}>
-      {/* OVERLAY DE ANIMAÇÃO ELITE */}
+      {/* OVERLAY CINEMATOGRÁFICO OTOMIZADO */}
       {introPhase !== 'done' && (
-        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-1000 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
-          {/* Shutdown da TV */}
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-700 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
+          {/* Shutdown da TV - Fluido */}
           {introPhase === 'shutdown' && (
             <div className="w-full h-full bg-white animate-tv-shutdown" />
           )}
 
-          {/* Carimbo da Badge no Escuro - Com tempo de leitura ampliado */}
+          {/* Carimbo da Badge - GPU Accelerated */}
           {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
-            <div className={`flex flex-col items-center gap-8 ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
-              <RankBadge status={owner.status} size="lg" className="drop-shadow-[0_0_50px_rgba(var(--primary),0.6)]" />
-              <div className="space-y-2 text-center">
-                <p className={`text-[12px] font-black uppercase tracking-[0.8em] ${themeColorClass} animate-pulse`}>Autenticação Confirmada</p>
-                <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest italic opacity-50">Protocolo de Elite Hall Black</p>
+            <div className={`flex flex-col items-center gap-10 backface-hidden ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
+              <RankBadge status={owner.status} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)]" />
+              <div className="space-y-3 text-center">
+                <p className={`text-[13px] font-black uppercase tracking-[1em] ${themeColorClass} animate-pulse`}>Identidade Confirmada</p>
+                <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-widest italic opacity-60">Hall Black Elite Identity</p>
               </div>
             </div>
           )}
@@ -163,7 +160,6 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   </div>
                 )}
               </div>
-              {/* Badge abaixo da foto */}
               <RankBadge status={owner.status} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             </div>
             

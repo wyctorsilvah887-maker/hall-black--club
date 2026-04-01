@@ -50,6 +50,8 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -103,25 +105,25 @@
 }
 
 @keyframes tv-shutdown {
-  0% { transform: scaleX(1) scaleY(1); opacity: 1; background: white; }
-  45% { transform: scaleX(1) scaleY(0.003); opacity: 1; background: white; }
-  90% { transform: scaleX(0.003) scaleY(0.003); opacity: 1; background: white; }
-  100% { transform: scaleX(0) scaleY(0); opacity: 0; background: white; }
+  0% { transform: scaleX(1) scaleY(1); opacity: 1; background: white; filter: brightness(1); }
+  45% { transform: scaleX(1) scaleY(0.003); opacity: 1; background: white; filter: brightness(1.5); }
+  90% { transform: scaleX(0.003) scaleY(0.003); opacity: 1; background: white; filter: brightness(2); }
+  100% { transform: scaleX(0) scaleY(0); opacity: 0; background: white; filter: brightness(5); }
 }
 
 @keyframes badge-stamp {
-  0% { transform: scale(5); opacity: 0; filter: blur(40px) brightness(3); }
+  0% { transform: scale(3.5); opacity: 0; filter: blur(30px) brightness(4); }
   40% { transform: scale(1); opacity: 1; filter: blur(0) brightness(1.5); }
   100% { transform: scale(1); opacity: 1; filter: blur(0) brightness(1); }
 }
 
 @keyframes badge-fade-out {
   0% { opacity: 1; transform: scale(1); filter: blur(0); }
-  100% { opacity: 0; transform: scale(0.9); filter: blur(20px); }
+  100% { opacity: 0; transform: scale(0.96); filter: blur(15px); }
 }
 
 @keyframes slow-reveal-elite {
-  0% { opacity: 0; filter: brightness(0); transform: scale(1.02); }
+  0% { opacity: 0; filter: brightness(0); transform: scale(1.01); }
   100% { opacity: 1; filter: brightness(1); transform: scale(1); }
 }
 
@@ -157,12 +159,24 @@
   animation: star-fill 2s infinite ease-in-out;
 }
 
+.animate-tv-shutdown {
+  animation: tv-shutdown 2.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
 .animate-badge-stamp {
-  animation: badge-stamp 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation: badge-stamp 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity, filter;
 }
 
 .animate-badge-fade-out {
-  animation: badge-fade-out 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: badge-fade-out 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.animate-slow-reveal {
+  animation: slow-reveal-elite 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, filter, transform;
 }
 
 .gold-gradient-text {
@@ -185,12 +199,4 @@
   background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(12px);
   border: 1px solid hsla(var(--primary), 0.2);
-}
-
-.animate-tv-shutdown {
-  animation: tv-shutdown 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-slow-reveal {
-  animation: slow-reveal-elite 4s cubic-bezier(0.2, 0, 0.3, 1) forwards;
 }
