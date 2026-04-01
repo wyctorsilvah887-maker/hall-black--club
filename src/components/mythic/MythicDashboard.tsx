@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -92,6 +92,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   }, [db, profile?.id]);
 
   const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
+
+  // Monitor de Membros Ativos
+  const allUsersQuery = useMemoFirebase(() => collection(db, 'users'), [db]);
+  const { data: allUsersData } = useCollection(allUsersQuery);
+  const memberCount = allUsersData?.length || 0;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'profile' | 'newPet' | 'editPet') => {
     const file = e.target.files?.[0];
@@ -279,6 +284,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden lg:flex items-center gap-2 px-4 py-1.5 rounded-full border border-zinc-900 bg-zinc-950/50">
+              <Users className={`w-3 h-3 ${themeColorClass}`} />
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                {memberCount.toString().padStart(2, '0')} / 60
+              </span>
+            </div>
+
             <Button 
               variant="outline" 
               size="sm"
@@ -356,7 +368,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Button 
             className={`w-full h-14 md:h-20 text-xs sm:text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
               ${isLegendary ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 hover:scale-[1.01] shadow-yellow-500/20' : 
@@ -366,6 +378,19 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             <Stethoscope className="w-5 h-5 md:w-8 md:h-8 mr-3 md:mr-4 group-hover:rotate-12 transition-transform" />
             SAÚDE MUNDO PET
           </Button>
+
+          <Card className="bg-zinc-950/40 border-zinc-900 border-dashed rounded-2xl flex items-center justify-between px-8">
+            <div className="space-y-1">
+              <p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest">Censo de Elite</p>
+              <h3 className="text-2xl font-black uppercase tracking-tighter">Membros Ativos</h3>
+            </div>
+            <div className="text-right">
+              <p className={`text-4xl font-black tracking-tighter ${themeColorClass}`}>
+                {memberCount.toString().padStart(2, '0')} <span className="text-zinc-800 text-xl">/ 60</span>
+              </p>
+              <p className="text-[8px] text-zinc-700 font-bold uppercase tracking-widest">Slots de Rede Mundial</p>
+            </div>
+          </Card>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
@@ -495,7 +520,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </main>
 
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-sm rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Registrar Novo Pet</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Adicione uma nova identidade à sua linhagem.</DialogDescription>

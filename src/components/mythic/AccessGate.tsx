@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -6,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode } from "@/lib/mythic-service";
-import { useFirestore } from "@/firebase";
-import { Loader2, Info, Crown, Gem } from "lucide-react";
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection } from 'firebase/firestore';
+import { Loader2, Info, Crown, Gem, Users } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -24,6 +26,12 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const db = useFirestore();
+
+  // Monitor de Membros Ativos (Contagem Global)
+  const usersQuery = useMemoFirebase(() => collection(db, 'users'), [db]);
+  const { data: usersData } = useCollection(usersQuery);
+  const memberCount = usersData?.length || 0;
+  const slotsLeft = Math.max(0, 60 - memberCount);
 
   const handleClaimAccess = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,9 +82,17 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white font-headline">
             HALL <span className="text-primary animate-text-ruby-glow">BLACK</span>
           </h1>
-          <p className="text-zinc-500 text-[8px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.5em] font-bold">
-            THE EXCLUSIVE ELITE 60
-          </p>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-zinc-500 text-[8px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.5em] font-bold">
+              THE EXCLUSIVE ELITE 60
+            </p>
+            <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full border border-zinc-900 bg-zinc-950/40">
+              <Users className="w-3 h-3 text-primary/60" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                {memberCount.toString().padStart(2, '0')} / 60 SLOTS OCUPADOS
+              </span>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-5 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md">
@@ -95,10 +111,12 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <Button 
             type="submit" 
             className="w-full h-14 md:h-16 text-base md:text-lg font-black bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow group relative overflow-hidden"
-            disabled={isLoading || !code}
+            disabled={isLoading || !code || slotsLeft === 0}
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" />
+            ) : slotsLeft === 0 ? (
+              "CAPACIDADE MÁXIMA"
             ) : (
               <span className="flex items-center justify-center gap-2">
                 REIVINDICAR ACESSO
@@ -106,6 +124,11 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               </span>
             )}
           </Button>
+          {slotsLeft <= 5 && slotsLeft > 0 && (
+            <p className="text-red-500 text-[9px] font-black uppercase animate-pulse tracking-widest">
+              Alerta: Apenas {slotsLeft} vagas restantes!
+            </p>
+          )}
         </form>
 
         <div className="mt-8 md:mt-10 flex flex-col items-center gap-4 md:gap-6">
