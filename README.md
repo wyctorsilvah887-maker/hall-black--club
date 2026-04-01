@@ -4,7 +4,7 @@ Este é o sistema de elite do **Hall Black Club**, desenvolvido com Next.js 15, 
 
 ## 🚀 Como subir para o GitHub
 
-Para versionar este projeto, execute os seguintes comandos no seu terminal:
+Para versionar este projeto no seu repositório, execute os seguintes comandos no seu terminal:
 
 1. **Inicie o Git:**
    ```bash
@@ -23,7 +23,7 @@ Para versionar este projeto, execute os seguintes comandos no seu terminal:
 
 4. **Conecte ao seu repositório remoto:**
    ```bash
-   git remote add origin https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
+   git remote add origin https://github.com/wyctorsilvah887-maker/hall-black--club.git
    ```
 
 5. **Envie os arquivos:**
