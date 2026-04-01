@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/image-utils';
 import { ImageEditor } from './ImageEditor';
 import { RankBadge } from './MythicIcons';
+import { ToastAction } from "@/components/ui/toast";
 
 interface MythicDashboardProps {
   profile: any;
@@ -180,6 +181,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       toast({
         title: "PET REGISTRADO",
         description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.`,
+        action: (
+          <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
+            RECARREGAR
+          </ToastAction>
+        ),
       });
 
       setNewPetName('');
@@ -216,7 +222,12 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
       toast({
         title: "IDENTIDADE ATUALIZADA",
-        description: `AS CREDENCIAIS DE ${editPetName.toUpperCase()} FORAM SINCRONIZADAS.`,
+        description: `AS CREDENCIAIS DE ${editPetName.toUpperCase()} FORAM SINCRONIZADAS. RECARREGUE PARA ATUALIZAR.`,
+        action: (
+          <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
+            RECARREGAR
+          </ToastAction>
+        ),
       });
 
       setIsEditPetOpen(false);
@@ -245,7 +256,12 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
       toast({
         title: "PERFIL ATUALIZADO",
-        description: "Suas credenciais foram sincronizadas com sucesso.",
+        description: "SUAS CREDENCIAIS FORAM SINCRONIZADAS. RECARREGUE PARA ATUALIZAR A INTERFACE.",
+        action: (
+          <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
+            RECARREGAR
+          </ToastAction>
+        ),
       });
 
       setIsSettingsOpen(false);
@@ -260,7 +276,15 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     if (!profile?.id) return;
     const petRef = doc(db, 'users', profile.id, 'pets', petId);
     deleteDocumentNonBlocking(petRef);
-    toast({ title: "PET REMOVIDO", description: `${petName.toUpperCase()} FOI RETIRADO DA LINHAGEM.` });
+    toast({ 
+      title: "PET REMOVIDO", 
+      description: `${petName.toUpperCase()} FOI RETIRADO DA LINHAGEM.`,
+      action: (
+        <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
+          RECARREGAR
+        </ToastAction>
+      ),
+    });
   };
 
   const handleToggleEmergency = (pet: any) => {
@@ -278,6 +302,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       description: newState 
         ? `PROTOCOLO DE EMERGÊNCIA INICIADO PARA ${pet.name.toUpperCase()}.`
         : `SITUAÇÃO NORMALIZADA PARA ${pet.name.toUpperCase()}.`,
+      action: (
+        <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
+          RECARREGAR
+        </ToastAction>
+      ),
     });
   };
 
