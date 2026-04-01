@@ -79,17 +79,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [settingsState, setSettingsState] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
 
-  // Protocolo de Desbloqueio de Interface
-  useEffect(() => {
-    const isAnyModalOpen = isAddPetOpen || isEditPetOpen || isSettingsOpen || isHealthDialogOpen || !!editorState;
-    if (!isAnyModalOpen) {
-      setTimeout(() => {
-        document.body.style.pointerEvents = 'auto';
-        document.body.style.overflow = 'auto';
-      }, 100);
-    }
-  }, [isAddPetOpen, isEditPetOpen, isSettingsOpen, isHealthDialogOpen, editorState]);
-
   useEffect(() => {
     if (profile && isSettingsOpen) {
       setSettingsName(profile.name || '');

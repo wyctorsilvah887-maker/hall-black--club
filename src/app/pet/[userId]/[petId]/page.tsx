@@ -56,7 +56,9 @@ export default function PetProfilePage({ params }: PetPageProps) {
     };
   }, []);
 
-  const handleSkip = () => {
+  const handleSkip = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIntroPhase('done');
   };
 
@@ -114,7 +116,8 @@ export default function PetProfilePage({ params }: PetPageProps) {
           
           <button 
             onClick={handleSkip}
-            className="absolute top-8 right-8 z-[110] flex items-center gap-2 px-4 py-2 border border-zinc-800 rounded-full bg-black/40 text-zinc-600 hover:text-white hover:border-zinc-600 transition-all active:scale-95 group"
+            type="button"
+            className="absolute top-8 right-8 z-[120] flex items-center gap-2 px-4 py-2 border border-zinc-800 rounded-full bg-black/60 text-zinc-300 hover:text-white hover:border-zinc-500 transition-all active:scale-95 group pointer-events-auto shadow-2xl backdrop-blur-sm"
           >
             <span className="text-[9px] font-black uppercase tracking-[0.3em] ml-1">Pular Protocolo</span>
             <FastForward className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
