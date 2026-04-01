@@ -15,26 +15,41 @@ interface PetPageProps {
   params: Promise<{ userId: string; petId: string }>;
 }
 
+type IntroPhase = 'initial' | 'shutdown' | 'stamp' | 'fade_stamp' | 'reveal' | 'done';
+
 export default function PetProfilePage({ params }: PetPageProps) {
   const { userId, petId } = use(params);
   const db = useFirestore();
   
-  const [introPhase, setIntroPhase] = useState<'initial' | 'shutdown' | 'reveal' | 'done'>('initial');
+  const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
   useEffect(() => {
-    // Inicia imediatamente o shutdown lento
+    // Sequência de animação AAA
     setIntroPhase('shutdown');
     
-    // O shutdown dura 2.5s. Aguardamos um pouco mais para garantir que a tela ficou preta.
+    // 1. TV Shutdown termina em 2.5s
+    const tStamp = setTimeout(() => {
+      setIntroPhase('stamp');
+    }, 2600); 
+
+    // 2. Carimbo dura ~1s
+    const tFadeStamp = setTimeout(() => {
+      setIntroPhase('fade_stamp');
+    }, 4000);
+
+    // 3. Desvanecimento da badge
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
-    }, 2800); 
+    }, 5500);
 
+    // 4. Revelação final concluída
     const tDone = setTimeout(() => {
       setIntroPhase('done');
-    }, 7000); // A revelação leva 4s agora, totalizando ~7s para o fim do ciclo
+    }, 9500);
 
     return () => {
+      clearTimeout(tStamp);
+      clearTimeout(tFadeStamp);
       clearTimeout(tReveal);
       clearTimeout(tDone);
     };
@@ -90,15 +105,27 @@ export default function PetProfilePage({ params }: PetPageProps) {
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 overflow-x-hidden relative ${themeClass}`}>
       {/* OVERLAY DE ANIMAÇÃO ELITE */}
       {introPhase !== 'done' && (
-        <div className={`fixed inset-0 z-[100] pointer-events-none flex items-center justify-center bg-black transition-opacity duration-1000 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-1000 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
+          {/* Shutdown da TV */}
           {introPhase === 'shutdown' && (
             <div className="w-full h-full bg-white animate-tv-shutdown" />
+          )}
+
+          {/* Carimbo da Badge no Escuro */}
+          {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
+            <div className={`flex flex-col items-center gap-6 ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
+              <RankBadge status={owner.status} size="lg" className="drop-shadow-[0_0_30px_rgba(var(--primary),0.5)]" />
+              <div className="space-y-1 text-center">
+                <p className={`text-[10px] font-black uppercase tracking-[0.6em] ${themeColorClass}`}>Autenticação Confirmada</p>
+                <p className="text-zinc-600 text-[8px] font-bold uppercase tracking-widest italic">Acesso Restrito Hall Black</p>
+              </div>
+            </div>
           )}
         </div>
       )}
 
       {/* CONTEÚDO PRINCIPAL COM REVELAÇÃO LENTA */}
-      <div className={`relative z-10 ${introPhase === 'reveal' || introPhase === 'done' ? 'animate-slow-reveal' : 'opacity-0'}`}>
+      <div className={`relative z-10 ${(introPhase === 'reveal' || introPhase === 'done') ? 'animate-slow-reveal' : 'opacity-0'}`}>
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[160px] opacity-20" />
         </div>
