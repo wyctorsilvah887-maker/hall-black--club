@@ -599,8 +599,8 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </Button>
               <Button 
                 onClick={() => {
+                  window.location.href = 'https://mundopet-wsstudios.online/signup';
                   setIsHealthDialogOpen(false);
-                  setIsAddPetOpen(true);
                 }}
                 className={`flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl ${isLegendary ? 'bg-yellow-500 text-black hover:bg-yellow-400' : isAmber ? 'bg-orange-500 text-black hover:bg-orange-400' : 'bg-primary text-white hover:bg-accent'}`}
               >
