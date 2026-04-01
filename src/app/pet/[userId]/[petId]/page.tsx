@@ -24,28 +24,29 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
   useEffect(() => {
-    // Sequência de animação AAA
+    // Sequência de animação AAA de Alta Fidelidade
     setIntroPhase('shutdown');
     
-    // 1. TV Shutdown termina em 2.5s
+    // 1. TV Shutdown termina em 2.5s. Deixamos 100ms de tela preta absoluta.
     const tStamp = setTimeout(() => {
       setIntroPhase('stamp');
     }, 2600); 
 
-    // 2. Carimbo dura ~1s
+    // 2. O Carimbo (stamp) agora é mais lento (1.2s) e fica estático por um tempo.
+    // Damos 2.4s totais para apreciação do brasão.
     const tFadeStamp = setTimeout(() => {
       setIntroPhase('fade_stamp');
-    }, 4000);
+    }, 5000);
 
-    // 3. Desvanecimento da badge
+    // 3. O desvanecimento da badge (fade_stamp) leva 2s.
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
-    }, 5500);
+    }, 7000);
 
-    // 4. Revelação final concluída
+    // 4. Revelação final concluída após a animação de slow-reveal (4s).
     const tDone = setTimeout(() => {
       setIntroPhase('done');
-    }, 9500);
+    }, 11000);
 
     return () => {
       clearTimeout(tStamp);
@@ -111,13 +112,13 @@ export default function PetProfilePage({ params }: PetPageProps) {
             <div className="w-full h-full bg-white animate-tv-shutdown" />
           )}
 
-          {/* Carimbo da Badge no Escuro */}
+          {/* Carimbo da Badge no Escuro - Agora com tempo de exposição estendido */}
           {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
-            <div className={`flex flex-col items-center gap-6 ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
-              <RankBadge status={owner.status} size="lg" className="drop-shadow-[0_0_30px_rgba(var(--primary),0.5)]" />
-              <div className="space-y-1 text-center">
-                <p className={`text-[10px] font-black uppercase tracking-[0.6em] ${themeColorClass}`}>Autenticação Confirmada</p>
-                <p className="text-zinc-600 text-[8px] font-bold uppercase tracking-widest italic">Acesso Restrito Hall Black</p>
+            <div className={`flex flex-col items-center gap-8 ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
+              <RankBadge status={owner.status} size="lg" className="drop-shadow-[0_0_50px_rgba(var(--primary),0.6)]" />
+              <div className="space-y-2 text-center">
+                <p className={`text-[12px] font-black uppercase tracking-[0.8em] ${themeColorClass} animate-pulse`}>Autenticação Confirmada</p>
+                <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest italic opacity-50">Protocolo de Elite Hall Black</p>
               </div>
             </div>
           )}
