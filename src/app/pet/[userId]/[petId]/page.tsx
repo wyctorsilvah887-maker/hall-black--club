@@ -19,26 +19,23 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const { userId, petId } = use(params);
   const db = useFirestore();
   
-  const [introPhase, setIntroPhase] = useState<'initial' | 'blur' | 'shutdown' | 'reveal' | 'done'>('initial');
+  const [introPhase, setIntroPhase] = useState<'initial' | 'shutdown' | 'reveal' | 'done'>('initial');
 
   useEffect(() => {
-    // Sequência Cinematográfica
-    setIntroPhase('blur');
+    // Sequência Cinematográfica Direta
+    // Começa imediatamente o efeito de desligamento para criar o suspense
+    setIntroPhase('shutdown');
     
-    const tShutdown = setTimeout(() => {
-      setIntroPhase('shutdown');
-    }, 1000); // 1s de blur
-
+    // O efeito de TV Shutdown agora dura 2 segundos (definido no CSS)
     const tReveal = setTimeout(() => {
       setIntroPhase('reveal');
-    }, 1800); // Após o efeito TV Shutdown
+    }, 2200); // Aguarda o fim do shutdown lento + pequena pausa dramática
 
     const tDone = setTimeout(() => {
       setIntroPhase('done');
-    }, 5000); // Finaliza o ciclo de animação
+    }, 5500); // Finaliza o ciclo de animação após a revelação lenta
 
     return () => {
-      clearTimeout(tShutdown);
       clearTimeout(tReveal);
       clearTimeout(tDone);
     };
@@ -95,9 +92,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
       {/* OVERLAY DE ANIMAÇÃO ELITE */}
       {introPhase !== 'done' && (
         <div className={`fixed inset-0 z-[100] pointer-events-none flex items-center justify-center bg-black transition-opacity duration-1000 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
-          {introPhase === 'blur' && (
-            <div className="absolute inset-0 backdrop-blur-3xl bg-black/40" />
-          )}
+          {/* O desfoque inicial foi removido para um impacto mais limpo */}
           {introPhase === 'shutdown' && (
             <div className="w-full h-full bg-white animate-tv-shutdown" />
           )}
@@ -140,6 +135,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   </div>
                 )}
               </div>
+              {/* Badge abaixo da foto */}
               <RankBadge status={owner.status} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             </div>
             
