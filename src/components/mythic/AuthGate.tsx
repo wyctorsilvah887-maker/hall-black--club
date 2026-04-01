@@ -12,7 +12,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile 
 } from "firebase/auth";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getCountFromServer, collection } from "firebase/firestore";
 import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
 
 interface AuthGateProps {
@@ -76,6 +76,10 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         
         await updateProfile(userCredential.user, { displayName: name });
         
+        // Calcular número de registro (ordem de entrada)
+        const usersSnapshot = await getCountFromServer(collection(db, 'users'));
+        const memberNumber = usersSnapshot.data().count + 1;
+
         // 1. Criar perfil do usuário
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
@@ -86,10 +90,11 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           registrationDateTime: new Date().toISOString(),
           isPublicProfile: true,
           status: tempProfile?.status || 'MYTHIC',
-          theme: tempProfile?.theme || 'mythic'
+          theme: tempProfile?.theme || 'mythic',
+          memberNumber: memberNumber
         }, { merge: true });
 
-        // 2. Inativar a chave mítica se houver um codeId (Sistema de Uso Único)
+        // 2. Inativar a chave mítica se houver um codeId
         if (tempProfile?.codeId) {
           const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
           await updateDoc(codeRef, {
@@ -101,7 +106,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
         toast({
           title: "REGISTRO CONCLUÍDO",
-          description: "Sua conta na elite foi criada e sua chave foi ativada.",
+          description: `Sua conta na elite foi criada. Registro #${memberNumber.toString().padStart(2, '0')}/60.`,
         });
       }
     } catch (error: any) {

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -43,9 +44,10 @@ interface RankBadgeProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   id?: string;
+  regNumber?: number;
 }
 
-export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps) => {
+export const RankBadge = ({ status, className, size = 'md', id, regNumber }: RankBadgeProps) => {
   const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
   const isMythic = status === 'MYTHIC' || !status;
@@ -63,8 +65,8 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
   const starsCount = isMythic ? 6 : 5;
   
-  // Gera um número determinístico entre 01 e 60 baseado no ID
-  const getRegNumber = (uid?: string) => {
+  // Gera um número determinístico apenas como fallback se regNumber não existir
+  const getFallbackRegNumber = (uid?: string) => {
     if (!uid) return '00';
     let hash = 0;
     for (let i = 0; i < uid.length; i++) {
@@ -74,7 +76,11 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
     return num.toString().padStart(2, '0');
   };
 
-  const regDisplay = `#${getRegNumber(id)} / 60`;
+  const displayNum = regNumber 
+    ? regNumber.toString().padStart(2, '0') 
+    : getFallbackRegNumber(id);
+
+  const regDisplay = `#${displayNum} / 60`;
 
   return (
     <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>

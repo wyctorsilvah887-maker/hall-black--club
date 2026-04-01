@@ -95,6 +95,10 @@
         "theme": {
           "type": "string",
           "description": "UI theme based on status."
+        },
+        "memberNumber": {
+          "type": "number",
+          "description": "The sequential registration number (1-60) based on entry order."
         }
       },
       "required": [

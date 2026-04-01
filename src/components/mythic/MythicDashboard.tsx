@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -33,6 +34,7 @@ import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlo
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/image-utils';
 import { ImageEditor } from './ImageEditor';
+import { RankBadge } from './MythicIcons';
 
 interface MythicDashboardProps {
   profile: any;
@@ -379,6 +381,10 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 md:space-y-6">
+              <div className="flex flex-col items-center justify-center py-4">
+                <RankBadge status={profile.status} id={profile.id} regNumber={profile.memberNumber} />
+              </div>
+
               <div className="flex items-center gap-4 p-4 md:p-5 rounded-xl bg-black/60 border border-zinc-800/50">
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative flex-shrink-0">
                   {profile.photo ? <Image src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
