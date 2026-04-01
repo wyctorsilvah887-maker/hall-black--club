@@ -69,8 +69,12 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
   const starsCount = isMythic ? 6 : 5;
   
   // Ajuste fino do tamanho da fonte e posicionamento para nomes longos
-  // Reduzido para 14px conforme solicitado
-  const labelFontSize = labelText === 'LEGENDÁRIO' ? '14px' : '22px';
+  // LENDÁRIO (Gold) reduzido para 18px e LEGENDÁRIO (Amber) reduzido para 12px para equilíbrio
+  const labelFontSize = 
+    labelText === 'LEGENDÁRIO' ? '12px' : 
+    labelText === 'LENDÁRIO' ? '18px' : 
+    '22px';
+    
   const labelYPosition = labelText === 'LEGENDÁRIO' ? '57' : '58';
   
   const getFallbackRegNumber = (uid?: string) => {
