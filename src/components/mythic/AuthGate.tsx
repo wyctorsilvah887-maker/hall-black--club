@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -11,7 +12,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile 
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
 
 interface AuthGateProps {
@@ -71,11 +72,14 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         });
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userId = userCredential.user.uid;
+        
         await updateProfile(userCredential.user, { displayName: name });
         
-        const userRef = doc(db, 'users', userCredential.user.uid);
-        setDoc(userRef, {
-          id: userCredential.user.uid,
+        // 1. Criar perfil do usuário
+        const userRef = doc(db, 'users', userId);
+        await setDoc(userRef, {
+          id: userId,
           name: name,
           email: email,
           emergencyContact: emergencyPhone,
@@ -85,9 +89,19 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           theme: tempProfile?.theme || 'mythic'
         }, { merge: true });
 
+        // 2. Inativar a chave mítica se houver um codeId (Sistema de Uso Único)
+        if (tempProfile?.codeId) {
+          const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
+          await updateDoc(codeRef, {
+            status: 'activated',
+            userId: userId,
+            activationDateTime: new Date().toISOString()
+          });
+        }
+
         toast({
           title: "REGISTRO CONCLUÍDO",
-          description: "Sua conta na elite foi criada com sucesso.",
+          description: "Sua conta na elite foi criada e sua chave foi ativada.",
         });
       }
     } catch (error: any) {

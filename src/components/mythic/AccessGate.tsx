@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { validateMythicCode } from "@/app/actions";
-import { Loader2, Info, Crown, Gem, Sparkles } from "lucide-react";
+import { validateMythicCode } from "@/lib/mythic-service";
+import { useFirestore } from "@/firebase";
+import { Loader2, Info, Crown, Gem } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -22,14 +23,15 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const db = useFirestore();
 
   const handleClaimAccess = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code) return;
+    if (!code || !db) return;
 
     setIsLoading(true);
     try {
-      const result = await validateMythicCode(code);
+      const result = await validateMythicCode(db, code);
       if (result.success) {
         let title = "💎 STATUS MÍTICO";
         if (result.profile.status === 'LEGENDARY') title = "👑 STATUS LENDÁRIO";
@@ -121,8 +123,10 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64 max-w-[calc(100vw-32px)]">
                 <div className="space-y-2">
-                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi):</p>
-                  <code className="bg-black px-3 py-2 rounded text-[10px] border border-zinc-800 block font-mono text-zinc-400">MYTH-2024</code>
+                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi) - Chaves de Amostra:</p>
+                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-8X2K</code>
+                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-4P9L</code>
+                  <p className="text-[8px] text-zinc-600 italic mt-1">Total de 10 chaves únicas disponíveis.</p>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
                   <p className="font-black text-[10px] uppercase text-orange-500 flex items-center gap-2 tracking-widest">
