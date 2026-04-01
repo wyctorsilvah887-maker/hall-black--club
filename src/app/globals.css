@@ -102,6 +102,20 @@
   50% { fill: currentColor; stroke-opacity: 1; }
 }
 
+/* EFEITO TV SHUTDOWN */
+@keyframes tv-shutdown {
+  0% { transform: scaleX(1) scaleY(1); opacity: 1; }
+  40% { transform: scaleX(1) scaleY(0.005); opacity: 1; background: white; }
+  70% { transform: scaleX(0.005) scaleY(0.005); opacity: 1; background: white; }
+  100% { transform: scaleX(0) scaleY(0); opacity: 0; background: white; }
+}
+
+/* REVELAÇÃO LENTA DE ELITE */
+@keyframes slow-reveal-elite {
+  0% { opacity: 0; filter: blur(40px) brightness(0); transform: scale(1.05); }
+  100% { opacity: 1; filter: blur(0) brightness(1); transform: scale(1); }
+}
+
 .animate-ruby-glow {
   animation: ruby-glow 3s infinite ease-in-out;
 }
@@ -154,4 +168,12 @@
   background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(12px);
   border: 1px solid hsla(var(--primary), 0.2);
+}
+
+.animate-tv-shutdown {
+  animation: tv-shutdown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-slow-reveal {
+  animation: slow-reveal-elite 3s cubic-bezier(0.2, 0, 0.3, 1) forwards;
 }
