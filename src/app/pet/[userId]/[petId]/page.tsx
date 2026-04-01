@@ -25,7 +25,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
   useEffect(() => {
-    // Sequência de animação otimizada para fluidez 60fps
+    // Sequência de animação otimizada para fluidez 60fps - Início Automático
     setIntroPhase('shutdown');
     
     // 1. Início da Badge após TV Shutdown (2.2s)
@@ -108,11 +108,10 @@ export default function PetProfilePage({ params }: PetPageProps) {
 
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white pb-12 overflow-x-hidden relative ${themeClass}`}>
-      {/* OVERLAY CINEMATOGRÁFICO OTOMIZADO */}
+      {/* OVERLAY CINEMATOGRÁFICO */}
       {introPhase !== 'done' && (
         <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-700 ${introPhase === 'reveal' ? 'opacity-0' : 'opacity-100'}`}>
           
-          {/* Botão de Skip - Elite Style */}
           <button 
             onClick={handleSkip}
             className="absolute top-8 right-8 z-[110] flex items-center gap-2 px-4 py-2 border border-zinc-800 rounded-full bg-black/40 text-zinc-600 hover:text-white hover:border-zinc-600 transition-all active:scale-95 group"
@@ -121,12 +120,10 @@ export default function PetProfilePage({ params }: PetPageProps) {
             <FastForward className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </button>
 
-          {/* Shutdown da TV - Fluido */}
           {introPhase === 'shutdown' && (
             <div className="w-full h-full bg-white animate-tv-shutdown" />
           )}
 
-          {/* Carimbo da Badge - GPU Accelerated */}
           {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
             <div className={`flex flex-col items-center gap-10 backface-hidden ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
               <RankBadge status={owner.status} id={owner.id} regNumber={owner.memberNumber} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)]" />
@@ -139,7 +136,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
         </div>
       )}
 
-      {/* CONTEÚDO PRINCIPAL COM REVELAÇÃO LENTA */}
+      {/* CONTEÚDO PRINCIPAL */}
       <div className={`relative z-10 ${(introPhase === 'reveal' || introPhase === 'done') ? 'animate-slow-reveal' : 'opacity-0'}`}>
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[160px] opacity-20" />

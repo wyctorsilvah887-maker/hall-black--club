@@ -54,7 +54,6 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
   
   const scale = size === 'sm' ? 'scale-[0.6]' : size === 'lg' ? 'scale-125' : 'scale-100';
 
-  // Usar o ID do usuário para tornar os IDs do SVG únicos e evitar conflitos de renderização
   const uniqueId = id ? id.replace(/\W/g, '') : Math.random().toString(36).substring(7);
 
   const colors = {
@@ -68,8 +67,6 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
   const starsCount = isMythic ? 6 : 5;
   
-  // Ajuste fino do tamanho da fonte e posicionamento para nomes longos
-  // LENDÁRIO (Gold) reduzido para 18px e LEGENDÁRIO (Amber) reduzido para 12px para equilíbrio
   const labelFontSize = 
     labelText === 'LEGENDÁRIO' ? '12px' : 
     labelText === 'LENDÁRIO' ? '18px' : 
