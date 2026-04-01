@@ -9,7 +9,7 @@ import { CollarIcon, RubyShield } from "./MythicIcons";
 import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, doc, query, orderBy, limit } from 'firebase/firestore';
+import { collection, doc, query, orderBy, limit, getCountFromServer } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import {
@@ -53,6 +53,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [isEditPetOpen, setIsEditPetOpen] = useState(false);
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [memberCount, setMemberCount] = useState(0);
   
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
@@ -86,19 +87,22 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     }
   }, [profile, isSettingsOpen]);
 
+  useEffect(() => {
+    const fetchMemberCount = async () => {
+      if (db) {
+        const snapshot = await getCountFromServer(collection(db, 'users'));
+        setMemberCount(snapshot.data().count);
+      }
+    };
+    fetchMemberCount();
+  }, [db]);
+
   const petsQuery = useMemoFirebase(() => {
     if (!profile?.id) return null;
     return collection(db, 'users', profile.id, 'pets');
   }, [db, profile?.id]);
 
   const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
-
-  // Monitor de Membros Ativos e Ranking
-  const allUsersQuery = useMemoFirebase(() => {
-    return query(collection(db, 'users'), orderBy('memberNumber', 'asc'), limit(60));
-  }, [db]);
-  const { data: allUsersData, isLoading: isRankingLoading } = useCollection(allUsersQuery);
-  const memberCount = allUsersData?.length || 0;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'profile' | 'newPet' | 'editPet') => {
     const file = e.target.files?.[0];
@@ -440,54 +444,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                     </div>
                   )}
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-xl rounded-2xl overflow-hidden">
-              <CardHeader className="p-5 border-b border-zinc-900 bg-zinc-900/20">
-                <CardTitle className="flex items-center gap-3 text-sm font-black uppercase tracking-widest">
-                  <Trophy className="w-4 h-4 text-primary" />
-                  Hall da Linhagem (Elite 60)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                {isRankingLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-5 h-5 animate-spin text-zinc-800" />
-                  </div>
-                ) : (
-                  <div className="divide-y divide-zinc-900">
-                    {allUsersData?.map((user) => (
-                      <Link 
-                        key={user.id} 
-                        href={`/profile/${user.id}`}
-                        className="flex items-center justify-between p-4 hover:bg-zinc-900/40 transition-colors group"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className={`text-[10px] font-mono font-black ${user.id === profile.id ? themeColorClass : 'text-zinc-700'}`}>
-                            #{user.memberNumber?.toString().padStart(2, '0') || '--'}
-                          </span>
-                          <div className="w-7 h-7 rounded-full overflow-hidden border border-zinc-800 bg-zinc-900">
-                            {user.photo ? (
-                              <Image src={user.photo} alt={user.name} width={28} height={28} className="object-cover" unoptimized />
-                            ) : (
-                              <User className="w-full h-full p-1.5 text-zinc-800" />
-                            )}
-                          </div>
-                          <p className={`text-[11px] font-bold uppercase tracking-tight truncate ${user.id === profile.id ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-300'}`}>
-                            {user.name}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className={`py-0.5 px-2 text-[8px] font-black border-zinc-800 bg-zinc-950/50 ${user.status === 'LEGENDARY' ? 'text-yellow-500' : user.status === 'AMBER' ? 'text-orange-500' : 'text-zinc-600'}`}>
-                            {user.status || 'MÍTICO'}
-                          </Badge>
-                          <ChevronRight className="w-3 h-3 text-zinc-800 group-hover:text-zinc-600" />
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>
