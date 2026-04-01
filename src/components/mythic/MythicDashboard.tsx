@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -53,9 +52,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
-  const [selectedPetForSOS, setSelectedPetForSOS] = useState<any>(null);
-
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
     image: string;
@@ -266,6 +262,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                           isAmber ? 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' : 
                           'border-primary/50 bg-primary/10 text-primary';
 
+  // ID de Membro formatado
+  const memberRegistrationId = `HB-${profile.id?.slice(0, 5).toUpperCase() || 'XXXXX'}`;
+
   return (
     <div className={`min-h-screen bg-black text-white animate-in fade-in duration-1000 overflow-x-hidden`}>
       <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-800/50">
@@ -306,7 +305,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 <div className="px-3 pb-3">
                   <p className="font-bold text-sm text-white truncate">{profile.name}</p>
                   <p className={`text-[9px] font-black uppercase tracking-tighter ${themeColorClass}`}>
-                    {isLegendary ? 'ACREDITAÇÃO LENDÁRIA' : isAmber ? 'STATUS LEGENDÁRIO' : 'MEMBRO MÍTICO'}
+                    REGISTRO: {memberRegistrationId}
                   </p>
                 </div>
                 <DropdownMenuSeparator className="bg-zinc-800" />
@@ -336,12 +335,18 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <div className="space-y-1">
             <p className="text-zinc-500 text-[10px] md:text-[12px] uppercase tracking-[0.4em] font-bold">Bem-vindo ao Elite</p>
             <h1 className="text-2xl sm:text-4xl md:text-6xl font-black tracking-tight uppercase leading-none break-words max-w-2xl">{profile.name}</h1>
-            {(profile.city || profile.state) && (
-              <div className="flex items-center gap-2 text-zinc-500 mt-2">
-                <MapPin className="w-3 h-3" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">{profile.city}{profile.city && profile.state ? ', ' : ''}{profile.state}</span>
+            <div className="flex flex-wrap items-center gap-4 mt-2">
+              {(profile.city || profile.state) && (
+                <div className="flex items-center gap-2 text-zinc-500">
+                  <MapPin className="w-3 h-3" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{profile.city}{profile.city && profile.state ? ', ' : ''}{profile.state}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 text-zinc-600">
+                <ShieldCheck className="w-3 h-3" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">REGISTRO: {memberRegistrationId}</span>
               </div>
-            )}
+            </div>
           </div>
           <Badge variant="outline" className={`py-2 px-5 flex items-center gap-2 rounded-full font-bold tracking-widest text-[10px] md:text-xs w-full sm:w-fit justify-center ${themeBadgeStyle}`}>
             {isLegendary ? <Crown className="w-3.5 h-3.5 md:w-4 md:h-4" /> : isAmber ? <Gem className="w-3.5 h-3.5 md:w-4 md:h-4" /> : <CollarIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />}
@@ -384,15 +389,24 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 </div>
               </div>
 
-              {profile.emergencyContact && (
-                <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl bg-black/40 border border-zinc-800/30">
-                  <Phone className={`w-4 h-4 flex-shrink-0 ${themeColorClass}`} />
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-black/40 border border-zinc-800/30">
                   <div className="text-sm min-w-0">
-                    <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Contato Emergencial</p>
-                    <p className="font-mono text-white text-[11px] sm:text-sm">{profile.emergencyContact}</p>
+                    <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Nº Registro</p>
+                    <p className="font-mono text-white text-[11px] sm:text-sm font-black">{memberRegistrationId}</p>
                   </div>
                 </div>
-              )}
+
+                {profile.emergencyContact && (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-black/40 border border-zinc-800/30">
+                    <Phone className={`w-4 h-4 flex-shrink-0 ${themeColorClass}`} />
+                    <div className="text-sm min-w-0">
+                      <p className="text-zinc-500 uppercase text-[8px] md:text-[9px] tracking-widest font-semibold">Contato Emergencial</p>
+                      <p className="font-mono text-white text-[11px] sm:text-sm">{profile.emergencyContact}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
