@@ -75,7 +75,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
             HALL <span className="text-primary animate-text-ruby-glow">BLACK</span>
           </h1>
           <p className="text-zinc-500 text-[8px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.5em] font-bold">
-            THE ABSOLUTE PET ELITE
+            THE EXCLUSIVE ELITE 60
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
         <div className="mt-8 md:mt-10 flex flex-col items-center gap-4 md:gap-6">
           <p className="text-zinc-600 text-[8px] md:text-[9px] px-4 uppercase tracking-widest font-medium leading-relaxed">
-            Acesso restrito. Use chaves de criptografia autorizadas.
+            Apenas 60 slots disponíveis na rede mundial.
           </p>
           
           <TooltipProvider>
@@ -123,10 +123,10 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64 max-w-[calc(100vw-32px)]">
                 <div className="space-y-2">
-                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi) - Chaves de Amostra:</p>
+                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi) - Chaves Ativas:</p>
                   <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-8X2K</code>
                   <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-4P9L</code>
-                  <p className="text-[8px] text-zinc-600 italic mt-1">Total de 10 chaves únicas disponíveis.</p>
+                  <p className="text-[8px] text-zinc-600 italic mt-1">Limite global de 60 chaves únicas.</p>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
                   <p className="font-black text-[10px] uppercase text-orange-500 flex items-center gap-2 tracking-widest">

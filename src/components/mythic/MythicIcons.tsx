@@ -52,7 +52,6 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   
   const scale = size === 'sm' ? 'scale-[0.6]' : size === 'lg' ? 'scale-125' : 'scale-100';
 
-  // Configuração de cores baseada no status
   const colors = {
     primary: isLegendary ? '#FFD700' : isAmber ? '#F59E0B' : '#ff1a1a',
     secondary: isLegendary ? '#B8860B' : isAmber ? '#D97706' : '#660000',
@@ -63,11 +62,22 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
 
   const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
   const starsCount = isMythic ? 6 : 5;
-  const displayId = id ? `HB-${id.slice(0, 5).toUpperCase()}` : 'HB-XXXXX';
+  
+  // Gera um número determinístico entre 01 e 60 baseado no ID
+  const getRegNumber = (uid?: string) => {
+    if (!uid) return '00';
+    let hash = 0;
+    for (let i = 0; i < uid.length; i++) {
+      hash = uid.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const num = (Math.abs(hash) % 60) + 1;
+    return num.toString().padStart(2, '0');
+  };
+
+  const regDisplay = `#${getRegNumber(id)} / 60`;
 
   return (
     <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>
-      {/* Pulsating Aura */}
       <div 
         className="absolute inset-0 blur-[50px] rounded-full animate-pulse" 
         style={{ backgroundColor: colors.aura }}
@@ -82,7 +92,6 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
         className="relative drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]"
       >
         <defs>
-          {/* Metal Gradiente */}
           <linearGradient id="metal-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor={colors.primary} />
             <stop offset="30%" stopColor={colors.vibrant} />
@@ -90,21 +99,18 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
             <stop offset="100%" stopColor={colors.secondary} />
           </linearGradient>
 
-          {/* Cromo Negro Profundo */}
           <linearGradient id="dark-chrome-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#444" />
             <stop offset="50%" stopColor="#111" />
             <stop offset="100%" stopColor="#000" />
           </linearGradient>
 
-          {/* Brilho do Texto */}
           <linearGradient id="text-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#fff" />
             <stop offset="50%" stopColor={isMythic ? '#ffcccc' : '#fff2ac'} />
             <stop offset="100%" stopColor={colors.primary} />
           </linearGradient>
 
-          {/* Máscara de Brilho Metálico (Sweep) */}
           <linearGradient id="sweep-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="white" stopOpacity="0" />
             <stop offset="40%" stopColor="white" stopOpacity="0" />
@@ -131,20 +137,16 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
           </mask>
         </defs>
 
-        {/* Estrutura Alada Metálica */}
         <g opacity="1">
           <path d="M70 45 L20 25 L45 50 L15 40 L40 55 L10 60 L70 65 Z" fill="url(#metal-gradient)" stroke={colors.secondary} strokeWidth="1" />
           <path d="M190 45 L240 25 L215 50 L245 40 L220 55 L250 60 L190 65 Z" fill="url(#metal-gradient)" stroke={colors.secondary} strokeWidth="1" />
         </g>
 
-        {/* Banner Central (Corpo) */}
         <path d="M60 35 L200 35 L215 70 L45 70 Z" fill="url(#dark-chrome-gradient)" stroke="#000" strokeWidth="2" />
         <path d="M65 38 L195 38 L208 67 L52 67 Z" fill="none" stroke="url(#metal-gradient)" strokeWidth="1.5" strokeOpacity="0.6" />
 
-        {/* Ponta Inferior V */}
         <path d="M100 65 L130 95 L160 65 Z" fill="url(#dark-chrome-gradient)" stroke="url(#metal-gradient)" strokeWidth="2" />
 
-        {/* Texto de Rank */}
         <text 
           x="130" 
           y="58" 
@@ -161,7 +163,6 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
           {labelText}
         </text>
 
-        {/* Numeração do Usuário */}
         <text 
           x="130" 
           y="74" 
@@ -170,15 +171,15 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
           style={{ 
             fontFamily: 'monospace', 
             fontWeight: 'bold', 
-            fontSize: '8px', 
+            fontSize: '9px', 
             letterSpacing: '2px',
-            opacity: 0.8
+            opacity: 0.9,
+            filter: 'brightness(1.5)'
           }}
         >
-          {displayId}
+          {regDisplay}
         </text>
 
-        {/* EFEITO FLASH Sweep */}
         <g mask="url(#text-flash-mask)">
             <rect 
               x="0" 
@@ -190,14 +191,12 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
             />
         </g>
 
-        {/* Estrelas de Rank */}
-        <g transform={`translate(${130 - (starsCount * 6)}, 84)`}>
+        <g transform={`translate(${130 - ((starsCount - 1) * 6)}, 86)`}>
             {Array.from({ length: starsCount }).map((_, i) => (
                 <path 
                   key={i} 
                   className="animate-star-fill-loop"
                   style={{ 
-                    paddingTop: '4px',
                     animationDelay: `${i * 0.4}s`,
                     color: colors.primary
                   }}
