@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc, query, orderBy, limit, getCountFromServer } from 'firebase/firestore';
@@ -52,6 +52,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   
   const [isAddPetOpen, setIsAddPetOpen] = useState(false);
   const [isEditPetOpen, setIsEditPetOpen] = useState(false);
+  const [isHealthDialogOpen, setIsHealthDialogOpen] = useState(false);
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [memberCount, setMemberCount] = useState(0);
@@ -78,17 +79,16 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [settingsState, setSettingsState] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
 
-  // Protocolo de Desbloqueio de Interface: 
-  // Garante que o body nunca fique travado após o fechamento de múltiplos modais.
+  // Protocolo de Desbloqueio de Interface
   useEffect(() => {
-    const isAnyModalOpen = isAddPetOpen || isEditPetOpen || isSettingsOpen || !!editorState;
+    const isAnyModalOpen = isAddPetOpen || isEditPetOpen || isSettingsOpen || isHealthDialogOpen || !!editorState;
     if (!isAnyModalOpen) {
       setTimeout(() => {
         document.body.style.pointerEvents = 'auto';
         document.body.style.overflow = 'auto';
       }, 100);
     }
-  }, [isAddPetOpen, isEditPetOpen, isSettingsOpen, editorState]);
+  }, [isAddPetOpen, isEditPetOpen, isSettingsOpen, isHealthDialogOpen, editorState]);
 
   useEffect(() => {
     if (profile && isSettingsOpen) {
@@ -107,7 +107,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           const snapshot = await getCountFromServer(collection(db, 'users'));
           setMemberCount(snapshot.data().count);
         } catch (e) {
-          // Ignorar erro silenciosamente para evitar poluição do console em ambiente dev
+          // Ignorar erro silenciosamente
         }
       }
     };
@@ -423,6 +423,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Button 
+            onClick={() => setIsHealthDialogOpen(true)}
             className={`w-full h-14 md:h-20 text-xs sm:text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
               ${isLegendary ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 hover:scale-[1.01] shadow-yellow-500/20' : 
                 isAmber ? 'bg-gradient-to-r from-orange-600 to-orange-400 hover:scale-[1.01] shadow-orange-500/20' : 
@@ -573,6 +574,53 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           </div>
         </div>
       </main>
+
+      {/* DIÁLOGO SAÚDE MUNDO PET */}
+      <Dialog open={isHealthDialogOpen} onOpenChange={setIsHealthDialogOpen}>
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-3xl overflow-hidden relative p-0">
+          <div className={`absolute top-0 inset-x-0 h-1.5 ${isLegendary ? 'bg-yellow-500' : isAmber ? 'bg-orange-500' : 'bg-primary'}`} />
+          <div className="p-8 space-y-6">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className={`p-4 rounded-2xl bg-black border ${isLegendary ? 'border-yellow-500/30' : isAmber ? 'border-orange-500/30' : 'border-primary/30'}`}>
+                <Activity className={`w-10 h-10 ${themeColorClass} animate-pulse`} />
+              </div>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-black uppercase tracking-tighter text-center">Protocolos de Saúde</DialogTitle>
+                <DialogDescription className="text-zinc-500 text-[10px] uppercase tracking-[0.2em] font-bold text-center pt-1">Ecossistema Hall Black Elite</DialogDescription>
+              </DialogHeader>
+            </div>
+
+            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
+              <p className="text-zinc-400 text-xs leading-relaxed text-center font-medium">
+                Para acessar os <span className="text-white font-bold">serviços de telemedicina</span>, histórico clínico de elite e monitoramento preventivo, você e seu pet precisam estar devidamente registrados no ecossistema Hall Black.
+              </p>
+              <div className="h-px w-full bg-zinc-800/50" />
+              <p className="text-zinc-500 text-[10px] text-center uppercase tracking-widest font-black italic">
+                A saúde da linhagem é nossa prioridade absoluta.
+              </p>
+            </div>
+
+            <DialogFooter className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                onClick={() => setIsHealthDialogOpen(false)}
+                variant="ghost" 
+                className="flex-1 h-14 rounded-2xl border border-zinc-900 text-zinc-500 text-[10px] font-black uppercase tracking-widest hover:text-white"
+              >
+                Agora não
+              </Button>
+              <Button 
+                onClick={() => {
+                  setIsHealthDialogOpen(false);
+                  setIsAddPetOpen(true);
+                }}
+                className={`flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl ${isLegendary ? 'bg-yellow-500 text-black hover:bg-yellow-400' : isAmber ? 'bg-orange-500 text-black hover:bg-orange-400' : 'bg-primary text-white hover:bg-accent'}`}
+              >
+                Cadastrar Agora
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-sm rounded-2xl">
