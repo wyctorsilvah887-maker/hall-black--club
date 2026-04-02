@@ -9,7 +9,7 @@ import { CollarIcon, RubyShield } from "./MythicIcons";
 import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, doc, query, orderBy, limit, getCountFromServer } from 'firebase/firestore';
+import { collection, doc, query, orderBy, limit } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import {
@@ -55,7 +55,14 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [isHealthDialogOpen, setIsHealthDialogOpen] = useState(false);
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [memberCount, setMemberCount] = useState(0);
+  
+  // Monitor de Membros em Tempo Real
+  const globalUsersQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return collection(db, 'users');
+  }, [db]);
+  const { data: allUsersData } = useCollection(globalUsersQuery);
+  const memberCount = allUsersData?.length || 0;
   
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
@@ -88,20 +95,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       setSettingsPhoto(profile.photo || null);
     }
   }, [profile, isSettingsOpen]);
-
-  useEffect(() => {
-    const fetchMemberCount = async () => {
-      if (db) {
-        try {
-          const snapshot = await getCountFromServer(collection(db, 'users'));
-          setMemberCount(snapshot.data().count);
-        } catch (e) {
-          // Ignorar erro
-        }
-      }
-    };
-    fetchMemberCount();
-  }, [db]);
 
   const petsQuery = useMemoFirebase(() => {
     if (!profile?.id) return null;
