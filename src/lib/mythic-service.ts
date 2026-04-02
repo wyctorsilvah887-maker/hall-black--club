@@ -1,13 +1,13 @@
 'use client';
 
-import { collection, query, where, getDocs, Firestore } from 'firebase/firestore';
+import { doc, getDoc, Firestore } from 'firebase/firestore';
 
 /**
  * @fileOverview Serviço de validação de chaves de acesso para o Hall Black Club.
  * 
  * POLÍTICA DE USO:
- * O sistema agora aceita apenas Chaves Míticas Únicas (Firestore).
- * Chaves são inativadas após o primeiro registro bem-sucedido.
+ * O sistema busca o código diretamente pelo ID do documento na coleção 'mythicCodes'.
+ * Chaves são inativadas (status: 'activated') após o primeiro registro bem-sucedido.
  */
 
 export async function validateMythicCode(db: Firestore, code: string) {
@@ -16,18 +16,16 @@ export async function validateMythicCode(db: Firestore, code: string) {
 
   const normalizedCode = code.toUpperCase().trim();
 
-  // Verificação de Chaves Míticas Únicas (Firestore - Uso Único)
   try {
-    const codesRef = collection(db, 'mythicCodes');
-    const q = query(codesRef, where('code', '==', normalizedCode));
-    const querySnapshot = await getDocs(q);
+    // Busca direta pelo ID do documento (o código é o ID)
+    const codeRef = doc(db, 'mythicCodes', normalizedCode);
+    const codeSnap = await getDoc(codeRef);
 
-    if (querySnapshot.empty) {
+    if (!codeSnap.exists()) {
       return { success: false, message: "Chave de Acesso Inválida ou Não Localizada" };
     }
 
-    const codeDoc = querySnapshot.docs[0];
-    const codeData = codeDoc.data();
+    const codeData = codeSnap.data();
 
     if (codeData.status !== 'available') {
       return { 
@@ -36,15 +34,14 @@ export async function validateMythicCode(db: Firestore, code: string) {
       };
     }
 
-    // O status do código será 'MYTHIC' por padrão, a menos que o documento especifique outro.
     return {
       success: true,
-      message: "Acesso Mítico Concedido. Chave Validada.",
+      message: "Acesso Validado. Bem-vindo à Elite.",
       profile: {
         name: "Candidato à Elite",
         status: codeData.status_rank || 'MYTHIC',
         theme: codeData.theme || 'mythic',
-        codeId: codeDoc.id // Usado no AuthGate para marcar como 'activated'
+        codeId: codeSnap.id 
       }
     };
   } catch (error) {
