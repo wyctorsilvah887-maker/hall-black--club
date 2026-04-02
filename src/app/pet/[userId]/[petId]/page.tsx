@@ -53,12 +53,6 @@ export default function PetProfilePage({ params }: PetPageProps) {
     };
   }, []);
 
-  const handleSkip = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIntroPhase('done');
-  };
-
   const petRef = React.useMemo(() => {
     if (!db || !userId || !petId) return null;
     return doc(db, 'users', userId, 'pets', petId);
@@ -114,15 +108,6 @@ export default function PetProfilePage({ params }: PetPageProps) {
         <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-700 
           ${introPhase === 'reveal' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           
-          <button 
-            onClick={handleSkip}
-            type="button"
-            className="absolute top-8 right-8 z-[120] flex items-center gap-2 px-4 py-2 border border-zinc-800 rounded-full bg-black/60 text-zinc-300 hover:text-white hover:border-zinc-500 transition-all active:scale-95 group pointer-events-auto shadow-2xl backdrop-blur-sm"
-          >
-            <span className="text-[9px] font-black uppercase tracking-[0.3em] ml-1">Pular Protocolo</span>
-            <FastForward className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </button>
-
           {introPhase === 'shutdown' && (
             <div className="w-full h-full bg-white animate-tv-shutdown" />
           )}
