@@ -38,12 +38,35 @@ Para que um código funcione, você deve cadastrá-lo na coleção `mythicCodes`
 **Importante:** Use o próprio código como o **ID do Documento**.
 
 ### Campos obrigatórios por documento (Case-Sensitive):
-1. **ID do Documento:** (O próprio código, ex: `HB-24-MYTH-X01`)
-2. `status`: (string) deve ser exatamente `available` (DIGITE SEM ASPAS)
-3. `status_rank`: (string) `MYTHIC`, `AMBER` ou `LEGENDARY`
-4. `theme`: (string) `mythic`, `amber` ou `legendary`
+1. **ID do Documento:** (O próprio código)
+2. `status`: `available` (DIGITE SEM ASPAS)
+3. `status_rank`: `MYTHIC`, `AMBER` ou `LEGENDARY`
+4. `theme`: `mythic`, `amber` ou `legendary`
 
-### Lista de 10 Códigos Sugeridos:
+### 🏆 Lista de 20 Códigos LENDÁRIOS (Gold/Ouro):
+Estes códigos ativam o tema Dourado e o status de maior prestígio.
+- `HB-24-GOLD-X01`
+- `HB-24-GOLD-B22`
+- `HB-24-GOLD-Z99`
+- `HB-24-GOLD-K33`
+- `HB-24-GOLD-R55`
+- `HB-24-GOLD-P11`
+- `HB-24-GOLD-M07`
+- `HB-24-GOLD-T12`
+- `HB-24-GOLD-Y44`
+- `HB-24-GOLD-W10`
+- `HB-24-GOLD-S88`
+- `HB-24-GOLD-V15`
+- `HB-24-GOLD-F20`
+- `HB-24-GOLD-G25`
+- `HB-24-GOLD-H30`
+- `HB-24-GOLD-J35`
+- `HB-24-GOLD-L40`
+- `HB-24-GOLD-N45`
+- `HB-24-GOLD-Q50`
+- `HB-24-GOLD-C55`
+
+### 💎 Lista de 10 Códigos MÍTICOS / ÂMBAR:
 - `HB-24-MYTH-X01` (Mítico)
 - `HB-24-MYTH-K99` (Mítico)
 - `HB-24-MYTH-Z77` (Mítico)
