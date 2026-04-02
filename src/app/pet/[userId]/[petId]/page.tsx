@@ -2,7 +2,7 @@
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
-import { useDoc, useFirestore } from '@/firebase';
+import { useDoc, useFirestore, useUser } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,7 @@ type IntroPhase = 'initial' | 'shutdown' | 'stamp' | 'fade_stamp' | 'reveal' | '
 export default function PetProfilePage({ params }: PetPageProps) {
   const { userId, petId } = use(params);
   const db = useFirestore();
+  const { user } = useUser();
   
   const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
@@ -85,9 +86,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
         <ShieldAlert className="w-12 h-12 text-zinc-900 mb-6" />
         <h1 className="text-xl font-black text-white uppercase tracking-tighter mb-2">Protocolo Inexistente</h1>
         <p className="text-zinc-600 text-[10px] uppercase tracking-widest max-w-xs mb-8 leading-relaxed">Este registro não foi localizado em nossa rede de elite.</p>
-        <Button asChild variant="outline" className="border-zinc-800 text-zinc-500 hover:text-white rounded-full h-11 px-8 text-[10px] font-black uppercase tracking-widest">
-          <Link href="/">Retornar</Link>
-        </Button>
+        {user && (
+          <Button asChild variant="outline" className="border-zinc-800 text-zinc-500 hover:text-white rounded-full h-11 px-8 text-[10px] font-black uppercase tracking-widest">
+            <Link href="/">Retornar</Link>
+          </Button>
+        )}
       </div>
     );
   }
@@ -143,9 +146,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
         </div>
 
         <div className="max-w-3xl mx-auto px-5 pt-8 md:pt-16 space-y-10 relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2 text-zinc-600 hover:text-white transition-colors text-[9px] font-bold uppercase tracking-[0.4em]">
-            <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao Início
-          </Link>
+          {user && (
+            <Link href="/" className="inline-flex items-center gap-2 text-zinc-600 hover:text-white transition-colors text-[9px] font-bold uppercase tracking-[0.4em]">
+              <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao Início
+            </Link>
+          )}
 
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="flex flex-col items-center gap-2">
@@ -211,11 +216,13 @@ export default function PetProfilePage({ params }: PetPageProps) {
                       {owner.status === 'LEGENDARY' ? 'PLATINUM LENDÁRIO' : owner.status === 'AMBER' ? 'RUBI LEGENDÁRIO' : 'MEMBRO MÍTICO'}
                     </p>
                   </div>
-                  <Button asChild variant="ghost" className="p-0 h-auto text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-white flex items-center gap-1 group/btn">
-                    <Link href={`/profile/${owner.id}`}>
-                      Ver Perfil Completo <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-                    </Link>
-                  </Button>
+                  {user && (
+                    <Button asChild variant="ghost" className="p-0 h-auto text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-white flex items-center gap-1 group/btn">
+                      <Link href={`/profile/${owner.id}`}>
+                        Ver Perfil Completo <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
+                  )}
                </CardContent>
             </Card>
 
