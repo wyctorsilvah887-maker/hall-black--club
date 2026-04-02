@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -9,13 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode } from "@/lib/mythic-service";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from 'firebase/firestore';
-import { Loader2, Info, Crown, Gem, Users, LogIn } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Loader2, Crown, Users, LogIn } from "lucide-react";
 
 interface AccessGateProps {
   onSuccess: (profile: any) => void;
@@ -120,11 +113,11 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <Button 
             type="submit" 
             className="w-full h-14 md:h-16 text-base md:text-lg font-black bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow group relative overflow-hidden"
-            disabled={isLoading || !code || (slotsLeft === 0 && !code.startsWith('LEGEND'))}
+            disabled={isLoading || !code || (slotsLeft === 0)}
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" />
-            ) : slotsLeft === 0 && !code.startsWith('LEGEND') ? (
+            ) : slotsLeft === 0 ? (
               "CAPACIDADE MÁXIMA"
             ) : (
               <span className="flex items-center justify-center gap-2">
@@ -154,37 +147,6 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <p className="text-zinc-600 text-[8px] md:text-[9px] px-4 uppercase tracking-widest font-medium leading-relaxed">
             Chaves individuais garantem o sigilo da linhagem.
           </p>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-zinc-700 hover:text-zinc-400 gap-2 text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.3em] font-bold">
-                  <Info className="w-3 h-3" />
-                  CONSULTAR CHAVES MESTRAS
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64 max-w-[calc(100vw-32px)]">
-                <div className="space-y-2">
-                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Chaves de Teste (Mestre):</p>
-                  <p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-1">Uso ilimitado para demonstração</p>
-                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-TEST</code>
-                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-8X2K</code>
-                </div>
-                <div className="space-y-2 pt-2 border-t border-zinc-800">
-                  <p className="font-black text-[10px] uppercase text-orange-500 flex items-center gap-2 tracking-widest">
-                    <Gem className="w-3 h-3" /> Legendário:
-                  </p>
-                  <code className="bg-black px-3 py-2 rounded text-[10px] border border-orange-900/50 block font-mono text-orange-500">AMBER-LEGEND</code>
-                </div>
-                <div className="space-y-2 pt-2 border-t border-zinc-800">
-                  <p className="font-black text-[10px] uppercase text-yellow-500 flex items-center gap-2 tracking-widest">
-                    <Crown className="w-3 h-3" /> Lendário:
-                  </p>
-                  <code className="bg-black px-3 py-2 rounded text-[10px] border border-yellow-900/50 block font-mono text-yellow-500">LEGEND-GOLD</code>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
       </div>
     </div>
