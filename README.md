@@ -32,6 +32,27 @@ Para versionar este projeto no seu repositório, execute os seguintes comandos n
    git push -u origin main
    ```
 
+## 🔑 Gerenciamento de Chaves (Firestore)
+
+O sistema agora utiliza exclusivamente **Códigos Únicos**. Para que um código funcione, você deve cadastrá-lo na coleção `mythicCodes` no seu Console do Firebase com os seguintes campos:
+
+- `code`: (String) O código da chave.
+- `status`: (String) "available"
+- `status_rank`: (String) "MYTHIC", "AMBER" ou "LEGENDARY"
+- `theme`: (String) "mythic", "amber" ou "legendary"
+
+### Sugestão de 10 Códigos Iniciais:
+1. `HB-24-MYTH-X01`
+2. `HB-24-MYTH-K99`
+3. `HB-24-MYTH-Z77`
+4. `HB-24-MYTH-B12`
+5. `HB-24-MYTH-R50`
+6. `HB-24-MYTH-L33`
+7. `HB-24-MYTH-P10`
+8. `HB-24-MYTH-V07`
+9. `HB-24-MYTH-Q88`
+10. `HB-24-MYTH-A42`
+
 ## 🛠️ Tecnologias Utilizadas
 
 - **Framework:** Next.js 15 (App Router)
