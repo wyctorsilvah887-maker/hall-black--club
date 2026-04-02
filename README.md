@@ -38,12 +38,12 @@ Para que um código funcione, você deve cadastrá-lo na coleção `mythicCodes`
 **Importante:** Use o próprio código como o **ID do Documento**.
 
 ### Campos obrigatórios por documento (Case-Sensitive):
-1. **ID do Documento:** (O próprio código)
-2. `status`: `available` (DIGITE SEM ASPAS)
-3. `status_rank`: `MYTHIC`, `AMBER` ou `LEGENDARY`
-4. `theme`: `mythic`, `amber` ou `legendary`
+1. **ID do Documento:** (O próprio código, ex: `HB-24-GOLD-X01`)
+2. `status`: `available` (Status de disponibilidade, digite sem aspas)
+3. `status_rank`: `MYTHIC`, `AMBER` ou `LEGENDARY` (Define o título do membro)
+4. `theme`: `mythic`, `amber` ou `legendary` (Define a cor da interface)
 
-### 🏆 Lista de 20 Códigos LENDÁRIOS (Gold/Ouro):
+### 🏆 Lista de 20 Códigos LENDÁRIOS (Ouro):
 Estes códigos ativam o tema Dourado e o status de maior prestígio.
 - `HB-24-GOLD-X01`
 - `HB-24-GOLD-B22`
