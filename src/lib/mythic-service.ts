@@ -26,8 +26,11 @@ export async function validateMythicCode(db: Firestore, code: string) {
     }
 
     const codeData = codeSnap.data();
+    
+    // Normaliza o status vindo do Firestore para evitar erros de digitação (case-insensitive)
+    const currentStatus = (codeData.status || '').toString().toLowerCase().trim();
 
-    if (codeData.status !== 'available') {
+    if (currentStatus !== 'available') {
       return { 
         success: false, 
         message: "Esta chave de acesso já foi ativada por outro membro da elite." 
