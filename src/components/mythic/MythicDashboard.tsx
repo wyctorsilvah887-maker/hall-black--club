@@ -9,7 +9,7 @@ import { CollarIcon, RubyShield } from "./MythicIcons";
 import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, doc, query, orderBy, limit } from 'firebase/firestore';
+import { collection, doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import {
@@ -36,6 +36,7 @@ import { compressImage } from '@/lib/image-utils';
 import { ImageEditor } from './ImageEditor';
 import { RankBadge } from './MythicIcons';
 import { ToastAction } from "@/components/ui/toast";
+import { cn } from '@/lib/utils';
 
 interface MythicDashboardProps {
   profile: any;
@@ -306,6 +307,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-800/50">
         <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
+             <Crown className={cn("w-5 h-5 md:w-6 md:h-6", themeColorClass)} />
              <h2 className={`text-sm sm:text-lg md:text-2xl font-black font-headline uppercase tracking-tighter 
               ${isLegendary ? 'gold-gradient-text' : isAmber ? 'amber-gradient-text' : 'text-primary'}`}>
               {isLegendary ? 'HALL BLACK LENDÁRIO' : isAmber ? 'HALL BLACK LEGENDÁRIO' : 'HALL BLACK'}

@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -84,7 +85,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
         <div className="space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
-            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <Crown className="w-4 h-4 text-primary animate-pulse" />
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white font-headline">
