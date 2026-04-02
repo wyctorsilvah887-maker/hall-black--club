@@ -27,13 +27,15 @@ export async function validateMythicCode(db: Firestore, code: string) {
 
     const codeData = codeSnap.data();
     
-    // Normaliza o status vindo do Firestore para evitar erros de digitação (case-insensitive)
-    const currentStatus = (codeData.status || '').toString().toLowerCase().trim();
+    // Normaliza o status vindo do Firestore
+    // Remove aspas caso o usuário tenha digitado literalmente com aspas no console do Firebase (erro comum)
+    const rawStatus = (codeData.status || '').toString().toLowerCase().trim();
+    const currentStatus = rawStatus.replace(/['"]+/g, ''); 
 
     if (currentStatus !== 'available') {
       return { 
         success: false, 
-        message: "Esta chave de acesso já foi ativada por outro membro da elite." 
+        message: "Esta chave de acesso já foi ativada ou está indisponível." 
       };
     }
 

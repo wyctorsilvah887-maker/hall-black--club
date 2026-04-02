@@ -39,7 +39,7 @@ Para que um código funcione, você deve cadastrá-lo na coleção `mythicCodes`
 
 ### Campos obrigatórios por documento (Case-Sensitive):
 1. **ID do Documento:** (O próprio código, ex: `HB-24-MYTH-X01`)
-2. `status`: (string) deve ser exatamente `available`
+2. `status`: (string) deve ser exatamente `available` (DIGITE SEM ASPAS)
 3. `status_rank`: (string) `MYTHIC`, `AMBER` ou `LEGENDARY`
 4. `theme`: (string) `mythic`, `amber` ou `legendary`
 
