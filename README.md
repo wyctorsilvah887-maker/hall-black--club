@@ -34,13 +34,12 @@ Para versionar este projeto no seu repositório, execute os seguintes comandos n
 
 ## 🔑 Estrutura das Chaves (Mythic Codes)
 
-Os códigos seguem o padrão `HB-[ANO]-[NÍVEL]-[ID]`. O "26" refere-se ao ano de 2026.
-Para que um código funcione, você deve cadastrá-lo na coleção `mythicCodes` no seu Console do Firebase. 
-**Importante:** Use o próprio código como o **ID do Documento**.
+**IMPORTANTE:** Todos os códigos devem ser criados na MESMA coleção: `mythicCodes`.
+Os códigos seguem o padrão `HB-26-[NÍVEL]-[ID]`. O "26" refere-se ao ano de 2026.
 
 ### Campos obrigatórios por documento (Case-Sensitive):
 1. **ID do Documento:** (O próprio código, ex: `HB-26-GOLD-X01`)
-2. `status`: `available` (Sem aspas, tudo minúsculo. O sistema limpa aspas automáticas se inseridas por erro)
+2. `status`: `available` (Sem aspas, tudo minúsculo)
 3. `status_rank`: `MYTHIC`, `AMBER` ou `LEGENDARY` (Define o título do membro)
 4. `theme`: `mythic`, `amber` ou `legendary` (Define a cor da interface)
 
