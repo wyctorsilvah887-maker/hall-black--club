@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -74,7 +73,6 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
   };
 
   const handleBypassToLogin = () => {
-    // Permite que membros existentes pulem a validação de código para ir à tela de login
     onSuccess({ status: 'MYTHIC', theme: 'mythic', name: 'Membro Elite' });
   };
 
@@ -82,7 +80,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black overflow-hidden relative">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/10 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
       
-      <div className="w-full max-w-md space-y-8 md:space-y-10 relative z-10 text-center">
+      <div className="w-full max-md space-y-8 md:space-y-10 relative z-10 text-center">
         <div className="space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
@@ -153,7 +151,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
         <div className="mt-8 md:mt-10 flex flex-col items-center gap-4 md:gap-6">
           <p className="text-zinc-600 text-[8px] md:text-[9px] px-4 uppercase tracking-widest font-medium leading-relaxed">
-            Apenas 60 slots disponíveis na rede mundial.
+            Chaves individuais garantem o sigilo da linhagem.
           </p>
           
           <TooltipProvider>
@@ -161,26 +159,25 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="sm" className="text-zinc-700 hover:text-zinc-400 gap-2 text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.3em] font-bold">
                   <Info className="w-3 h-3" />
-                  CONSULTAR CHAVES
+                  CONSULTAR CHAVES MESTRAS
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-zinc-950 border-zinc-800 text-zinc-300 p-4 space-y-4 w-64 max-w-[calc(100vw-32px)]">
                 <div className="space-y-2">
-                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Mítico (Rubi) - Chaves Ativas:</p>
+                  <p className="font-black text-[10px] uppercase text-primary tracking-widest">Chaves de Teste (Mestre):</p>
+                  <p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-1">Uso ilimitado para demonstração</p>
                   <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-TEST</code>
                   <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-8X2K</code>
-                  <code className="bg-black px-3 py-2 rounded text-[9px] border border-zinc-800 block font-mono text-zinc-400">HB-MYTH-4P9L</code>
-                  <p className="text-[8px] text-zinc-600 italic mt-1">Limite global de 60 chaves únicas.</p>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
                   <p className="font-black text-[10px] uppercase text-orange-500 flex items-center gap-2 tracking-widest">
-                    <Gem className="w-3 h-3" /> Legendário (Laranja):
+                    <Gem className="w-3 h-3" /> Legendário:
                   </p>
                   <code className="bg-black px-3 py-2 rounded text-[10px] border border-orange-900/50 block font-mono text-orange-500">AMBER-LEGEND</code>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
                   <p className="font-black text-[10px] uppercase text-yellow-500 flex items-center gap-2 tracking-widest">
-                    <Crown className="w-3 h-3" /> Lendário (Dourado):
+                    <Crown className="w-3 h-3" /> Lendário:
                   </p>
                   <code className="bg-black px-3 py-2 rounded text-[10px] border border-yellow-900/50 block font-mono text-yellow-500">LEGEND-GOLD</code>
                 </div>

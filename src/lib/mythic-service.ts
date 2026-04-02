@@ -4,7 +4,10 @@ import { collection, query, where, getDocs, Firestore } from 'firebase/firestore
 
 /**
  * @fileOverview Serviço de validação de chaves de acesso para o Hall Black Club.
- * Realiza a validação de chaves especiais (Lendário/Âmbar) e chaves místicas únicas no Firestore.
+ * 
+ * POLÍTICA DE USO:
+ * 1. Chaves Hardcoded (Mestras): Uso ilimitado. Destinadas a testes e demonstração.
+ * 2. Chaves Firestore (Únicas): Uso único. São inativadas após o primeiro registro bem-sucedido.
  */
 
 const AMBER_CODES = ["AMBER-LEGEND"];
@@ -17,7 +20,7 @@ export async function validateMythicCode(db: Firestore, code: string) {
 
   const normalizedCode = code.toUpperCase().trim();
 
-  // 1. Verificação de Categorias Especiais (Hardcoded para demonstração de acesso administrativo)
+  // 1. Verificação de Categorias Especiais (Chaves Mestras - Uso Ilimitado)
   if (LEGENDARY_CODES.includes(normalizedCode)) {
     return {
       success: true,
@@ -42,7 +45,7 @@ export async function validateMythicCode(db: Firestore, code: string) {
     };
   }
 
-  // 2. Verificação de Chaves Míticas de Teste (Hardcoded)
+  // 2. Verificação de Chaves Míticas de Teste (Chaves Mestras - Uso Ilimitado)
   if (MYTHIC_TEST_CODES.includes(normalizedCode)) {
     return {
       success: true,
@@ -55,7 +58,7 @@ export async function validateMythicCode(db: Firestore, code: string) {
     };
   }
 
-  // 3. Verificação de Chaves Míticas Únicas (Firestore)
+  // 3. Verificação de Chaves Míticas Únicas (Firestore - Uso Único)
   try {
     const codesRef = collection(db, 'mythicCodes');
     const q = query(codesRef, where('code', '==', normalizedCode));
@@ -82,7 +85,7 @@ export async function validateMythicCode(db: Firestore, code: string) {
         name: "Candidato à Elite",
         status: "MYTHIC",
         theme: "mythic",
-        codeId: codeDoc.id // Identificador para inativação durante o registro definitivo
+        codeId: codeDoc.id // Usado no AuthGate para marcar como 'activated'
       }
     };
   } catch (error) {
