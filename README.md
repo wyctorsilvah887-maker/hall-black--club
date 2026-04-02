@@ -32,7 +32,7 @@ Para versionar este projeto no seu repositório, execute os seguintes comandos n
    git push -u origin main
    ```
 
-## 🔑 Estrutura das Chaves (Mythic Codes)
+## 🔑 Estrutura das Chaves (Mythic Codes) - 2026
 
 **IMPORTANTE:** Todos os códigos devem ser criados na MESMA coleção: `mythicCodes`.
 Os códigos seguem o padrão `HB-26-[NÍVEL]-[ID]`. O "26" refere-se ao ano de 2026.
@@ -45,30 +45,12 @@ Os códigos seguem o padrão `HB-26-[NÍVEL]-[ID]`. O "26" refere-se ao ano de 2
 
 ---
 
-### 👑 Nível 1: LENDÁRIO (Ouro/Gold)
+### 👑 Nível 1: LENDÁRIO (Ouro/Gold) - 30 VAGAS
 **Configuração:** `status_rank: LEGENDARY` | `theme: legendary`
-- `HB-26-GOLD-X01`
-- `HB-26-GOLD-B22`
-- `HB-26-GOLD-Z99`
-- `HB-26-GOLD-K33`
-- `HB-26-GOLD-R55`
-- `HB-26-GOLD-P11`
-- `HB-26-GOLD-M07`
-- `HB-26-GOLD-T12`
-- `HB-26-GOLD-Y44`
-- `HB-26-GOLD-W10`
-- `HB-26-GOLD-S88`
-- `HB-26-GOLD-V15`
-- `HB-26-GOLD-F20`
-- `HB-26-GOLD-G25`
-- `HB-26-GOLD-H30`
-- `HB-26-GOLD-J35`
-- `HB-26-GOLD-L40`
-- `HB-26-GOLD-N45`
-- `HB-26-GOLD-Q50`
-- `HB-26-GOLD-C55`
+- `HB-26-GOLD-X01` até `HB-26-GOLD-L20` (Total 30 códigos)
+- IDs: X01, B22, Z99, K33, R55, P11, M07, T12, Y44, W10, S88, V15, F20, G25, H30, J35, L40, N45, Q50, C55, A11, D22, E33, F44, G55, H66, I77, J88, K10, L20.
 
-### 🔥 Nível 2: LEGENDÁRIO ÂMBAR (Laranja/Amber)
+### 🔥 Nível 2: LEGENDÁRIO ÂMBAR (Laranja/Amber) - 20 VAGAS
 **Configuração:** `status_rank: AMBER` | `theme: amber`
 - `HB-26-AMBR-X01`
 - `HB-26-AMBR-B22`
@@ -91,7 +73,7 @@ Os códigos seguem o padrão `HB-26-[NÍVEL]-[ID]`. O "26" refere-se ao ano de 2
 - `HB-26-AMBR-Q50`
 - `HB-26-AMBR-C55`
 
-### 💎 Nível 3: MÍTICO (Rubi/Red)
+### 💎 Nível 3: MÍTICO (Rubi/Red) - 10 VAGAS
 **Configuração:** `status_rank: MYTHIC` | `theme: mythic`
 - `HB-26-MYTH-X01`
 - `HB-26-MYTH-K99`
