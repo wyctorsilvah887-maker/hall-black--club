@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +31,16 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const auth = useAuth();
   const db = useFirestore();
   const { toast } = useToast();
+
+  // Verifica se o usuário tem um código validado (para permitir registro)
+  const hasValidCode = !!tempProfile?.codeId;
+
+  // Força modo login se não houver código validado
+  useEffect(() => {
+    if (!hasValidCode) {
+      setIsLogin(true);
+    }
+  }, [hasValidCode]);
 
   const formatPhoneMask = (value: string) => {
     let digits = value.replace(/\D/g, '');
@@ -71,6 +81,11 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           description: "Sua identidade foi confirmada.",
         });
       } else {
+        // Segurança extra: impede registro via código se burlarem o front-end
+        if (!hasValidCode) {
+          throw new Error("Acesso negado: Código de ativação não detectado.");
+        }
+
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const userId = userCredential.user.uid;
         
@@ -94,15 +109,13 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           memberNumber: memberNumber
         }, { merge: true });
 
-        // 2. Inativar a chave mítica se houver um codeId
-        if (tempProfile?.codeId) {
-          const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
-          await updateDoc(codeRef, {
-            status: 'activated',
-            userId: userId,
-            activationDateTime: new Date().toISOString()
-          });
-        }
+        // 2. Inativar a chave mítica
+        const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
+        await updateDoc(codeRef, {
+          status: 'activated',
+          userId: userId,
+          activationDateTime: new Date().toISOString()
+        });
 
         toast({
           title: "REGISTRO CONCLUÍDO",
@@ -115,6 +128,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         errorMessage = "Credenciais inválidas para este nível de acesso.";
       } else if (error.code === 'auth/email-already-in-use') {
         errorMessage = "Este email já possui registro no Hall Black.";
+      } else if (error.message) {
+        errorMessage = error.message;
       }
 
       toast({
@@ -157,7 +172,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         </div>
 
         <form onSubmit={handleAuth} className="space-y-4 md:space-y-5 bg-zinc-900/30 p-6 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
-          {!isLogin && (
+          {!isLogin && hasValidCode && (
             <>
               <div className="space-y-1.5 md:space-y-2">
                 <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
@@ -225,12 +240,14 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         </form>
 
         <div className="text-center space-y-5 md:space-y-6">
-          <button 
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-zinc-500 hover:text-white transition-colors text-[9px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-bold"
-          >
-            {isLogin ? 'Não possui registro? Criar conta elite' : 'Já possui credenciais? Fazer login'}
-          </button>
+          {hasValidCode && (
+            <button 
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-zinc-500 hover:text-white transition-colors text-[9px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-bold"
+            >
+              {isLogin ? 'Não possui registro? Criar conta elite' : 'Já possui credenciais? Fazer login'}
+            </button>
+          )}
           
           <div className="pt-2 md:pt-4">
             <button 
