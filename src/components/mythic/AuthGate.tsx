@@ -36,7 +36,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
   const hasValidEntry = !!(tempProfile?.codeId || tempProfile?.transferRequestId);
 
-  // Sincroniza o e-mail caso venha de uma validação de código/transferência
   useEffect(() => {
     if (tempProfile?.email) {
       setEmail(tempProfile.email);
@@ -49,18 +48,12 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   }, [tempProfile, hasValidEntry]);
 
   const formatPhoneMask = (value: string) => {
-    let digits = value.replace(/\D/g, '');
+    const digits = value.replace(/\D/g, '');
     if (!digits) return '';
-    const truncated = digits.slice(0, 11);
-    let formatted = '+55 ';
-    if (truncated.length <= 2) {
-      formatted += `(${truncated}`;
-    } else if (truncated.length <= 7) {
-      formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2)}`;
-    } else {
-      formatted += `(${truncated.slice(0, 2)}) ${truncated.slice(2, 7)}-${truncated.slice(7)}`;
-    }
-    return formatted;
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,7 +167,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         });
       }
     } catch (error: any) {
-      // Surfar erros de autenticação (senha fraca, etc) que não são de permissão do Firestore
       const isPermissionError = error.message?.includes('Missing or insufficient permissions');
       if (!isPermissionError) {
         toast({
@@ -224,7 +216,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
                   <Phone className="w-3 h-3" /> Contato de Emergência
                 </Label>
                 <Input
-                  placeholder="+55 (00) 00000-0000"
+                  placeholder="(00) 00000-0000"
                   required
                   className="bg-black/50 border-zinc-800 h-12"
                   value={emergencyPhone}
@@ -241,7 +233,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               placeholder="email@exemplo.com"
               required
               className="bg-black/50 border-zinc-800 h-12"
-              value={email}
+              value={email || ''}
               onChange={(e) => setEmail(e.target.value)}
               disabled={!isLogin && tempProfile?.isTransfer}
             />
@@ -254,7 +246,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               placeholder="••••••••"
               required
               className="bg-black/50 border-zinc-800 h-12"
-              value={password}
+              value={password || ''}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>

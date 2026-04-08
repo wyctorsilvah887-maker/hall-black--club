@@ -104,6 +104,19 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     }
   }, [profile, isSettingsOpen]);
 
+  const formatPhoneMask = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSettingsPhone(formatPhoneMask(e.target.value));
+  };
+
   const petsQuery = useMemoFirebase(() => {
     if (!profile?.id) return null;
     return collection(db, 'users', profile.id, 'pets');
@@ -311,7 +324,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     setTransferCode(confirmationCode);
 
     try {
-      // 1. Registro oficial da transferência no Firestore
       const requestsRef = collection(db, 'transferRequests');
       addDocumentNonBlocking(requestsRef, {
         fromUserId: profile.id,
@@ -323,7 +335,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         timestamp: new Date().toISOString()
       });
 
-      // 2. Acionamento do Fluxo de IA para envio de e-mail de confirmação
       await sendTransferConfirmationEmail({
         fromName: profile.name,
         fromEmail: profile.email,
@@ -340,7 +351,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         description: `Código ${confirmationCode} processado. O acesso será encerrado por segurança.`,
       });
       
-      // Logout forçado após 15 segundos para dar tempo de ver o código no teste
       setTimeout(() => {
         signOut(auth);
       }, 15000);
@@ -668,7 +678,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Adicionar Pet Modal e outros diálogos... */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-sm rounded-2xl z-[200]">
           <DialogHeader>
@@ -701,7 +710,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Editar Pet Modal */}
       <Dialog open={isEditPetOpen} onOpenChange={(open) => { setIsEditPetOpen(open); if(!open) setEditingPet(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl z-[200]">
           <DialogHeader>
@@ -734,7 +742,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Configurações Modal */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -769,7 +776,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Contato de Emergência</Label>
-                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsPhone} onChange={(e) => setSettingsPhone(e.target.value)} required />
+                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsPhone} onChange={handlePhoneChange} placeholder="(00) 00000-0000" required />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Cidade</Label>
@@ -811,7 +818,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Transferência Modal */}
       <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200]">
           <DialogHeader>
@@ -900,7 +906,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Editor de Imagem Modal */}
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[300] rounded-2xl">
           <DialogHeader>
