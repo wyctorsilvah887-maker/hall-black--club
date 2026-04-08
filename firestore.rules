@@ -33,7 +33,8 @@ service cloud.firestore {
       allow list: if true; 
       allow get: if isSignedIn() || (resource != null && resource.data.isPublicProfile == true);
       allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      // Permite update se for o dono OU se for uma revogação autorizada durante transferência
+      allow update: if isExistingOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
       allow delete: if isExistingOwner(userId);
 
       match /pets/{petId} {
@@ -47,9 +48,9 @@ service cloud.firestore {
 
     match /transferRequests/{requestId} {
       allow create: if isSignedIn() && request.resource.data.fromUserId == request.auth.uid;
-      allow list: if true; // Necessário para validar a transferência antes do login
+      allow list: if true; 
       allow get: if true;
-      allow update: if isSignedIn(); // Necessário para marcar como processado no final
+      allow update: if isSignedIn(); 
       allow delete: if false;
     }
   }

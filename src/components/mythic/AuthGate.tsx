@@ -97,7 +97,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           
           if (originalSnap.exists()) {
             const data = originalSnap.data();
-            memberNumber = data.memberNumber; // Herda o slot original
+            memberNumber = data.memberNumber || 0;
             inheritedData = {
               city: data.city || '',
               state: data.state || '',
@@ -126,19 +126,18 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               });
             }
 
-            // IMPORTANTE: Marca o perfil antigo como revogado para não contar nos slots
+            // Marcar perfil antigo como revogado para herdar o slot sem duplicar contagem
             await updateDoc(originalProfileRef, { 
               status: 'REVOKED', 
               revokedAt: new Date().toISOString(),
               isPublicProfile: false 
             }).catch(err => {
-              // Se falhar o update, tentamos deletar (opcional dependendo da regra)
-              deleteDoc(originalProfileRef);
+              errorEmitter.emit('permission-error', new FirestorePermissionError({ path: originalProfileRef.path, operation: 'update' }));
             });
           }
         }
 
-        // Se não for transferência, gera novo número de membro
+        // Se não houver número herdado, gera um novo baseado no contador
         if (memberNumber === 0) {
           const usersSnapshot = await getCountFromServer(query(collection(db, 'users'), where('status', '!=', 'REVOKED')));
           memberNumber = usersSnapshot.data().count + 1;
@@ -160,6 +159,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           throw err;
         });
 
+        // Concluir os protocolos de acesso
         if (tempProfile.codeId) {
           const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
           await updateDoc(codeRef, {
