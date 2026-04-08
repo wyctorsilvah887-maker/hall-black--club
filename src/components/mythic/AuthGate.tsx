@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -13,6 +14,8 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs } from "firebase/firestore";
 import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 interface AuthGateProps {
   theme?: string;
@@ -69,7 +72,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
       } else {
         if (!hasValidEntry) throw new Error("Acesso negado: Validação pendente.");
 
-        // 1. Criar Credencial de Autenticação
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const userId = userCredential.user.uid;
         await updateProfile(userCredential.user, { displayName: name });
@@ -77,7 +79,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         const usersSnapshot = await getCountFromServer(collection(db, 'users'));
         const memberNumber = usersSnapshot.data().count + 1;
 
-        // 2. Lógica de Herança para Transferências
         let inheritedData = {
           city: '',
           state: '',
@@ -86,7 +87,10 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
         if (tempProfile.isTransfer && tempProfile.fromUserId) {
           const originalProfileRef = doc(db, 'users', tempProfile.fromUserId);
-          const originalSnap = await getDoc(originalProfileRef);
+          const originalSnap = await getDoc(originalProfileRef).catch(err => {
+            errorEmitter.emit('permission-error', new FirestorePermissionError({ path: originalProfileRef.path, operation: 'get' }));
+            throw err;
+          });
           
           if (originalSnap.exists()) {
             const data = originalSnap.data();
@@ -96,9 +100,11 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               isPublicProfile: data.isPublicProfile ?? true
             };
 
-            // Migrar Pets da Linhagem
             const petsRef = collection(db, 'users', tempProfile.fromUserId, 'pets');
-            const petsSnap = await getDocs(petsRef);
+            const petsSnap = await getDocs(petsRef).catch(err => {
+              errorEmitter.emit('permission-error', new FirestorePermissionError({ path: petsRef.path, operation: 'list' }));
+              throw err;
+            });
             
             for (const petDoc of petsSnap.docs) {
               const petData = petDoc.data();
@@ -109,14 +115,15 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
                 userId: userId,
                 inheritedFrom: tempProfile.fromUserId,
                 migrationDate: new Date().toISOString()
+              }).catch(err => {
+                errorEmitter.emit('permission-error', new FirestorePermissionError({ path: newPetRef.path, operation: 'create', requestResourceData: petData }));
               });
             }
           }
         }
 
-        // 3. Criar Perfil do Novo Usuário
         const userRef = doc(db, 'users', userId);
-        await setDoc(userRef, {
+        const userData = {
           id: userId,
           name: name,
           email: email,
@@ -126,15 +133,21 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           status: tempProfile?.status || 'MYTHIC',
           theme: tempProfile?.theme || 'mythic',
           memberNumber: memberNumber
+        };
+
+        await setDoc(userRef, userData).catch(err => {
+          errorEmitter.emit('permission-error', new FirestorePermissionError({ path: userRef.path, operation: 'create', requestResourceData: userData }));
+          throw err;
         });
 
-        // 4. Finalizar Processo no Banco
         if (tempProfile.codeId) {
           const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
           await updateDoc(codeRef, {
             status: 'activated',
             userId: userId,
             activationDateTime: new Date().toISOString()
+          }).catch(err => {
+            errorEmitter.emit('permission-error', new FirestorePermissionError({ path: codeRef.path, operation: 'update' }));
           });
         } else if (tempProfile.transferRequestId) {
           const transferRef = doc(db, 'transferRequests', tempProfile.transferRequestId);
@@ -142,6 +155,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             status: 'processed',
             processedAt: new Date().toISOString(),
             newUserId: userId
+          }).catch(err => {
+            errorEmitter.emit('permission-error', new FirestorePermissionError({ path: transferRef.path, operation: 'update' }));
           });
         }
 
@@ -151,11 +166,13 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         });
       }
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "ERRO DE ACESSO",
-        description: error.message || "Falha na autenticação.",
-      });
+      if (error.name !== 'FirebaseError') {
+        toast({
+          variant: "destructive",
+          title: "ERRO DE ACESSO",
+          description: error.message || "Falha na autenticação.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -247,12 +264,12 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         </form>
 
         <div className="text-center space-y-6">
-          {hasValidEntry && (
+          {!isLogin && hasValidEntry && (
             <button 
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => setIsLogin(true)}
               className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-bold"
             >
-              {isLogin ? 'Primeiro acesso? Criar conta de membro' : 'Já possui credenciais? Login'}
+              Já possui credenciais? Login
             </button>
           )}
           

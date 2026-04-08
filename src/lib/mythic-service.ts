@@ -1,6 +1,9 @@
+
 'use client';
 
 import { doc, getDoc, Firestore, collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 /**
  * @fileOverview Serviço de validação de chaves e transferências para o Hall Black Club.
@@ -12,7 +15,10 @@ export async function validateMythicCode(db: Firestore, code: string) {
 
   try {
     const codeRef = doc(db, 'mythicCodes', normalizedCode);
-    const codeSnap = await getDoc(codeRef);
+    const codeSnap = await getDoc(codeRef).catch(err => {
+      errorEmitter.emit('permission-error', new FirestorePermissionError({ path: codeRef.path, operation: 'get' }));
+      throw err;
+    });
 
     if (!codeSnap.exists()) {
       return { success: false, message: "Chave de Acesso Inválida ou Não Localizada" };
@@ -61,7 +67,10 @@ export async function validateTransferClaim(db: Firestore, email: string, code: 
       limit(1)
     );
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(q).catch(err => {
+      errorEmitter.emit('permission-error', new FirestorePermissionError({ path: transferRef.path, operation: 'list' }));
+      throw err;
+    });
 
     if (querySnapshot.empty) {
       return { 
@@ -81,7 +90,7 @@ export async function validateTransferClaim(db: Firestore, email: string, code: 
         status: transferData.statusRank || 'MYTHIC',
         theme: transferData.statusRank?.toLowerCase() || 'mythic',
         transferRequestId: transferDoc.id,
-        fromUserId: transferData.fromUserId, // ID do membro original para herança
+        fromUserId: transferData.fromUserId, 
         isTransfer: true
       }
     };
