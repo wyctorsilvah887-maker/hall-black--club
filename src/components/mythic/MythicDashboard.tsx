@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -37,6 +37,7 @@ import { ImageEditor } from './ImageEditor';
 import { RankBadge } from './MythicIcons';
 import { ToastAction } from "@/components/ui/toast";
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 interface MythicDashboardProps {
   profile: any;
@@ -54,6 +55,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [isAddPetOpen, setIsAddPetOpen] = useState(false);
   const [isEditPetOpen, setIsEditPetOpen] = useState(false);
   const [isHealthDialogOpen, setIsHealthDialogOpen] = useState(false);
+  const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -86,6 +88,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [settingsCity, setSettingsCity] = useState('');
   const [settingsState, setSettingsState] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
+
+  const [transferEmail, setTransferEmail] = useState('');
+  const [isTransferring, setIsTransferring] = useState(false);
 
   useEffect(() => {
     if (profile && isSettingsOpen) {
@@ -291,6 +296,24 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </ToastAction>
       ),
     });
+  };
+
+  const handleInitiateTransfer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!transferEmail || !profile?.id) return;
+
+    setIsTransferring(true);
+    // Simulação de solicitação de transferência
+    await new Promise(r => setTimeout(r, 2000));
+    
+    toast({
+      title: "SOLICITAÇÃO ENVIADA",
+      description: "O protocolo de transferência foi registrado. Nossa equipe entrará em contato para validar a cessão da credencial.",
+    });
+    
+    setIsTransferring(false);
+    setIsTransferOpen(false);
+    setTransferEmail('');
   };
 
   const isLegendary = profile.status === 'LEGENDARY';
@@ -671,7 +694,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </Dialog>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200]">
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter">Configurações de Elite</DialogTitle>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Gerencie suas credenciais e identidade mística.</DialogDescription>
@@ -716,9 +739,87 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </div>
             </div>
 
-            <DialogFooter>
-              <Button type="submit" className={`w-full h-12 font-black uppercase tracking-widest ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary'}`} disabled={isUpdatingSettings}>
-                {isUpdatingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar Alterações'}
+            <Button type="submit" className={`w-full h-12 font-black uppercase tracking-widest ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary'}`} disabled={isUpdatingSettings}>
+              {isUpdatingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar Alterações'}
+            </Button>
+            
+            <Separator className="bg-zinc-900" />
+            
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center gap-2 text-zinc-500">
+                <ArrowRightLeft className={cn("w-4 h-4", themeColorClass)} />
+                <h3 className="text-xs font-black uppercase tracking-widest">Protocolo de Transferência</h3>
+              </div>
+              <p className="text-[10px] text-zinc-600 uppercase tracking-widest leading-relaxed">
+                Deseja transferir sua titularidade para outro membro? Este processo requer validação de segurança e é permanente.
+              </p>
+              <Button 
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsSettingsOpen(false);
+                  setIsTransferOpen(true);
+                }}
+                className="w-full h-12 rounded-xl border-zinc-800 text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-widest"
+              >
+                Solicitar Transferência de Credencial
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200]">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-lg bg-red-950/20 border border-red-900/50">
+                <ShieldAlert className="w-5 h-5 text-red-500" />
+              </div>
+              <DialogTitle className="text-xl font-black uppercase tracking-tighter">Protocolo de Cessão</DialogTitle>
+            </div>
+            <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest leading-relaxed">
+              Inicie a transferência permanente de sua credencial de elite para um novo guardião.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleInitiateTransfer} className="space-y-6 pt-4">
+            <div className="bg-red-950/10 border border-red-900/30 p-4 rounded-xl space-y-2">
+              <p className="text-[10px] text-red-500 font-black uppercase tracking-widest flex items-center gap-2">
+                <AlertCircle className="w-3 h-3" /> Atenção
+              </p>
+              <p className="text-[9px] text-zinc-500 uppercase tracking-widest leading-relaxed">
+                Ao finalizar, você perderá acesso imediato a todos os privilégios, registros de pets e histórico da linhagem Hall Black.
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Email do Novo Titular</Label>
+              <Input 
+                type="email" 
+                required 
+                placeholder="novo.membro@exemplo.com"
+                className="bg-black/50 border-zinc-800 h-12 text-white"
+                value={transferEmail}
+                onChange={(e) => setTransferEmail(e.target.value)}
+              />
+            </div>
+            
+            <DialogFooter className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                onClick={() => setIsTransferOpen(false)}
+                className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest border border-zinc-900 text-zinc-500 hover:text-white"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={isTransferring || !transferEmail}
+                className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-widest"
+              >
+                {isTransferring ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Protocolo'}
               </Button>
             </DialogFooter>
           </form>
@@ -744,3 +845,4 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     </div>
   );
 }
+
