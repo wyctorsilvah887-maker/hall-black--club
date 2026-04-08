@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -7,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode, validateTransferClaim } from "@/lib/mythic-service";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { Loader2, Crown, Users, LogIn, ArrowRightLeft, ShieldCheck, Mail } from "lucide-react";
 
 interface AccessGateProps {
@@ -26,12 +27,12 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
   const usersQuery = useMemoFirebase(() => {
     if (!db) return null;
-    return collection(db, 'users');
+    // Filtra apenas usuários que não foram revogados por transferência
+    return query(collection(db, 'users'), where('status', '!=', 'REVOKED'));
   }, [db]);
   
-  const { data: usersData, error: usersError } = useCollection(usersQuery);
+  const { data: usersData } = useCollection(usersQuery);
   const memberCount = usersData?.length || 0;
-  const slotsLeft = Math.max(0, 60 - memberCount);
 
   const handleClaimAccess = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -12,7 +12,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile 
 } from "firebase/auth";
-import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs, deleteDoc, query, where } from "firebase/firestore";
 import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -39,6 +39,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   useEffect(() => {
     if (tempProfile?.email) {
       setEmail(tempProfile.email);
+    } else {
+      setEmail('');
     }
     if (hasValidEntry) {
       setIsLogin(false);
@@ -77,13 +79,13 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         const userId = userCredential.user.uid;
         await updateProfile(userCredential.user, { displayName: name });
         
-        const usersSnapshot = await getCountFromServer(collection(db, 'users'));
-        const memberNumber = usersSnapshot.data().count + 1;
-
+        let memberNumber = 0;
         let inheritedData = {
           city: '',
           state: '',
-          isPublicProfile: true
+          isPublicProfile: true,
+          status: tempProfile?.status || 'MYTHIC',
+          theme: tempProfile?.theme || 'mythic'
         };
 
         if (tempProfile.isTransfer && tempProfile.fromUserId) {
@@ -95,12 +97,16 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           
           if (originalSnap.exists()) {
             const data = originalSnap.data();
+            memberNumber = data.memberNumber; // Herda o slot original
             inheritedData = {
               city: data.city || '',
               state: data.state || '',
-              isPublicProfile: data.isPublicProfile ?? true
+              isPublicProfile: data.isPublicProfile ?? true,
+              status: data.status || tempProfile?.status || 'MYTHIC',
+              theme: data.theme || tempProfile?.theme || 'mythic'
             };
 
+            // Migrar Pets
             const petsRef = collection(db, 'users', tempProfile.fromUserId, 'pets');
             const petsSnap = await getDocs(petsRef).catch(err => {
               errorEmitter.emit('permission-error', new FirestorePermissionError({ path: petsRef.path, operation: 'list' }));
@@ -114,13 +120,28 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
                 ...petData,
                 id: newPetRef.id,
                 userId: userId,
-                inheritedFrom: tempProfile.fromUserId,
                 migrationDate: new Date().toISOString()
               }).catch(err => {
                 errorEmitter.emit('permission-error', new FirestorePermissionError({ path: newPetRef.path, operation: 'create', requestResourceData: petData }));
               });
             }
+
+            // IMPORTANTE: Marca o perfil antigo como revogado para não contar nos slots
+            await updateDoc(originalProfileRef, { 
+              status: 'REVOKED', 
+              revokedAt: new Date().toISOString(),
+              isPublicProfile: false 
+            }).catch(err => {
+              // Se falhar o update, tentamos deletar (opcional dependendo da regra)
+              deleteDoc(originalProfileRef);
+            });
           }
+        }
+
+        // Se não for transferência, gera novo número de membro
+        if (memberNumber === 0) {
+          const usersSnapshot = await getCountFromServer(query(collection(db, 'users'), where('status', '!=', 'REVOKED')));
+          memberNumber = usersSnapshot.data().count + 1;
         }
 
         const userRef = doc(db, 'users', userId);
@@ -131,8 +152,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           emergencyContact: emergencyPhone,
           registrationDateTime: new Date().toISOString(),
           ...inheritedData,
-          status: tempProfile?.status || 'MYTHIC',
-          theme: tempProfile?.theme || 'mythic',
           memberNumber: memberNumber
         };
 

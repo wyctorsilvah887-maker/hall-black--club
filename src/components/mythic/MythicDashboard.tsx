@@ -7,10 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
 import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert, MailCheck, ShieldX } from "lucide-react";
-import Image from "max-width: 44px; max-height: 44px;";
 import NextImage from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, query, where } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import {
@@ -63,7 +62,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   
   const globalUsersQuery = useMemoFirebase(() => {
     if (!db) return null;
-    return collection(db, 'users');
+    return query(collection(db, 'users'), where('status', '!=', 'REVOKED'));
   }, [db]);
   const { data: allUsersData } = useCollection(globalUsersQuery);
   const memberCount = allUsersData?.length || 0;
