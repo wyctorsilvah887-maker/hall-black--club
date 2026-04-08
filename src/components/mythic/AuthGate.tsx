@@ -11,7 +11,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile 
 } from "firebase/auth";
-import { doc, setDoc, updateDoc, getCountFromServer, collection } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs } from "firebase/firestore";
 import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
 
 interface AuthGateProps {
@@ -69,6 +69,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
       } else {
         if (!hasValidEntry) throw new Error("Acesso negado: Validação pendente.");
 
+        // 1. Criar Credencial de Autenticação
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const userId = userCredential.user.uid;
         await updateProfile(userCredential.user, { displayName: name });
@@ -76,6 +77,44 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         const usersSnapshot = await getCountFromServer(collection(db, 'users'));
         const memberNumber = usersSnapshot.data().count + 1;
 
+        // 2. Lógica de Herança para Transferências
+        let inheritedData = {
+          city: '',
+          state: '',
+          isPublicProfile: true
+        };
+
+        if (tempProfile.isTransfer && tempProfile.fromUserId) {
+          const originalProfileRef = doc(db, 'users', tempProfile.fromUserId);
+          const originalSnap = await getDoc(originalProfileRef);
+          
+          if (originalSnap.exists()) {
+            const data = originalSnap.data();
+            inheritedData = {
+              city: data.city || '',
+              state: data.state || '',
+              isPublicProfile: data.isPublicProfile ?? true
+            };
+
+            // Migrar Pets da Linhagem
+            const petsRef = collection(db, 'users', tempProfile.fromUserId, 'pets');
+            const petsSnap = await getDocs(petsRef);
+            
+            for (const petDoc of petsSnap.docs) {
+              const petData = petDoc.data();
+              const newPetRef = doc(collection(db, 'users', userId, 'pets'));
+              await setDoc(newPetRef, {
+                ...petData,
+                id: newPetRef.id,
+                userId: userId,
+                inheritedFrom: tempProfile.fromUserId,
+                migrationDate: new Date().toISOString()
+              });
+            }
+          }
+        }
+
+        // 3. Criar Perfil do Novo Usuário
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
           id: userId,
@@ -83,12 +122,13 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           email: email,
           emergencyContact: emergencyPhone,
           registrationDateTime: new Date().toISOString(),
-          isPublicProfile: true,
+          ...inheritedData,
           status: tempProfile?.status || 'MYTHIC',
           theme: tempProfile?.theme || 'mythic',
           memberNumber: memberNumber
         });
 
+        // 4. Finalizar Processo no Banco
         if (tempProfile.codeId) {
           const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
           await updateDoc(codeRef, {
@@ -106,8 +146,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         }
 
         toast({
-          title: "REGISTRO CONCLUÍDO",
-          description: `Sua conta na elite foi criada. Registro #${memberNumber.toString().padStart(2, '0')}.`,
+          title: "HERANÇA CONCLUÍDA",
+          description: `Credencial #${memberNumber.toString().padStart(2, '0')} ativada com sucesso.`,
         });
       }
     } catch (error: any) {

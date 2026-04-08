@@ -46,7 +46,7 @@ export async function validateMythicCode(db: Firestore, code: string) {
 }
 
 /**
- * Valida uma solicitação de transferência pendente.
+ * Valida uma solicitação de transferência pendente e recupera o ID do cedente.
  */
 export async function validateTransferClaim(db: Firestore, email: string, code: string) {
   await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -81,6 +81,7 @@ export async function validateTransferClaim(db: Firestore, email: string, code: 
         status: transferData.statusRank || 'MYTHIC',
         theme: transferData.statusRank?.toLowerCase() || 'mythic',
         transferRequestId: transferDoc.id,
+        fromUserId: transferData.fromUserId, // ID do membro original para herança
         isTransfer: true
       }
     };
