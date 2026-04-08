@@ -1,23 +1,16 @@
 'use client';
 
-import { doc, getDoc, Firestore } from 'firebase/firestore';
+import { doc, getDoc, Firestore, collection, query, where, getDocs, limit } from 'firebase/firestore';
 
 /**
- * @fileOverview Serviço de validação de chaves de acesso para o Hall Black Club.
- * 
- * POLÍTICA DE USO:
- * O sistema busca o código diretamente pelo ID do documento na coleção 'mythicCodes'.
- * Chaves são inativadas (status: 'activated') após o primeiro registro bem-sucedido.
+ * @fileOverview Serviço de validação de chaves e transferências para o Hall Black Club.
  */
 
 export async function validateMythicCode(db: Firestore, code: string) {
-  // Simula processamento de segurança para feedback visual de elite
   await new Promise((resolve) => setTimeout(resolve, 1500));
-
   const normalizedCode = code.toUpperCase().trim();
 
   try {
-    // Busca direta pelo ID do documento (o código é o ID)
     const codeRef = doc(db, 'mythicCodes', normalizedCode);
     const codeSnap = await getDoc(codeRef);
 
@@ -26,9 +19,6 @@ export async function validateMythicCode(db: Firestore, code: string) {
     }
 
     const codeData = codeSnap.data();
-    
-    // Normaliza o status vindo do Firestore
-    // Remove aspas caso o usuário tenha digitado literalmente com aspas no console do Firebase (erro comum)
     const rawStatus = (codeData.status || '').toString().toLowerCase().trim();
     const currentStatus = rawStatus.replace(/['"]+/g, ''); 
 
@@ -50,7 +40,52 @@ export async function validateMythicCode(db: Firestore, code: string) {
       }
     };
   } catch (error) {
-    console.error("Erro na validação de segurança:", error);
-    return { success: false, message: "Falha na sincronização com os servidores Hall Black." };
+    console.error("Erro na validação:", error);
+    return { success: false, message: "Falha na sincronização Hall Black." };
+  }
+}
+
+/**
+ * Valida uma solicitação de transferência pendente.
+ */
+export async function validateTransferClaim(db: Firestore, email: string, code: string) {
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+  
+  try {
+    const transferRef = collection(db, 'transferRequests');
+    const q = query(
+      transferRef, 
+      where('toUserEmail', '==', email.toLowerCase().trim()),
+      where('confirmationCode', '==', code.trim()),
+      where('status', '==', 'pending'),
+      limit(1)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return { 
+        success: false, 
+        message: "Protocolo de transferência não localizado ou código inválido." 
+      };
+    }
+
+    const transferDoc = querySnapshot.docs[0];
+    const transferData = transferDoc.data();
+
+    return {
+      success: true,
+      message: "Identidade Cessionária Validada.",
+      profile: {
+        name: "Novo Titular",
+        status: transferData.statusRank || 'MYTHIC',
+        theme: transferData.statusRank?.toLowerCase() || 'mythic',
+        transferRequestId: transferDoc.id,
+        isTransfer: true
+      }
+    };
+  } catch (error) {
+    console.error("Erro na validação de transferência:", error);
+    return { success: false, message: "Erro ao consultar rede de elite." };
   }
 }

@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -23,7 +22,7 @@ interface AuthGateProps {
 export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(tempProfile?.isTransfer ? tempProfile.email : '');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [emergencyPhone, setEmergencyPhone] = useState('');
@@ -32,22 +31,17 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const db = useFirestore();
   const { toast } = useToast();
 
-  // Verifica se o usuário tem um código validado (para permitir registro)
-  const hasValidCode = !!tempProfile?.codeId;
+  const hasValidEntry = !!(tempProfile?.codeId || tempProfile?.transferRequestId);
 
-  // Força modo login se não houver código validado
   useEffect(() => {
-    if (!hasValidCode) {
+    if (!hasValidEntry) {
       setIsLogin(true);
     }
-  }, [hasValidCode]);
+  }, [hasValidEntry]);
 
   const formatPhoneMask = (value: string) => {
     let digits = value.replace(/\D/g, '');
     if (!digits) return '';
-    if (digits.startsWith('55') && digits.length > 2) {
-      digits = digits.slice(2);
-    }
     const truncated = digits.slice(0, 11);
     let formatted = '+55 ';
     if (truncated.length <= 2) {
@@ -61,12 +55,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    if (emergencyPhone.startsWith('+55 ') && input.length < 5) {
-      setEmergencyPhone('');
-      return;
-    }
-    setEmergencyPhone(formatPhoneMask(input));
+    setEmergencyPhone(formatPhoneMask(e.target.value));
   };
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -76,26 +65,17 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
     try {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
-        toast({
-          title: "BEM-VINDO DE VOLTA",
-          description: "Sua identidade foi confirmada.",
-        });
+        toast({ title: "BEM-VINDO", description: "Identidade confirmada." });
       } else {
-        // Segurança extra: impede registro via código se burlarem o front-end
-        if (!hasValidCode) {
-          throw new Error("Acesso negado: Código de ativação não detectado.");
-        }
+        if (!hasValidEntry) throw new Error("Acesso negado: Validação pendente.");
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const userId = userCredential.user.uid;
-        
         await updateProfile(userCredential.user, { displayName: name });
         
-        // Calcular número de registro (ordem de entrada)
         const usersSnapshot = await getCountFromServer(collection(db, 'users'));
         const memberNumber = usersSnapshot.data().count + 1;
 
-        // 1. Criar perfil do usuário
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
           id: userId,
@@ -107,91 +87,79 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           status: tempProfile?.status || 'MYTHIC',
           theme: tempProfile?.theme || 'mythic',
           memberNumber: memberNumber
-        }, { merge: true });
-
-        // 2. Inativar a chave mítica
-        const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
-        await updateDoc(codeRef, {
-          status: 'activated',
-          userId: userId,
-          activationDateTime: new Date().toISOString()
         });
+
+        if (tempProfile.codeId) {
+          const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
+          await updateDoc(codeRef, {
+            status: 'activated',
+            userId: userId,
+            activationDateTime: new Date().toISOString()
+          });
+        } else if (tempProfile.transferRequestId) {
+          const transferRef = doc(db, 'transferRequests', tempProfile.transferRequestId);
+          await updateDoc(transferRef, {
+            status: 'processed',
+            processedAt: new Date().toISOString(),
+            newUserId: userId
+          });
+        }
 
         toast({
           title: "REGISTRO CONCLUÍDO",
-          description: `Sua conta na elite foi criada. Registro #${memberNumber.toString().padStart(2, '0')}/60.`,
+          description: `Sua conta na elite foi criada. Registro #${memberNumber.toString().padStart(2, '0')}.`,
         });
       }
     } catch (error: any) {
-      let errorMessage = "Ocorreu um erro na autenticação.";
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = "Credenciais inválidas para este nível de acesso.";
-      } else if (error.code === 'auth/email-already-in-use') {
-        errorMessage = "Este email já possui registro no Hall Black.";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
       toast({
         variant: "destructive",
         title: "ERRO DE ACESSO",
-        description: errorMessage,
+        description: error.message || "Falha na autenticação.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const themeTextClass = theme === 'legendary' 
-    ? 'text-yellow-500 animate-text-gold-glow' 
-    : theme === 'amber' 
-    ? 'text-orange-500 animate-text-amber-glow' 
-    : 'text-primary animate-text-ruby-glow';
-
-  const themeBtnClass = theme === 'legendary'
-    ? 'bg-yellow-500 hover:bg-yellow-400 text-black animate-gold-glow'
-    : theme === 'amber'
-    ? 'bg-orange-500 hover:bg-orange-400 text-black animate-amber-glow'
-    : 'bg-primary hover:bg-accent text-white animate-ruby-glow';
-
-  const iconColorClass = theme === 'legendary' ? 'text-yellow-500' : theme === 'amber' ? 'text-orange-500' : 'text-primary';
+  const themeTextClass = theme === 'legendary' ? 'text-yellow-500 animate-text-gold-glow' : theme === 'amber' ? 'text-orange-500 animate-text-amber-glow' : 'text-primary animate-text-ruby-glow';
+  const themeBtnClass = theme === 'legendary' ? 'bg-yellow-500 text-black' : theme === 'amber' ? 'bg-orange-500 text-black' : 'bg-primary text-white';
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/5 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       
-      <div className="w-full max-w-md space-y-6 md:space-y-8 relative z-10">
+      <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="text-center space-y-2">
-          <Shield className={`w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 ${iconColorClass}`} />
-          <h2 className={`text-3xl md:text-4xl font-black tracking-tighter uppercase leading-tight ${themeTextClass}`}>
-            {isLogin ? 'Confirmar Identidade' : 'Criar Credenciais'}
+          <Shield className={`w-12 h-12 mx-auto mb-4 ${theme === 'legendary' ? 'text-yellow-500' : theme === 'amber' ? 'text-orange-500' : 'text-primary'}`} />
+          <h2 className={`text-3xl md:text-4xl font-black uppercase tracking-tighter ${themeTextClass}`}>
+            {isLogin ? 'Confirmar Identidade' : 'Finalizar Credencial'}
           </h2>
-          <p className="text-zinc-500 text-[8px] md:text-[10px] uppercase tracking-[0.25em] md:tracking-[0.3em] font-bold">
-            Proteção de Nível Militar Hall Black
+          <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em] font-bold">
+            Portal Seguro Hall Black v2026
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="space-y-4 md:space-y-5 bg-zinc-900/30 p-6 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
-          {!isLogin && hasValidCode && (
+        <form onSubmit={handleAuth} className="space-y-4 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
+          {!isLogin && hasValidEntry && (
             <>
-              <div className="space-y-1.5 md:space-y-2">
-                <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
                 <Input
-                  placeholder="SEU NOME"
+                  placeholder="NOME"
                   required
-                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
+                  className="bg-black/50 border-zinc-800 h-12"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="space-y-1.5 md:space-y-2">
-                <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 flex items-center gap-2">
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 flex items-center gap-2">
                   <Phone className="w-3 h-3" /> Contato de Emergência
                 </Label>
                 <Input
                   placeholder="+55 (00) 00000-0000"
                   required
-                  className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
+                  className="bg-black/50 border-zinc-800 h-12"
                   value={emergencyPhone}
                   onChange={handlePhoneChange}
                 />
@@ -199,25 +167,26 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             </>
           )}
 
-          <div className="space-y-1.5 md:space-y-2">
-            <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Email Autorizado</Label>
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">E-mail Autorizado</Label>
             <Input
               type="email"
               placeholder="email@exemplo.com"
               required
-              className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
+              className="bg-black/50 border-zinc-800 h-12"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={!isLogin && tempProfile?.isTransfer}
             />
           </div>
 
-          <div className="space-y-1.5 md:space-y-2">
-            <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha de Criptografia</Label>
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha de Elite</Label>
             <Input
               type="password"
               placeholder="••••••••"
               required
-              className="bg-black/50 border-zinc-800 focus-visible:ring-primary/50 text-white h-11 md:h-12"
+              className="bg-black/50 border-zinc-800 h-12"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -225,42 +194,37 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
           <Button 
             type="submit" 
-            className={`w-full h-12 md:h-14 text-xs md:text-sm font-black tracking-widest uppercase transition-all duration-500 mt-2 md:mt-4 ${themeBtnClass}`}
+            className={`w-full h-14 text-xs font-black tracking-widest uppercase transition-all duration-500 mt-4 ${themeBtnClass}`}
             disabled={isLoading}
           >
-            {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
+            {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : (
               <span className="flex items-center gap-2">
                 {isLogin ? <LogIn className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                {isLogin ? 'AUTENTICAR AGORA' : 'FINALIZAR REGISTRO'}
+                {isLogin ? 'AUTENTICAR' : 'CRIAR CONTA ELITE'}
               </span>
             )}
           </Button>
         </form>
 
-        <div className="text-center space-y-5 md:space-y-6">
-          {hasValidCode && (
+        <div className="text-center space-y-6">
+          {hasValidEntry && (
             <button 
               onClick={() => setIsLogin(!isLogin)}
-              className="text-zinc-500 hover:text-white transition-colors text-[9px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-bold"
+              className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-bold"
             >
-              {isLogin ? 'Não possui registro? Criar conta elite' : 'Já possui credenciais? Fazer login'}
+              {isLogin ? 'Primeiro acesso? Criar conta de membro' : 'Já possui credenciais? Login'}
             </button>
           )}
           
-          <div className="pt-2 md:pt-4">
-            <button 
-              onClick={() => {
-                localStorage.removeItem('mythic_access_granted');
-                window.location.reload();
-              }}
-              className="flex items-center gap-2 mx-auto text-zinc-700 hover:text-zinc-500 transition-colors text-[8px] md:text-[9px] uppercase tracking-widest font-black"
-            >
-              <ArrowLeft className="w-3 h-3" />
-              Voltar para Validação de Chave
-            </button>
-          </div>
+          <button 
+            onClick={() => {
+              localStorage.removeItem('mythic_access_granted');
+              window.location.reload();
+            }}
+            className="flex items-center gap-2 mx-auto text-zinc-700 hover:text-zinc-500 transition-colors text-[9px] uppercase tracking-widest font-black"
+          >
+            <ArrowLeft className="w-3 h-3" /> Voltar para Início
+          </button>
         </div>
       </div>
     </div>

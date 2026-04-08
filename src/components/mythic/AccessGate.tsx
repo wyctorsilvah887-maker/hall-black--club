@@ -5,46 +5,50 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { validateMythicCode } from "@/lib/mythic-service";
+import { validateMythicCode, validateTransferClaim } from "@/lib/mythic-service";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from 'firebase/firestore';
-import { Loader2, Crown, Users, LogIn } from "lucide-react";
+import { Loader2, Crown, Users, LogIn, ArrowRightLeft, ShieldCheck, Mail } from "lucide-react";
 
 interface AccessGateProps {
   onSuccess: (profile: any) => void;
 }
 
 export function AccessGate({ onSuccess }: AccessGateProps) {
+  const [mode, setMode] = useState<'code' | 'transfer'>('code');
   const [code, setCode] = useState('');
+  const [transferEmail, setTransferEmail] = useState('');
+  const [transferCode, setTransferCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
   const { toast } = useToast();
   const db = useFirestore();
 
-  // Monitor de Membros Ativos (Contagem Global)
   const usersQuery = useMemoFirebase(() => {
     if (!db) return null;
     return collection(db, 'users');
   }, [db]);
   
   const { data: usersData, error: usersError } = useCollection(usersQuery);
-  
   const memberCount = usersData?.length || 0;
   const slotsLeft = Math.max(0, 60 - memberCount);
 
   const handleClaimAccess = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code || !db) return;
+    if (!db) return;
 
     setIsLoading(true);
     try {
-      const result = await validateMythicCode(db, code);
-      if (result.success) {
-        let title = "💎 STATUS MÍTICO";
-        if (result.profile.status === 'LEGENDARY') title = "👑 STATUS LENDÁRIO";
-        if (result.profile.status === 'AMBER') title = "🔥 STATUS LEGENDÁRIO";
+      let result;
+      if (mode === 'code') {
+        result = await validateMythicCode(db, code);
+      } else {
+        result = await validateTransferClaim(db, transferEmail, transferCode);
+      }
 
+      if (result.success) {
         toast({
-          title,
+          title: "SISTEMA HALL BLACK",
           description: result.message,
         });
         onSuccess(result.profile);
@@ -59,95 +63,113 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
       toast({
         variant: "destructive",
         title: "ERRO DE SISTEMA",
-        description: "Falha na sincronização com o Hall Black.",
+        description: "Falha na sincronização.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleBypassToLogin = () => {
-    onSuccess({ status: 'MYTHIC', theme: 'mythic', name: 'Membro Elite' });
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black overflow-hidden relative">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/10 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
       
-      <div className="w-full max-md space-y-8 md:space-y-10 relative z-10 text-center">
+      <div className="w-full max-w-md space-y-8 md:space-y-10 relative z-10 text-center">
         <div className="space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
             <Crown className="w-4 h-4 text-primary animate-pulse" />
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white font-headline">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white">
             HALL <span className="text-primary animate-text-ruby-glow">BLACK</span>
           </h1>
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-zinc-500 text-[8px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.5em] font-bold">
-              THE EXCLUSIVE ELITE 60
-            </p>
-            <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full border border-zinc-900 bg-zinc-950/40">
-              <Users className="w-3 h-3 text-primary/60" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
-                {usersError ? "CONTADOR INDISPONÍVEL" : `${memberCount.toString().padStart(2, '0')} / 60 SLOTS OCUPADOS`}
-              </span>
-            </div>
+          <div className="flex items-center justify-center gap-2 mt-2 px-3 py-1 rounded-full border border-zinc-900 bg-zinc-950/40 w-fit mx-auto">
+            <Users className="w-3 h-3 text-primary/60" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
+              {memberCount.toString().padStart(2, '0')} / 60 SLOTS OCUPADOS
+            </span>
           </div>
         </div>
 
-        <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-5 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md shadow-2xl">
-          <div className="space-y-2 md:space-y-3">
-            <Label htmlFor="mythic-code" className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Chave de Acesso</Label>
-            <Input
-              id="mythic-code"
-              placeholder="XXXXXXXX-XXXX"
-              className="bg-black/50 border-zinc-800 text-center text-lg md:text-xl h-14 md:h-16 tracking-[0.15em] md:tracking-[0.2em] font-black focus-visible:ring-primary focus-visible:border-primary/50 placeholder:text-zinc-800 transition-all"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              disabled={isLoading}
-            />
-          </div>
+        <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-6 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md shadow-2xl">
+          {mode === 'code' ? (
+            <div className="space-y-2 md:space-y-3">
+              <Label htmlFor="mythic-code" className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold block text-left ml-1">Chave de Acesso Original</Label>
+              <Input
+                id="mythic-code"
+                placeholder="XXXXXXXX-XXXX"
+                className="bg-black/50 border-zinc-800 text-center text-lg md:text-xl h-14 md:h-16 tracking-[0.15em] font-black focus-visible:ring-primary placeholder:text-zinc-800 transition-all"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                disabled={isLoading}
+              />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold block text-left ml-1">E-mail do Cessionário</Label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-700" />
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    className="bg-black/50 border-zinc-800 h-14 pl-12 text-sm font-bold focus-visible:ring-primary"
+                    value={transferEmail}
+                    onChange={(e) => setTransferEmail(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[9px] md:text-[10px] uppercase tracking-widest text-zinc-500 font-bold block text-left ml-1">Código de Segurança (6 Dígitos)</Label>
+                <Input
+                  placeholder="000000"
+                  maxLength={6}
+                  className="bg-black/50 border-zinc-800 text-center text-xl h-14 tracking-[0.5em] font-black focus-visible:ring-primary"
+                  value={transferCode}
+                  onChange={(e) => setTransferCode(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          )}
 
           <Button 
             type="submit" 
-            className="w-full h-14 md:h-16 text-base md:text-lg font-black bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow group relative overflow-hidden"
-            disabled={isLoading || !code || (slotsLeft === 0)}
+            className="w-full h-14 md:h-16 text-base md:text-lg font-black bg-primary hover:bg-accent text-white transition-all duration-500 animate-ruby-glow group"
+            disabled={isLoading || (mode === 'code' && !code) || (mode === 'transfer' && (!transferEmail || !transferCode))}
           >
             {isLoading ? (
-              <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" />
-            ) : slotsLeft === 0 ? (
-              "CAPACIDADE MÁXIMA"
+              <Loader2 className="h-6 w-6 animate-spin" />
             ) : (
               <span className="flex items-center justify-center gap-2">
-                REIVINDICAR ACESSO
-                <Crown className="h-4 w-4 md:h-5 md:w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                {mode === 'code' ? 'REIVINDICAR ACESSO' : 'VALIDAR TRANSFERÊNCIA'}
+                <ShieldCheck className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </span>
             )}
           </Button>
 
-          <button 
-            type="button"
-            onClick={handleBypassToLogin}
-            className="w-full text-zinc-500 hover:text-white transition-colors text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-black flex items-center justify-center gap-2 py-2"
-          >
-            <LogIn className="w-3 h-3" />
-            Já sou membro da elite? Autenticar
-          </button>
-
-          {slotsLeft <= 5 && slotsLeft > 0 && (
-            <p className="text-red-500 text-[9px] font-black uppercase animate-pulse tracking-widest">
-              Alerta: Apenas {slotsLeft} vagas restantes!
-            </p>
-          )}
+          <div className="flex flex-col gap-3 pt-2">
+            <button 
+              type="button"
+              onClick={() => setMode(mode === 'code' ? 'transfer' : 'code')}
+              className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-black flex items-center justify-center gap-2"
+            >
+              <ArrowRightLeft className="w-3 h-3" />
+              {mode === 'code' ? 'Reivindicar Transferência de Titular' : 'Usar Chave de Acesso Original'}
+            </button>
+            
+            <button 
+              type="button"
+              onClick={() => onSuccess({ status: 'MYTHIC', theme: 'mythic', name: 'Membro Elite' })}
+              className="text-zinc-700 hover:text-zinc-400 transition-colors text-[9px] uppercase tracking-widest font-black flex items-center justify-center gap-2"
+            >
+              <LogIn className="w-3 h-3" />
+              Já possui credenciais? Autenticar
+            </button>
+          </div>
         </form>
-
-        <div className="mt-8 md:mt-10 flex flex-col items-center gap-4 md:gap-6">
-          <p className="text-zinc-600 text-[8px] md:text-[9px] px-4 uppercase tracking-widest font-medium leading-relaxed">
-            Chaves individuais garantem o sigilo da linhagem.
-          </p>
-        </div>
       </div>
     </div>
   );
