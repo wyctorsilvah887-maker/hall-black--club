@@ -300,26 +300,44 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const handleInitiateTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!transferEmail || !profile?.id) return;
+    if (!transferEmail || !profile?.id || !db) return;
 
     setIsTransferring(true);
     setTransferProtocolStatus('initiating');
     
-    // Simulação de registro de protocolo militar
-    await new Promise(r => setTimeout(r, 2500));
-    
-    setTransferProtocolStatus('done');
-    
-    toast({
-      variant: "destructive",
-      title: "PROTOCOLO DE SEGURANÇA INICIADO",
-      description: "Suas credenciais estão sendo revogadas. O acesso será encerrado em instantes.",
-    });
-    
-    // Logout forçado após 5 segundos de "processamento"
-    setTimeout(() => {
-      signOut(auth);
-    }, 5000);
+    try {
+      // Registro funcional do protocolo na coleção transferRequests
+      const requestsRef = collection(db, 'transferRequests');
+      addDocumentNonBlocking(requestsRef, {
+        fromUserId: profile.id,
+        fromUserName: profile.name,
+        fromUserEmail: profile.email,
+        toUserEmail: transferEmail,
+        status: 'pending',
+        timestamp: new Date().toISOString()
+      });
+
+      setTransferProtocolStatus('done');
+      
+      toast({
+        variant: "destructive",
+        title: "PROTOCOLO DE SEGURANÇA INICIADO",
+        description: "Suas credenciais estão sendo revogadas. O acesso será encerrado em instantes.",
+      });
+      
+      // Logout forçado após 5 segundos de processamento visual
+      setTimeout(() => {
+        signOut(auth);
+      }, 5000);
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "ERRO NO PROTOCOLO",
+        description: "Falha ao registrar a solicitação de transferência no ecossistema.",
+      });
+      setIsTransferring(false);
+      setTransferProtocolStatus('idle');
+    }
   };
 
   const isLegendary = profile.status === 'LEGENDARY';

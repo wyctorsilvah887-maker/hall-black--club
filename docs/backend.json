@@ -152,6 +152,21 @@
         "species",
         "registrationDateTime"
       ]
+    },
+    "TransferRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TransferRequest",
+      "type": "object",
+      "description": "Logs a request to transfer membership from one person to another.",
+      "properties": {
+        "fromUserId": { "type": "string" },
+        "fromUserName": { "type": "string" },
+        "fromUserEmail": { "type": "string" },
+        "toUserEmail": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "processed"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fromUserId", "toUserEmail", "status", "timestamp"]
     }
   },
   "auth": {
@@ -177,6 +192,12 @@
         "$ref": "#/backend/entities/Pet"
       },
       "description": "Pets belonging to members."
+    },
+    "/transferRequests/{requestId}": {
+      "schema": {
+        "$ref": "#/backend/entities/TransferRequest"
+      },
+      "description": "Logs for membership transfers."
     }
   }
 }

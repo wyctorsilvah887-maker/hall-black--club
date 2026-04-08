@@ -21,9 +21,6 @@ service cloud.firestore {
 
     // --- Collection Rules ---
 
-    /**
-     * @description Rules for unique access codes.
-     */
     match /mythicCodes/{mythicCodeId} {
       allow get: if true;
       allow list: if false;
@@ -32,30 +29,25 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    /**
-     * @description Regras para perfis de usuários.
-     * Permite listagem pública (list) para o contador de 60 membros.
-     * Leitura individual (get) restrita a membros logados ou perfis públicos.
-     */
     match /users/{userId} {
-      // Permitir listagem pública para o contador de slots (Elite 60)
       allow list: if true; 
-      
-      // Leitura permitida se logado ou se o perfil for explicitamente público
       allow get: if isSignedIn() || (resource != null && resource.data.isPublicProfile == true);
-      
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(userId);
 
       match /pets/{petId} {
-        allow get: if true; // Permitir visualização pública de pets (via QR Code/Identidade)
+        allow get: if true;
         allow list: if isSignedIn();
-        
         allow create: if isOwner(userId) && request.resource.data.userId == userId;
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
         allow delete: if isExistingOwner(userId);
       }
+    }
+
+    match /transferRequests/{requestId} {
+      allow create: if isSignedIn() && request.resource.data.fromUserId == request.auth.uid;
+      allow get, list, update, delete: if false; // Only admins via console
     }
   }
 }
