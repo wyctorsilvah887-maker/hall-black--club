@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
 import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert, MailCheck, ShieldX } from "lucide-react";
-import Image from "next/image";
+import Image from "max-width: 44px; max-height: 44px;";
+import NextImage from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
@@ -322,6 +323,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     
     const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
     setTransferCode(confirmationCode);
+    const statusRank = profile.status || 'MYTHIC';
 
     try {
       const requestsRef = collection(db, 'transferRequests');
@@ -331,6 +333,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         fromUserEmail: profile.email,
         toUserEmail: transferEmail,
         confirmationCode,
+        statusRank,
         status: 'pending',
         timestamp: new Date().toISOString()
       });
@@ -340,7 +343,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         fromEmail: profile.email,
         toEmail: transferEmail,
         confirmationCode,
-        statusRank: profile.status || 'MYTHIC'
+        statusRank
       });
 
       setTransferProtocolStatus('done');
@@ -411,7 +414,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                     isAmber ? 'border-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 
                     'border-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]'}`}>
                   {profile.photo ? (
-                    <Image src={profile.photo} alt={profile.name} width={44} height={44} className="object-cover w-full h-full" unoptimized />
+                    <NextImage src={profile.photo} alt={profile.name} width={44} height={44} className="object-cover w-full h-full" unoptimized />
                   ) : (
                     <User className={`w-3.5 h-3.5 md:w-5 md:h-5 ${themeColorClass}`} />
                   )}
@@ -523,7 +526,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
                 <div className="flex items-center gap-4 p-4 md:p-5 rounded-xl bg-black/60 border border-zinc-800/50">
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative flex-shrink-0">
-                    {profile.photo ? <Image src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
+                    {profile.photo ? <NextImage src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
                   </div>
                   <div className="text-sm space-y-0.5 min-w-0">
                     <p className="text-zinc-500 uppercase text-[8px] md:text-[10px] tracking-widest font-semibold">Titular da Conta</p>
@@ -580,7 +583,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                           <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg border border-zinc-800 overflow-hidden relative flex-shrink-0
                             ${pet.isEmergencyActive ? 'border-red-600' : isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
                             {pet.photo ? (
-                              <Image src={pet.photo} alt={pet.name} fill className="object-cover" unoptimized />
+                              <NextImage src={pet.photo} alt={pet.name} fill className="object-cover" unoptimized />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-zinc-900">
                                 <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${themeColorClass}`} />
@@ -687,7 +690,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <form onSubmit={handleAddPet} className="space-y-6 pt-4">
             <div className="flex flex-col items-center gap-3">
               <div onClick={() => fileInputRef.current?.click()} className="w-24 h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
-                {newPetPhoto ? <Image src={newPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
+                {newPetPhoto ? <NextImage src={newPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
               </div>
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'newPet')} />
             </div>
@@ -719,7 +722,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <form onSubmit={handleUpdatePet} className="space-y-6 pt-4">
             <div className="flex flex-col items-center gap-3">
               <div onClick={() => editPetFileInputRef.current?.click()} className="w-24 h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
-                {editPetPhoto ? <Image src={editPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
+                {editPetPhoto ? <NextImage src={editPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-6 h-6" /><span className="text-[8px] font-black uppercase">Foto</span></div>}
               </div>
               <input type="file" ref={editPetFileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'editPet')} />
             </div>
@@ -755,7 +758,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                 className="w-24 h-24 rounded-full border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group"
               >
                 {settingsPhoto ? (
-                  <Image src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
+                  <NextImage src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
                 ) : (
                   <div className="flex flex-col items-center gap-1 text-zinc-600">
                     <User className="w-8 h-8" />

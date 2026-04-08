@@ -163,10 +163,12 @@
         "fromUserName": { "type": "string" },
         "fromUserEmail": { "type": "string" },
         "toUserEmail": { "type": "string" },
+        "confirmationCode": { "type": "string" },
+        "statusRank": { "type": "string" },
         "status": { "type": "string", "enum": ["pending", "processed"] },
         "timestamp": { "type": "string", "format": "date-time" }
       },
-      "required": ["fromUserId", "toUserEmail", "status", "timestamp"]
+      "required": ["fromUserId", "toUserEmail", "status", "timestamp", "confirmationCode", "statusRank"]
     }
   },
   "auth": {
