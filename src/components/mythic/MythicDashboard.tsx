@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert, MailCheck } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert, MailCheck, ShieldX } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -92,6 +92,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [transferEmail, setTransferEmail] = useState('');
   const [isTransferring, setIsTransferring] = useState(false);
   const [transferProtocolStatus, setTransferProtocolStatus] = useState<'idle' | 'initiating' | 'done'>('idle');
+  const [transferCode, setTransferCode] = useState('');
 
   useEffect(() => {
     if (profile && isSettingsOpen) {
@@ -307,6 +308,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     setTransferProtocolStatus('initiating');
     
     const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    setTransferCode(confirmationCode);
 
     try {
       // 1. Registro oficial da transferência no Firestore
@@ -335,13 +337,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       toast({
         variant: "destructive",
         title: "PROTOCOLO DE SEGURANÇA INICIADO",
-        description: "Um e-mail de confirmação foi enviado. O acesso será encerrado por segurança.",
+        description: `Código ${confirmationCode} processado. O acesso será encerrado por segurança.`,
       });
       
-      // Logout forçado após 5 segundos
+      // Logout forçado após 15 segundos para dar tempo de ver o código no teste
       setTimeout(() => {
         signOut(auth);
-      }, 5000);
+      }, 15000);
     } catch (err) {
       toast({
         variant: "destructive",
@@ -870,15 +872,29 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               </DialogFooter>
             </form>
           ) : (
-            <div className="py-12 flex flex-col items-center justify-center text-center space-y-6">
-              <div className="w-16 h-16 rounded-full border-4 border-red-600 flex items-center justify-center animate-pulse">
-                <MailCheck className="w-8 h-8 text-red-600" />
+            <div className="py-12 flex flex-col items-center justify-center text-center space-y-8 animate-in zoom-in duration-500">
+              <div className="relative">
+                 <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full" />
+                 <ShieldX className="w-20 h-20 text-red-600 relative z-10 animate-pulse" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-white font-black uppercase tracking-widest">E-mail de Confirmação Enviado</h3>
-                <p className="text-zinc-500 text-[10px] uppercase tracking-widest max-w-[200px] mx-auto">Sua identidade está sendo removida por segurança...</p>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-white font-black text-xl uppercase tracking-widest">Protocolo Emitido</h3>
+                  <p className="text-zinc-500 text-[10px] uppercase tracking-widest max-w-[250px] mx-auto leading-relaxed">
+                    Sua identidade Hall Black está sendo revogada da rede. Use o código abaixo para qualquer auditoria futura.
+                  </p>
+                </div>
+                
+                <div className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-3xl space-y-2">
+                   <p className="text-zinc-600 text-[9px] font-black uppercase tracking-widest">Código de Auditoria</p>
+                   <p className="text-3xl font-mono font-black text-white tracking-[0.3em]">{transferCode}</p>
+                </div>
+
+                <div className="flex flex-col items-center gap-3">
+                   <p className="text-red-500 text-[10px] font-black uppercase tracking-widest animate-pulse">Encerrando sessão em 15s...</p>
+                   <Loader2 className="w-6 h-6 animate-spin text-zinc-800" />
+                </div>
               </div>
-              <Loader2 className="w-6 h-6 animate-spin text-zinc-800" />
             </div>
           )}
         </DialogContent>

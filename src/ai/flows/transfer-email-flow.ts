@@ -22,6 +22,7 @@ const TransferEmailOutputSchema = z.object({
   success: z.boolean().describe('Indica se o e-mail foi processado com sucesso.'),
   message: z.string().describe('Mensagem de confirmação do sistema de mensageria.'),
   emailBodyPreview: z.string().describe('Prévia do conteúdo enviado.'),
+  confirmationCode: z.string().describe('O código de segurança processado.'),
 });
 
 export type TransferEmailOutput = z.infer<typeof TransferEmailOutputSchema>;
@@ -41,7 +42,7 @@ Código de Segurança: {{{confirmationCode}}}
 
 O e-mail deve ser escrito em tom solene, informando ao cedente que sua solicitação foi registrada e que a revogação de sua identidade está em andamento. Mencione que o novo titular receberá as instruções em sua caixa de entrada.
 
-Retorne um objeto JSON confirmando o sucesso e uma prévia do texto enviado.`,
+Retorne um objeto JSON confirmando o sucesso, o código e uma prévia do texto enviado.`,
 });
 
 export async function sendTransferEmail(input: TransferEmailInput): Promise<TransferEmailOutput> {
@@ -71,6 +72,7 @@ const transferEmailFlow = ai.defineFlow(
       success: true,
       message: "Comunicado de elite enviado via rede segura.",
       emailBodyPreview: output?.emailBodyPreview || "",
+      confirmationCode: input.confirmationCode
     };
   }
 );
