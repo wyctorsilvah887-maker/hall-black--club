@@ -56,12 +56,13 @@ export async function validateMythicCode(db: Firestore, code: string) {
  */
 export async function validateTransferClaim(db: Firestore, email: string, code: string) {
   await new Promise((resolve) => setTimeout(resolve, 1500));
+  const normalizedEmail = email.toLowerCase().trim();
   
   try {
     const transferRef = collection(db, 'transferRequests');
     const q = query(
       transferRef, 
-      where('toUserEmail', '==', email.toLowerCase().trim()),
+      where('toUserEmail', '==', normalizedEmail),
       where('confirmationCode', '==', code.trim()),
       where('status', '==', 'pending'),
       limit(1)
@@ -87,6 +88,7 @@ export async function validateTransferClaim(db: Firestore, email: string, code: 
       message: "Identidade Cessionária Validada.",
       profile: {
         name: "Novo Titular",
+        email: normalizedEmail,
         status: transferData.statusRank || 'MYTHIC',
         theme: transferData.statusRank?.toLowerCase() || 'mythic',
         transferRequestId: transferDoc.id,

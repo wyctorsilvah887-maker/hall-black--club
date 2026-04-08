@@ -25,7 +25,7 @@ interface AuthGateProps {
 export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState(tempProfile?.email || '');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [emergencyPhone, setEmergencyPhone] = useState('');
@@ -36,11 +36,17 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
   const hasValidEntry = !!(tempProfile?.codeId || tempProfile?.transferRequestId);
 
+  // Sincroniza o e-mail caso venha de uma validação de código/transferência
   useEffect(() => {
-    if (!hasValidEntry) {
+    if (tempProfile?.email) {
+      setEmail(tempProfile.email);
+    }
+    if (hasValidEntry) {
+      setIsLogin(false);
+    } else {
       setIsLogin(true);
     }
-  }, [hasValidEntry]);
+  }, [tempProfile, hasValidEntry]);
 
   const formatPhoneMask = (value: string) => {
     let digits = value.replace(/\D/g, '');
@@ -63,6 +69,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) return;
+    
     setIsLoading(true);
 
     try {
@@ -166,7 +174,9 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         });
       }
     } catch (error: any) {
-      if (error.name !== 'FirebaseError') {
+      // Surfar erros de autenticação (senha fraca, etc) que não são de permissão do Firestore
+      const isPermissionError = error.message?.includes('Missing or insufficient permissions');
+      if (!isPermissionError) {
         toast({
           variant: "destructive",
           title: "ERRO DE ACESSO",
@@ -238,7 +248,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha de Elite</Label>
+            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha de Elite {!isLogin && '(Mín. 6 caracteres)'}</Label>
             <Input
               type="password"
               placeholder="••••••••"
@@ -264,8 +274,9 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         </form>
 
         <div className="text-center space-y-6">
-          {!isLogin && hasValidEntry && (
+          {(!isLogin && hasValidEntry) && (
             <button 
+              type="button"
               onClick={() => setIsLogin(true)}
               className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-bold"
             >
@@ -274,6 +285,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           )}
           
           <button 
+            type="button"
             onClick={() => {
               localStorage.removeItem('mythic_access_granted');
               window.location.reload();
