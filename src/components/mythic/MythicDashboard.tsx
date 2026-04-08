@@ -59,7 +59,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Monitor de Membros em Tempo Real
   const globalUsersQuery = useMemoFirebase(() => {
     if (!db) return null;
     return collection(db, 'users');
@@ -91,6 +90,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const [transferEmail, setTransferEmail] = useState('');
   const [isTransferring, setIsTransferring] = useState(false);
+  const [transferProtocolStatus, setTransferProtocolStatus] = useState<'idle' | 'initiating' | 'done'>('idle');
 
   useEffect(() => {
     if (profile && isSettingsOpen) {
@@ -303,17 +303,23 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     if (!transferEmail || !profile?.id) return;
 
     setIsTransferring(true);
-    // Simulação de solicitação de transferência
-    await new Promise(r => setTimeout(r, 2000));
+    setTransferProtocolStatus('initiating');
+    
+    // Simulação de registro de protocolo militar
+    await new Promise(r => setTimeout(r, 2500));
+    
+    setTransferProtocolStatus('done');
     
     toast({
-      title: "SOLICITAÇÃO ENVIADA",
-      description: "O protocolo de transferência foi registrado. Nossa equipe entrará em contato para validar a cessão da credencial.",
+      variant: "destructive",
+      title: "PROTOCOLO DE SEGURANÇA INICIADO",
+      description: "Suas credenciais estão sendo revogadas. O acesso será encerrado em instantes.",
     });
     
-    setIsTransferring(false);
-    setIsTransferOpen(false);
-    setTransferEmail('');
+    // Logout forçado após 5 segundos de "processamento"
+    setTimeout(() => {
+      signOut(auth);
+    }, 5000);
   };
 
   const isLegendary = profile.status === 'LEGENDARY';
@@ -779,50 +785,67 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               <DialogTitle className="text-xl font-black uppercase tracking-tighter">Protocolo de Cessão</DialogTitle>
             </div>
             <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest leading-relaxed">
-              Inicie a transferência permanente de sua credencial de elite para um novo guardião.
+              {transferProtocolStatus === 'done' 
+                ? 'IDENTIDADE REVOGADA. O ACESSO SERÁ ENCERRADO.'
+                : 'Inicie a transferência permanente de sua credencial de elite para um novo guardião.'}
             </DialogDescription>
           </DialogHeader>
           
-          <form onSubmit={handleInitiateTransfer} className="space-y-6 pt-4">
-            <div className="bg-red-950/10 border border-red-900/30 p-4 rounded-xl space-y-2">
-              <p className="text-[10px] text-red-500 font-black uppercase tracking-widest flex items-center gap-2">
-                <AlertCircle className="w-3 h-3" /> Atenção
-              </p>
-              <p className="text-[9px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                Ao finalizar, você perderá acesso imediato a todos os privilégios, registros de pets e histórico da linhagem Hall Black.
-              </p>
+          {transferProtocolStatus !== 'done' ? (
+            <form onSubmit={handleInitiateTransfer} className="space-y-6 pt-4">
+              <div className="bg-red-950/10 border border-red-900/30 p-4 rounded-xl space-y-2">
+                <p className="text-[10px] text-red-500 font-black uppercase tracking-widest flex items-center gap-2">
+                  <AlertCircle className="w-3 h-3" /> Atenção
+                </p>
+                <p className="text-[9px] text-zinc-500 uppercase tracking-widest leading-relaxed">
+                  Ao finalizar, você perderá acesso imediato a todos os privilégios, registros de pets e histórico da linhagem Hall Black.
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Email do Novo Titular</Label>
+                <Input 
+                  type="email" 
+                  required 
+                  placeholder="novo.membro@exemplo.com"
+                  className="bg-black/50 border-zinc-800 h-12 text-white"
+                  value={transferEmail}
+                  onChange={(e) => setTransferEmail(e.target.value)}
+                  disabled={isTransferring}
+                />
+              </div>
+              
+              <DialogFooter className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  onClick={() => setIsTransferOpen(false)}
+                  className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest border border-zinc-900 text-zinc-500 hover:text-white"
+                  disabled={isTransferring}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isTransferring || !transferEmail}
+                  className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-widest"
+                >
+                  {isTransferring ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Protocolo'}
+                </Button>
+              </DialogFooter>
+            </form>
+          ) : (
+            <div className="py-12 flex flex-col items-center justify-center text-center space-y-6">
+              <div className="w-16 h-16 rounded-full border-4 border-red-600 flex items-center justify-center animate-pulse">
+                <Siren className="w-8 h-8 text-red-600" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-white font-black uppercase tracking-widest">Protocolo Finalizado</h3>
+                <p className="text-zinc-500 text-[10px] uppercase tracking-widest max-w-[200px] mx-auto">Sua identidade está sendo removida da rede Hall Black...</p>
+              </div>
+              <Loader2 className="w-6 h-6 animate-spin text-zinc-800" />
             </div>
-            
-            <div className="space-y-2">
-              <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Email do Novo Titular</Label>
-              <Input 
-                type="email" 
-                required 
-                placeholder="novo.membro@exemplo.com"
-                className="bg-black/50 border-zinc-800 h-12 text-white"
-                value={transferEmail}
-                onChange={(e) => setTransferEmail(e.target.value)}
-              />
-            </div>
-            
-            <DialogFooter className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                type="button" 
-                variant="ghost" 
-                onClick={() => setIsTransferOpen(false)}
-                className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest border border-zinc-900 text-zinc-500 hover:text-white"
-              >
-                Cancelar
-              </Button>
-              <Button 
-                type="submit" 
-                disabled={isTransferring || !transferEmail}
-                className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-widest"
-              >
-                {isTransferring ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Protocolo'}
-              </Button>
-            </DialogFooter>
-          </form>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -845,4 +868,3 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     </div>
   );
 }
-
