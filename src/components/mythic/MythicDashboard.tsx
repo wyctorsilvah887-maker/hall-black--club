@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert, MailCheck } from "lucide-react";
 import Image from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
@@ -38,6 +38,7 @@ import { RankBadge } from './MythicIcons';
 import { ToastAction } from "@/components/ui/toast";
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { sendTransferConfirmationEmail } from '@/app/actions';
 
 interface MythicDashboardProps {
   profile: any;
@@ -305,16 +306,28 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     setIsTransferring(true);
     setTransferProtocolStatus('initiating');
     
+    const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
     try {
-      // Registro funcional do protocolo na coleção transferRequests
+      // 1. Registro oficial da transferência no Firestore
       const requestsRef = collection(db, 'transferRequests');
       addDocumentNonBlocking(requestsRef, {
         fromUserId: profile.id,
         fromUserName: profile.name,
         fromUserEmail: profile.email,
         toUserEmail: transferEmail,
+        confirmationCode,
         status: 'pending',
         timestamp: new Date().toISOString()
+      });
+
+      // 2. Acionamento do Fluxo de IA para envio de e-mail de confirmação
+      await sendTransferConfirmationEmail({
+        fromName: profile.name,
+        fromEmail: profile.email,
+        toEmail: transferEmail,
+        confirmationCode,
+        statusRank: profile.status || 'MYTHIC'
       });
 
       setTransferProtocolStatus('done');
@@ -322,10 +335,10 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       toast({
         variant: "destructive",
         title: "PROTOCOLO DE SEGURANÇA INICIADO",
-        description: "Suas credenciais estão sendo revogadas. O acesso será encerrado em instantes.",
+        description: "Um e-mail de confirmação foi enviado. O acesso será encerrado por segurança.",
       });
       
-      // Logout forçado após 5 segundos de processamento visual
+      // Logout forçado após 5 segundos
       setTimeout(() => {
         signOut(auth);
       }, 5000);
@@ -333,7 +346,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       toast({
         variant: "destructive",
         title: "ERRO NO PROTOCOLO",
-        description: "Falha ao registrar a solicitação de transferência no ecossistema.",
+        description: "Falha ao registrar a solicitação no ecossistema.",
       });
       setIsTransferring(false);
       setTransferProtocolStatus('idle');
@@ -653,6 +666,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Adicionar Pet Modal e outros diálogos... */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-sm rounded-2xl z-[200]">
           <DialogHeader>
@@ -685,6 +699,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Editar Pet Modal */}
       <Dialog open={isEditPetOpen} onOpenChange={(open) => { setIsEditPetOpen(open); if(!open) setEditingPet(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-sm rounded-2xl z-[200]">
           <DialogHeader>
@@ -717,6 +732,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Configurações Modal */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -793,6 +809,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Transferência Modal */}
       <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200]">
           <DialogHeader>
@@ -816,7 +833,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                   <AlertCircle className="w-3 h-3" /> Atenção
                 </p>
                 <p className="text-[9px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                  Ao finalizar, você perderá acesso imediato a todos os privilégios, registros de pets e histórico da linhagem Hall Black.
+                  Ao finalizar, um e-mail de confirmação será enviado para você. Você perderá acesso imediato a todos os privilégios Hall Black.
                 </p>
               </div>
               
@@ -855,11 +872,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           ) : (
             <div className="py-12 flex flex-col items-center justify-center text-center space-y-6">
               <div className="w-16 h-16 rounded-full border-4 border-red-600 flex items-center justify-center animate-pulse">
-                <Siren className="w-8 h-8 text-red-600" />
+                <MailCheck className="w-8 h-8 text-red-600" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-white font-black uppercase tracking-widest">Protocolo Finalizado</h3>
-                <p className="text-zinc-500 text-[10px] uppercase tracking-widest max-w-[200px] mx-auto">Sua identidade está sendo removida da rede Hall Black...</p>
+                <h3 className="text-white font-black uppercase tracking-widest">E-mail de Confirmação Enviado</h3>
+                <p className="text-zinc-500 text-[10px] uppercase tracking-widest max-w-[200px] mx-auto">Sua identidade está sendo removida por segurança...</p>
               </div>
               <Loader2 className="w-6 h-6 animate-spin text-zinc-800" />
             </div>
@@ -867,6 +884,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Editor de Imagem Modal */}
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[300] rounded-2xl">
           <DialogHeader>
