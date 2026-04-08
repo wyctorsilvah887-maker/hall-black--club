@@ -25,7 +25,7 @@ interface AuthGateProps {
 export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState(tempProfile?.isTransfer ? tempProfile.email : '');
+  const [email, setEmail] = useState(tempProfile?.email || '');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [emergencyPhone, setEmergencyPhone] = useState('');
