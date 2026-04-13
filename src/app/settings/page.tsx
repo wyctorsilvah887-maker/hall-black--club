@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Calendar, Info } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Phone, UserCircle } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -23,7 +23,7 @@ import { signOut } from 'firebase/auth';
 
 /**
  * @fileOverview Página de configurações de elite do Hall Black Club.
- * Oferece edição de perfil, gestão de privacidade e protocolo de transferência.
+ * Otimizada para mobile com experiência estilo App nativo.
  */
 
 export default function SettingsPage() {
@@ -48,7 +48,6 @@ export default function SettingsPage() {
   const [settingsBio, setSettingsBio] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
   
-  // Estados de Privacidade
   const [isPublic, setIsPublic] = useState(true);
   const [showBio, setShowBio] = useState(true);
   const [showLocation, setShowLocation] = useState(true);
@@ -112,7 +111,7 @@ export default function SettingsPage() {
       const compressed = await compressImage(croppedImage);
       setSettingsPhoto(compressed);
       setEditorState(null);
-      toast({ title: "IMAGEM ATUALIZADA", description: "Sua foto de perfil foi processada." });
+      toast({ title: "FOTO ATUALIZADA", description: "Seu retrato foi processado." });
     } catch (error) {
       toast({ variant: "destructive", title: "ERRO", description: "Falha ao processar imagem." });
       setEditorState(null);
@@ -132,10 +131,10 @@ export default function SettingsPage() {
         bio: settingsBio,
         photo: settingsPhoto
       });
-      toast({ title: "PERFIL SINCRONIZADO", description: "Suas credenciais foram atualizadas na rede." });
+      toast({ title: "PERFIL SINCRONIZADO", description: "Credenciais salvas com sucesso." });
       setIsProfileEditOpen(false);
     } catch (err) {
-      toast({ variant: "destructive", title: "ERRO", description: "Falha ao salvar." });
+      toast({ variant: "destructive", title: "ERRO", description: "Falha ao sincronizar." });
     } finally {
       setIsUpdatingSettings(false);
     }
@@ -143,22 +142,14 @@ export default function SettingsPage() {
 
   const handleTogglePrivacyField = (field: string, value: boolean) => {
     if (!profile?.id || !db) return;
-    
-    // Update local state first for responsiveness
     if (field === 'isPublicProfile') setIsPublic(value);
     if (field === 'showBio') setShowBio(value);
     if (field === 'showLocation') setShowLocation(value);
     if (field === 'showJoinDate') setShowJoinDate(value);
 
     const userRef = doc(db, 'users', profile.id);
-    updateDocumentNonBlocking(userRef, {
-      [field]: value
-    });
-
-    toast({ 
-      title: "PRIVACIDADE ATUALIZADA", 
-      description: "Suas preferências de visibilidade foram sincronizadas." 
-    });
+    updateDocumentNonBlocking(userRef, { [field]: value });
+    toast({ title: "PRIVACIDADE", description: "Preferências atualizadas." });
   };
 
   const handleInitiateTransfer = async (e: React.FormEvent) => {
@@ -194,10 +185,10 @@ export default function SettingsPage() {
       });
 
       setTransferProtocolStatus('done');
-      toast({ variant: "destructive", title: "REVOGAÇÃO INICIADA", description: "Sua credencial será encerrada em instantes." });
-      setTimeout(() => signOut(auth), 15000);
+      toast({ variant: "destructive", title: "REVOGAÇÃO EM CURSO", description: "Sua identidade será encerrada." });
+      setTimeout(() => signOut(auth), 10000);
     } catch (err) {
-      toast({ variant: "destructive", title: "ERRO", description: "Falha no protocolo." });
+      toast({ variant: "destructive", title: "ERRO", description: "Falha no protocolo de cessão." });
       setIsTransferring(false);
       setTransferProtocolStatus('idle');
     }
@@ -214,212 +205,212 @@ export default function SettingsPage() {
   const isLegendary = profile?.status === 'LEGENDARY';
   const isAmber = profile?.status === 'AMBER';
   const themeColor = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
-  const themeBorder = isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : 'border-zinc-900';
+  const themeBorder = isLegendary ? 'border-yellow-500/30' : isAmber ? 'border-orange-500/30' : 'border-zinc-900';
 
   return (
-    <main className={cn("min-h-screen bg-black text-white pb-20 animate-in fade-in duration-500", isLegendary ? 'theme-legendary' : isAmber ? 'theme-amber' : '')}>
-      <div className="max-w-2xl mx-auto px-4 md:px-0">
+    <main className={cn("min-h-screen bg-black text-white selection:bg-primary/30 animate-in fade-in duration-700", isLegendary ? 'theme-legendary' : isAmber ? 'theme-amber' : '')}>
+      <div className="max-w-xl mx-auto">
         
-        {/* HEADER ESTILO APP */}
-        <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-md py-6 flex items-center justify-between border-b border-zinc-900/50 mb-8">
-          <Link href="/" className="p-2 -ml-2 hover:bg-zinc-900 rounded-full transition-colors">
+        {/* HEADER MOBILE-FIRST */}
+        <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl py-5 px-4 flex items-center justify-between border-b border-zinc-900/50">
+          <Link href="/" className="p-2 -ml-3 hover:bg-zinc-900/50 rounded-full transition-colors active:scale-95">
             <ArrowLeft className="w-6 h-6" />
           </Link>
-          <h1 className="text-sm font-black uppercase tracking-widest">Configurações</h1>
+          <h1 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-400">Configurações</h1>
           <div className="w-10" />
         </header>
 
-        {/* SEÇÃO: PERFIL */}
-        <div className="mb-10">
-          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Minha Conta</p>
-          <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
-            <button 
-              onClick={() => setIsProfileEditOpen(true)}
-              className="w-full flex items-center justify-between px-4 py-5 group text-left transition-colors hover:bg-zinc-900/40"
-            >
-              <div className="flex items-center gap-3">
-                <User className={cn("w-4 h-4", themeColor)} />
-                <p className="text-[11px] font-black uppercase tracking-widest text-white">Perfil</p>
+        {/* LISTA DE OPÇÕES ESTILO APP */}
+        <div className="py-6 space-y-10">
+          
+          <section>
+            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] px-5 mb-4">Minha Conta</p>
+            <div className="bg-zinc-950/40 border-y border-zinc-900/60 divide-y divide-zinc-900/40">
+              <button 
+                onClick={() => setIsProfileEditOpen(true)}
+                className="w-full flex items-center justify-between px-5 py-5 group active:bg-zinc-900/60 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={cn("p-2 rounded-xl bg-black border", themeBorder)}>
+                    <User className={cn("w-4 h-4", themeColor)} />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[11px] font-black uppercase tracking-widest">Perfil</p>
+                    <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">{settingsName || 'Configurar'}</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-800" />
+              </button>
+            </div>
+          </section>
+
+          <section>
+            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] px-5 mb-4">Privacidade de Elite</p>
+            <div className="bg-zinc-950/40 border-y border-zinc-900/60 divide-y divide-zinc-900/40">
+              <div className="flex items-center justify-between px-5 py-5">
+                <div className="space-y-1">
+                  <p className="text-[11px] font-black uppercase tracking-widest">Perfil Público</p>
+                  <p className="text-[9px] text-zinc-600 uppercase font-bold">Visibilidade global na rede</p>
+                </div>
+                <Switch checked={isPublic} onCheckedChange={(val) => handleTogglePrivacyField('isPublicProfile', val)} />
               </div>
-              <div className="flex items-center gap-3">
-                <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider hidden sm:block">
-                  {settingsName || 'Configurar'}
-                </p>
-                <ChevronRight className="w-4 h-4 text-zinc-800 group-hover:text-white transition-colors" />
+              
+              <div className="flex items-center justify-between px-5 py-5">
+                <div className="space-y-1">
+                  <p className="text-[11px] font-black uppercase tracking-widest">Exibir Localização</p>
+                  <p className="text-[9px] text-zinc-600 uppercase font-bold">Cidade e Estado no perfil</p>
+                </div>
+                <Switch checked={showLocation} onCheckedChange={(val) => handleTogglePrivacyField('showLocation', val)} />
               </div>
-            </button>
-          </div>
+
+              <div className="flex items-center justify-between px-5 py-5">
+                <div className="space-y-1">
+                  <p className="text-[11px] font-black uppercase tracking-widest">Exibir Biografia</p>
+                  <p className="text-[9px] text-zinc-600 uppercase font-bold">Sua trajetória no clube</p>
+                </div>
+                <Switch checked={showBio} onCheckedChange={(val) => handleTogglePrivacyField('showBio', val)} />
+              </div>
+
+              <div className="flex items-center justify-between px-5 py-5">
+                <div className="space-y-1">
+                  <p className="text-[11px] font-black uppercase tracking-widest">Exibir Admissão</p>
+                  <p className="text-[9px] text-zinc-600 uppercase font-bold">Ano de entrada na elite</p>
+                </div>
+                <Switch checked={showJoinDate} onCheckedChange={(val) => handleTogglePrivacyField('showJoinDate', val)} />
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] px-5 mb-4">Gestão e Segurança</p>
+            <div className="bg-zinc-950/40 border-y border-zinc-900/60 divide-y divide-zinc-900/40">
+              <button 
+                onClick={() => setIsTransferOpen(true)}
+                className="w-full flex items-center justify-between px-5 py-5 active:bg-red-950/10 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-xl bg-black border border-red-900/30">
+                    <ArrowRightLeft className="w-4 h-4 text-red-600" />
+                  </div>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-red-600">Transferir Credencial</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-800" />
+              </button>
+              
+              <button 
+                onClick={() => signOut(auth)}
+                className="w-full flex items-center justify-between px-5 py-5 active:bg-zinc-900/60 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-xl bg-black border border-zinc-800/30">
+                    <ShieldCheck className="w-4 h-4 text-zinc-500" />
+                  </div>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-zinc-300">Encerrar Sessão</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-800" />
+              </button>
+            </div>
+          </section>
         </div>
 
-        {/* SEÇÃO: PRIVACIDADE FUNCIONAL */}
-        <div className="space-y-1 mb-10">
-          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Privacidade de Elite</p>
-          <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
-            <div className="flex items-center justify-between px-4 py-4">
-              <div className="space-y-0.5">
-                <p className="text-[11px] font-black uppercase tracking-widest">Perfil Público</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Visibilidade global na rede</p>
-              </div>
-              <Switch checked={isPublic} onCheckedChange={(val) => handleTogglePrivacyField('isPublicProfile', val)} />
-            </div>
-            
-            <div className="flex items-center justify-between px-4 py-4">
-              <div className="space-y-0.5">
-                <p className="text-[11px] font-black uppercase tracking-widest">Exibir Localização</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Cidade e Estado no perfil público</p>
-              </div>
-              <Switch checked={showLocation} onCheckedChange={(val) => handleTogglePrivacyField('showLocation', val)} />
-            </div>
-
-            <div className="flex items-center justify-between px-4 py-4">
-              <div className="space-y-0.5">
-                <p className="text-[11px] font-black uppercase tracking-widest">Exibir Biografia</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Apresentação pessoal na rede</p>
-              </div>
-              <Switch checked={showBio} onCheckedChange={(val) => handleTogglePrivacyField('showBio', val)} />
-            </div>
-
-            <div className="flex items-center justify-between px-4 py-4">
-              <div className="space-y-0.5">
-                <p className="text-[11px] font-black uppercase tracking-widest">Exibir Data de Admissão</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Ano de entrada na elite</p>
-              </div>
-              <Switch checked={showJoinDate} onCheckedChange={(val) => handleTogglePrivacyField('showJoinDate', val)} />
-            </div>
-          </div>
-        </div>
-
-        {/* SEÇÃO: GERENCIAMENTO */}
-        <div className="space-y-1">
-          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Gerenciamento de Conta</p>
-          <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
-            <button 
-              onClick={() => setIsTransferOpen(true)}
-              className="w-full flex items-center justify-between px-4 py-5 group text-left transition-colors hover:bg-red-950/10"
-            >
-              <div className="flex items-center gap-3">
-                <ArrowRightLeft className="w-4 h-4 text-red-600" />
-                <p className="text-[11px] font-black uppercase tracking-widest text-red-600">Transferir Credencial</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-zinc-800 group-hover:text-red-600 transition-colors" />
-            </button>
-            <button 
-              onClick={() => signOut(auth)}
-              className="w-full flex items-center justify-between px-4 py-5 group text-left transition-colors hover:bg-zinc-900/40"
-            >
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="w-4 h-4 text-zinc-600" />
-                <p className="text-[11px] font-black uppercase tracking-widest text-zinc-300">Encerrar Sessão</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-zinc-800 group-hover:text-white transition-colors" />
-            </button>
-          </div>
-        </div>
-
-        <footer className="mt-20 py-10 border-t border-zinc-900/50 text-center opacity-20">
-          <p className="text-[8px] font-black uppercase tracking-[0.6em]">Hall Black Club Protocol © 2026</p>
+        <footer className="mt-12 py-12 border-t border-zinc-900/50 text-center opacity-20">
+          <p className="text-[8px] font-black uppercase tracking-[0.8em]">Hall Black Protocol v2.0</p>
         </footer>
       </div>
 
-      {/* DIALOG DE EDIÇÃO DE PERFIL */}
+      {/* DIALOG DE EDIÇÃO (FULLSCREEN MOBILE) */}
       <Dialog open={isProfileEditOpen} onOpenChange={setIsProfileEditOpen}>
-        <DialogContent className="bg-black border-zinc-900 text-white w-full h-full sm:h-auto sm:max-w-md p-0 overflow-y-auto z-[200]">
-          <div className="sticky top-0 bg-black/80 backdrop-blur-md z-10 px-6 py-4 flex items-center justify-between border-b border-zinc-900">
-            <button onClick={() => setIsProfileEditOpen(false)} className="p-2 -ml-2">
+        <DialogContent className="bg-black border-none text-white w-full h-full max-w-none m-0 p-0 z-[200] flex flex-col overflow-hidden">
+          <div className="sticky top-0 bg-black/90 backdrop-blur-xl z-50 px-5 py-5 flex items-center justify-between border-b border-zinc-900/60">
+            <button onClick={() => setIsProfileEditOpen(false)} className="p-2 -ml-2 active:scale-95">
               <X className="w-6 h-6 text-zinc-500" />
             </button>
-            <DialogTitle className="text-sm font-black uppercase tracking-widest">Editar Perfil</DialogTitle>
+            <DialogTitle className="text-[11px] font-black uppercase tracking-[0.3em]">Editar Perfil</DialogTitle>
             <button 
               onClick={handleUpdateSettings}
               disabled={isUpdatingSettings}
-              className={cn("text-sm font-black uppercase tracking-widest", themeColor)}
+              className={cn("text-[11px] font-black uppercase tracking-widest px-2", themeColor, isUpdatingSettings && 'opacity-50')}
             >
               {isUpdatingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
             </button>
           </div>
           
-          <div className="p-6 space-y-8 pb-20">
-            <DialogDescription className="sr-only">Altere seus dados de titularidade e foto de credencial.</DialogDescription>
+          <div className="flex-1 overflow-y-auto px-6 py-8 pb-20 space-y-10">
+            <DialogDescription className="sr-only">Formulário de edição de credencial elite.</DialogDescription>
             
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-5">
               <div 
                 onClick={() => profilePicInputRef.current?.click()}
-                className={cn("w-32 h-32 rounded-full border-4 overflow-hidden relative group cursor-pointer shadow-2xl", themeBorder)}
+                className={cn("w-36 h-36 rounded-full border-4 overflow-hidden relative group cursor-pointer shadow-2xl active:scale-95 transition-transform", themeBorder)}
               >
                 {settingsPhoto ? (
                   <NextImage src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-zinc-950">
-                    <User className="w-12 h-12 text-zinc-800" />
+                    <UserCircle className="w-16 h-16 text-zinc-800" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Camera className="w-8 h-8 text-white" />
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                  <Camera className="w-8 h-8 text-white/70" />
                 </div>
               </div>
-              <button 
-                onClick={() => profilePicInputRef.current?.click()}
-                className={cn("text-[10px] font-black uppercase tracking-widest underline underline-offset-4", themeColor)}
-              >
-                Alterar Foto de Elite
-              </button>
               <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <User className="w-3 h-3" /> Nome Completo
+            <div className="space-y-8 max-w-md mx-auto">
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <User className="w-3.5 h-3.5" /> Nome Completo
                 </Label>
                 <Input 
                   value={settingsName || ''} 
                   onChange={(e) => setSettingsName(e.target.value)}
-                  className="bg-zinc-950 border-zinc-900 h-12 font-bold uppercase focus-visible:ring-primary"
+                  className="bg-zinc-950/50 border-zinc-900/80 h-14 rounded-xl font-bold uppercase focus-visible:ring-primary/40 text-sm"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <AlignLeft className="w-3 h-3" /> Biografia
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <AlignLeft className="w-3.5 h-3.5" /> Biografia
                 </Label>
                 <Textarea 
                   value={settingsBio || ''} 
                   onChange={(e) => setSettingsBio(e.target.value)}
-                  placeholder="Conte um pouco sobre sua trajetória no mundo pet..."
-                  className="bg-zinc-950 border-zinc-900 min-h-[100px] font-medium focus-visible:ring-primary resize-none"
+                  placeholder="Defina sua identidade na rede..."
+                  className="bg-zinc-950/50 border-zinc-900/80 min-h-[120px] rounded-xl font-medium focus-visible:ring-primary/40 text-sm resize-none p-4"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <ShieldCheck className="w-3 h-3" /> Contato Emergencial
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5" /> Contato SOS
                 </Label>
                 <Input 
                   value={settingsPhone || ''} 
                   onChange={handlePhoneChange}
                   placeholder="(00) 00000-0000"
-                  className="bg-zinc-950 border-zinc-900 h-12 font-mono focus-visible:ring-primary"
+                  className="bg-zinc-950/50 border-zinc-900/80 h-14 rounded-xl font-mono focus-visible:ring-primary/40 text-sm"
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2 space-y-2">
-                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <MapPin className="w-3 h-3" /> Cidade
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="sm:col-span-2 space-y-3">
+                  <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5" /> Cidade
                   </Label>
                   <Input 
                     value={settingsCity || ''} 
                     onChange={(e) => setSettingsCity(e.target.value)}
-                    className="bg-zinc-950 border-zinc-900 h-12 font-bold uppercase focus-visible:ring-primary"
+                    className="bg-zinc-950/50 border-zinc-900/80 h-14 rounded-xl font-bold uppercase focus-visible:ring-primary/40 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 text-center">UF</Label>
+                <div className="space-y-3">
+                  <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest text-center">UF</Label>
                   <Input 
                     value={settingsState || ''} 
                     maxLength={2}
                     onChange={(e) => setSettingsState(e.target.value.toUpperCase())}
-                    className="bg-zinc-950 border-zinc-900 h-12 font-bold uppercase text-center focus-visible:ring-primary"
+                    className="bg-zinc-950/50 border-zinc-900/80 h-14 rounded-xl font-bold uppercase text-center focus-visible:ring-primary/40 text-sm"
                   />
                 </div>
               </div>
@@ -428,31 +419,31 @@ export default function SettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* DIALOG DE TRANSFERÊNCIA */}
+      {/* DIALOG DE TRANSFERÊNCIA (ADAPTADO MOBILE) */}
       <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-900 text-white w-[95vw] max-w-md rounded-[2rem] p-0 overflow-hidden shadow-2xl z-[200]">
-          <div className="absolute top-0 inset-x-0 h-1 bg-red-600" />
+        <DialogContent className="bg-zinc-950 border-zinc-900/80 text-white w-[95vw] max-w-sm rounded-[2rem] p-0 overflow-hidden shadow-2xl z-[250]">
+          <div className="absolute top-0 inset-x-0 h-1.5 bg-red-600" />
           {transferProtocolStatus !== 'done' ? (
-            <div className="p-8 space-y-8">
+            <div className="p-7 space-y-8">
               <div className="flex flex-col items-center text-center space-y-4">
-                <div className="p-4 rounded-3xl bg-red-950/20 border border-red-900/50">
+                <div className="p-4 rounded-[1.5rem] bg-red-950/20 border border-red-900/30">
                   <ShieldAlert className="w-10 h-10 text-red-600" />
                 </div>
                 <DialogHeader className="space-y-2">
-                  <DialogTitle className="text-xl font-black uppercase tracking-tighter text-center">Cessão de Credencial</DialogTitle>
-                  <DialogDescription className="text-[9px] text-red-500 uppercase tracking-widest font-bold leading-relaxed max-w-xs mx-auto text-center">
-                    ESTE PROCESSO É IRREVERSÍVEL E RESULTARÁ NA REVOGAÇÃO IMEDIATA DA SUA IDENTIDADE.
+                  <DialogTitle className="text-xl font-black uppercase tracking-tighter text-center">Protocolo de Cessão</DialogTitle>
+                  <DialogDescription className="text-[9px] text-red-500 uppercase tracking-[0.2em] font-bold leading-relaxed text-center">
+                    AÇÃO IRREVERSÍVEL: RESULTARÁ NA REVOGAÇÃO DA SUA IDENTIDADE.
                   </DialogDescription>
                 </DialogHeader>
               </div>
 
               <form onSubmit={handleInitiateTransfer} className="space-y-6">
                 <div className="space-y-3">
-                  <Label className="text-[9px] uppercase tracking-widest text-zinc-500 font-bold ml-1">E-mail do Novo Titular</Label>
+                  <Label className="text-[10px] uppercase tracking-widest text-zinc-600 font-bold ml-1">E-mail do Novo Titular</Label>
                   <Input 
                     type="email" required 
-                    placeholder="novo.membro@hallblack.com"
-                    className="bg-zinc-900/50 border-zinc-800 h-14 rounded-2xl text-sm font-bold"
+                    placeholder="exemplo@hallblack.com"
+                    className="bg-black/40 border-zinc-800 h-14 rounded-2xl text-sm font-bold"
                     value={transferEmail || ''}
                     onChange={(e) => setTransferEmail(e.target.value)}
                     disabled={isTransferring}
@@ -461,12 +452,12 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-3">
                   <Button 
                     type="submit" disabled={isTransferring || !transferEmail}
-                    className="h-14 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl"
+                    className="h-14 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl active:scale-[0.98] transition-transform"
                   >
                     {isTransferring ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirmar Transferência'}
                   </Button>
-                  <Button variant="ghost" onClick={() => setIsTransferOpen(false)} className="h-12 text-[9px] font-black uppercase tracking-widest text-zinc-500">
-                    Cancelar Protocolo
+                  <Button variant="ghost" onClick={() => setIsTransferOpen(false)} className="h-12 text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                    Cancelar
                   </Button>
                 </div>
               </form>
@@ -476,13 +467,13 @@ export default function SettingsPage() {
               <ShieldX className="w-20 h-20 text-red-600 animate-pulse" />
               <div className="space-y-4">
                 <DialogHeader className="space-y-2">
-                  <DialogTitle className="text-xl font-black uppercase tracking-widest text-center">Protocolo Emitido</DialogTitle>
-                  <DialogDescription className="text-[9px] text-zinc-500 uppercase font-bold leading-relaxed text-center">
-                    Sua identidade foi revogada. Informe o código abaixo ao novo titular para concluir a herança da credencial.
+                  <DialogTitle className="text-xl font-black uppercase tracking-widest">Acesso Revogado</DialogTitle>
+                  <DialogDescription className="text-[9px] text-zinc-500 uppercase font-bold text-center leading-relaxed">
+                    Sua identidade foi encerrada. O código abaixo deve ser entregue ao sucessor.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
-                   <p className="text-zinc-600 text-[8px] font-black uppercase tracking-[0.4em] mb-2">Código de Segurança</p>
+                <div className="p-7 bg-black/60 border border-zinc-900 rounded-[2rem]">
+                   <p className="text-zinc-600 text-[8px] font-black uppercase tracking-[0.5em] mb-3">Chave de Herança</p>
                    <p className="text-4xl font-mono font-black text-white tracking-[0.3em]">{transferCode}</p>
                 </div>
               </div>
@@ -493,10 +484,10 @@ export default function SettingsPage() {
 
       {/* EDITOR DE IMAGEM */}
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 rounded-3xl z-[300]">
+        <DialogContent className="bg-zinc-950 border-zinc-900/60 text-white w-[95vw] max-w-sm p-6 rounded-[2rem] z-[300]">
           <DialogHeader>
-            <DialogTitle className="text-lg font-black uppercase tracking-tighter">Ajuste de Credencial</DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500 uppercase tracking-widest">Enquadramento oficial para rede de elite.</DialogDescription>
+            <DialogTitle className="text-lg font-black uppercase tracking-tighter">Enquadramento</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-600 uppercase tracking-widest">Ajuste seu retrato de elite.</DialogDescription>
           </DialogHeader>
           {editorState && (
             <ImageEditor image={editorState.image} cropShape="round" onCancel={() => setEditorState(null)} onConfirm={handleEditorConfirm} />
