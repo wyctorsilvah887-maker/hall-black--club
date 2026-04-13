@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -47,6 +47,7 @@ export default function SettingsPage() {
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
 
+  const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
   const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [transferEmail, setTransferEmail] = useState('');
   const [isTransferring, setIsTransferring] = useState(false);
@@ -117,6 +118,7 @@ export default function SettingsPage() {
         photo: settingsPhoto
       });
       toast({ title: "PERFIL SINCRONIZADO", description: "Suas credenciais foram atualizadas na rede." });
+      setIsProfileEditOpen(false);
     } catch (err) {
       toast({ variant: "destructive", title: "ERRO", description: "Falha ao salvar." });
     } finally {
@@ -189,79 +191,28 @@ export default function SettingsPage() {
             <ArrowLeft className="w-6 h-6" />
           </Link>
           <h1 className="text-sm font-black uppercase tracking-widest">Configurações</h1>
-          <button 
-            onClick={handleUpdateSettings} 
-            disabled={isUpdatingSettings}
-            className={cn("text-xs font-black uppercase tracking-widest p-2", themeColor)}
-          >
-            {isUpdatingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
-          </button>
+          <div className="w-10" /> {/* Espaçador para centralizar título */}
         </header>
 
-        {/* SEÇÃO: EDITAR PERFIL */}
+        {/* SEÇÃO: CONTA */}
         <div className="mb-10">
-          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Editar Perfil</p>
-          
-          <div className="bg-zinc-950/50 border-y border-zinc-900 px-4 py-8 flex flex-col items-center gap-4 mb-2">
-            <div 
-              onClick={() => profilePicInputRef.current?.click()}
-              className={cn("w-28 h-28 rounded-full border-2 overflow-hidden relative group cursor-pointer", themeBorder)}
-            >
-              {settingsPhoto ? (
-                <NextImage src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-zinc-950">
-                  <User className="w-10 h-10 text-zinc-800" />
-                </div>
-              )}
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="w-6 h-6 text-white" />
-              </div>
-            </div>
-            <button 
-              onClick={() => profilePicInputRef.current?.click()}
-              className={cn("text-[10px] font-black uppercase tracking-widest", themeColor)}
-            >
-              Alterar Foto de Elite
-            </button>
-            <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
-          </div>
-
+          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Minha Conta</p>
           <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
-            <div className="flex items-center px-4 py-4 gap-4">
-              <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Nome</Label>
-              <Input 
-                value={settingsName || ''} 
-                onChange={(e) => setSettingsName(e.target.value)}
-                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0 placeholder:text-zinc-800"
-              />
-            </div>
-            <div className="flex items-center px-4 py-4 gap-4">
-              <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Contato</Label>
-              <Input 
-                value={settingsPhone || ''} 
-                onChange={handlePhoneChange}
-                placeholder="(00) 00000-0000"
-                className="bg-transparent border-none h-auto p-0 text-sm font-mono focus-visible:ring-0 placeholder:text-zinc-800"
-              />
-            </div>
-            <div className="flex items-center px-4 py-4 gap-4">
-              <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Cidade</Label>
-              <Input 
-                value={settingsCity || ''} 
-                onChange={(e) => setSettingsCity(e.target.value)}
-                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0 placeholder:text-zinc-800"
-              />
-            </div>
-            <div className="flex items-center px-4 py-4 gap-4">
-              <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Estado</Label>
-              <Input 
-                value={settingsState || ''} 
-                maxLength={2}
-                onChange={(e) => setSettingsState(e.target.value.toUpperCase())}
-                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0 placeholder:text-zinc-800"
-              />
-            </div>
+            <button 
+              onClick={() => setIsProfileEditOpen(true)}
+              className="w-full flex items-center justify-between px-4 py-5 group text-left transition-colors hover:bg-zinc-900/40"
+            >
+              <div className="flex items-center gap-3">
+                <User className={cn("w-4 h-4", themeColor)} />
+                <p className="text-[11px] font-black uppercase tracking-widest text-white">Perfil</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider hidden sm:block">
+                  {settingsName || 'Configurar'}
+                </p>
+                <ChevronRight className="w-4 h-4 text-zinc-800 group-hover:text-white transition-colors" />
+              </div>
+            </button>
           </div>
         </div>
 
@@ -292,7 +243,7 @@ export default function SettingsPage() {
           <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
             <button 
               onClick={() => setIsTransferOpen(true)}
-              className="w-full flex items-center justify-between px-4 py-5 group text-left"
+              className="w-full flex items-center justify-between px-4 py-5 group text-left transition-colors hover:bg-red-950/10"
             >
               <div className="flex items-center gap-3">
                 <ArrowRightLeft className="w-4 h-4 text-red-600" />
@@ -302,13 +253,13 @@ export default function SettingsPage() {
             </button>
             <button 
               onClick={() => signOut(auth)}
-              className="w-full flex items-center justify-between px-4 py-5 group text-left"
+              className="w-full flex items-center justify-between px-4 py-5 group text-left transition-colors hover:bg-zinc-900/40"
             >
               <div className="flex items-center gap-3">
                 <ShieldCheck className="w-4 h-4 text-zinc-600" />
                 <p className="text-[11px] font-black uppercase tracking-widest text-zinc-300">Encerrar Sessão</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-zinc-800" />
+              <ChevronRight className="w-4 h-4 text-zinc-800 group-hover:text-white transition-colors" />
             </button>
           </div>
         </div>
@@ -317,6 +268,99 @@ export default function SettingsPage() {
           <p className="text-[8px] font-black uppercase tracking-[0.6em]">Hall Black Club Protocol © 2026</p>
         </footer>
       </div>
+
+      {/* DIALOG DE EDIÇÃO DE PERFIL */}
+      <Dialog open={isProfileEditOpen} onOpenChange={setIsProfileEditOpen}>
+        <DialogContent className="bg-black border-zinc-900 text-white w-full h-full sm:h-auto sm:max-w-md p-0 overflow-y-auto z-[200]">
+          <div className="sticky top-0 bg-black/80 backdrop-blur-md z-10 px-6 py-4 flex items-center justify-between border-b border-zinc-900">
+            <button onClick={() => setIsProfileEditOpen(false)} className="p-2 -ml-2">
+              <X className="w-6 h-6 text-zinc-500" />
+            </button>
+            <DialogTitle className="text-sm font-black uppercase tracking-widest">Editar Perfil</DialogTitle>
+            <button 
+              onClick={handleUpdateSettings}
+              disabled={isUpdatingSettings}
+              className={cn("text-sm font-black uppercase tracking-widest", themeColor)}
+            >
+              {isUpdatingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
+            </button>
+          </div>
+          
+          <div className="p-6 space-y-8">
+            <DialogDescription className="sr-only">Altere seus dados de titularidade e foto de credencial.</DialogDescription>
+            
+            <div className="flex flex-col items-center gap-4">
+              <div 
+                onClick={() => profilePicInputRef.current?.click()}
+                className={cn("w-32 h-32 rounded-full border-4 overflow-hidden relative group cursor-pointer shadow-2xl", themeBorder)}
+              >
+                {settingsPhoto ? (
+                  <NextImage src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-zinc-950">
+                    <User className="w-12 h-12 text-zinc-800" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Camera className="w-8 h-8 text-white" />
+                </div>
+              </div>
+              <button 
+                onClick={() => profilePicInputRef.current?.click()}
+                className={cn("text-[10px] font-black uppercase tracking-widest underline underline-offset-4", themeColor)}
+              >
+                Alterar Foto de Elite
+              </button>
+              <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Nome Completo</Label>
+                <Input 
+                  value={settingsName || ''} 
+                  onChange={(e) => setSettingsName(e.target.value)}
+                  className="bg-zinc-950 border-zinc-900 h-12 font-bold uppercase focus-visible:ring-primary"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Contato Emergencial</Label>
+                <Input 
+                  value={settingsPhone || ''} 
+                  onChange={handlePhoneChange}
+                  placeholder="(00) 00000-0000"
+                  className="bg-zinc-950 border-zinc-900 h-12 font-mono focus-visible:ring-primary"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2 space-y-2">
+                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Cidade</Label>
+                  <Input 
+                    value={settingsCity || ''} 
+                    onChange={(e) => setSettingsCity(e.target.value)}
+                    className="bg-zinc-950 border-zinc-900 h-12 font-bold uppercase focus-visible:ring-primary"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Estado</Label>
+                  <Input 
+                    value={settingsState || ''} 
+                    maxLength={2}
+                    onChange={(e) => setSettingsState(e.target.value.toUpperCase())}
+                    className="bg-zinc-950 border-zinc-900 h-12 font-bold uppercase text-center focus-visible:ring-primary"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="pt-8">
+               <p className="text-[8px] text-center text-zinc-700 uppercase tracking-[0.4em] leading-relaxed">
+                 OS DADOS ACIMA SÃO EXIBIDOS EM SUA CREDENCIAL PÚBLICA E NO SISTEMA DE BUSCA SOS PARA PETS.
+               </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* DIALOG DE TRANSFERÊNCIA */}
       <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
