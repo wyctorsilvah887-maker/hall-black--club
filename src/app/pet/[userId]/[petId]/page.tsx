@@ -7,7 +7,7 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, ChevronRight, Siren, AlertCircle, MessageSquare, PhoneCall, FastForward } from "lucide-react";
+import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, ChevronRight, Siren, AlertCircle, MessageSquare, PhoneCall } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
@@ -113,11 +113,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
           )}
 
           {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
-            <div className={`flex flex-col items-center gap-10 backface-hidden ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
-              <RankBadge status={owner.status} id={owner.id} regNumber={owner.memberNumber} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)]" />
+            <div className={`flex flex-col items-center gap-10 backface-hidden px-5 ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
+              <RankBadge status={owner.status} id={owner.id} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)] scale-90 md:scale-125" />
               <div className="space-y-3 text-center">
-                <p className={`text-[13px] font-black uppercase tracking-[1em] ${themeColorClass} animate-pulse`}>Identidade Confirmada</p>
-                <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-widest italic opacity-60">Hall Black Elite Identity</p>
+                <p className={`text-[11px] md:text-[13px] font-black uppercase tracking-[0.8em] md:tracking-[1em] ${themeColorClass} animate-pulse`}>Identidade Confirmada</p>
+                <p className="text-zinc-700 text-[9px] md:text-[10px] font-bold uppercase tracking-widest italic opacity-60">Hall Black Elite Identity</p>
               </div>
             </div>
           )}
@@ -127,15 +127,13 @@ export default function PetProfilePage({ params }: PetPageProps) {
       {/* CONTEÚDO PRINCIPAL */}
       <div className={`relative z-10 ${(introPhase === 'reveal' || introPhase === 'done') ? 'animate-slow-reveal' : 'opacity-0'}`}>
         <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[160px] opacity-20" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] bg-primary/5 rounded-full blur-[80px] md:blur-[160px] opacity-20" />
         </div>
 
         <div className="max-w-3xl mx-auto px-5 pt-8 md:pt-16 space-y-10 relative z-10">
-          {user && (
-            <Link href="/" className="inline-flex items-center gap-2 text-zinc-600 hover:text-white transition-colors text-[9px] font-bold uppercase tracking-[0.4em]">
-              <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao Início
-            </Link>
-          )}
+          <Link href="/" className="inline-flex items-center gap-2 text-zinc-600 hover:text-white transition-colors text-[9px] font-bold uppercase tracking-[0.4em]">
+            <ArrowLeft className="w-3.5 h-3.5" /> Retornar
+          </Link>
 
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="flex flex-col items-center gap-2">
@@ -162,7 +160,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   </div>
                 )}
               </div>
-              <RankBadge status={owner.status} id={owner.id} regNumber={owner.memberNumber} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+              <RankBadge status={owner.status} id={owner.id} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             </div>
             
             <div className="space-y-3">
@@ -171,8 +169,8 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 <p className="text-zinc-500 text-[9px] uppercase tracking-[0.6em] font-black">Linhagem de Elite</p>
                 <span className="h-px w-4 bg-zinc-800" />
               </div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none">{pet.name}</h1>
-              <div className="flex justify-center gap-2 pt-1">
+              <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none break-words px-2">{pet.name}</h1>
+              <div className="flex flex-wrap justify-center gap-2 pt-1">
                 <Badge variant="outline" className="py-1 px-3 rounded-full border-zinc-900 bg-zinc-950 text-zinc-500 text-[9px] font-black uppercase tracking-widest">
                   {pet.species}
                 </Badge>
@@ -184,7 +182,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-5 md:p-6 rounded-3xl group overflow-hidden relative">
+            <Card className="bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-6 rounded-3xl group overflow-hidden relative">
                <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                   <User className={`w-24 h-24 ${themeColorClass}`} />
                </div>
@@ -212,7 +210,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
             </Card>
 
             <div className="grid grid-cols-1 gap-4">
-               <Card className={`bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-5 md:p-6 rounded-3xl flex items-center justify-between transition-all duration-500
+               <Card className={`bg-zinc-950/40 border-zinc-900/50 backdrop-blur-2xl p-6 rounded-3xl flex flex-row items-center justify-between transition-all duration-500
                  ${isSOSActive ? 'border-red-600/50 bg-red-950/10' : ''}`}>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-zinc-600">
@@ -223,17 +221,13 @@ export default function PetProfilePage({ params }: PetPageProps) {
                       {owner.city ? `${owner.city}, ${owner.state || ''}` : 'LOCALIZAÇÃO RESTRITA'}
                     </p>
                   </div>
-                  <div className="h-8 w-px bg-zinc-900/50" />
                   <div className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Siren className={`w-3 h-3 ${isSOSActive ? 'text-red-500 animate-pulse' : 'text-zinc-800'}`} />
                       <span className={`text-[9px] font-black uppercase tracking-widest ${isSOSActive ? 'text-red-500' : 'text-zinc-600'}`}>
-                        {isSOSActive ? 'Emergência Ativa' : 'SOS Privado'}
+                        {isSOSActive ? 'Emergência' : 'SOS Privado'}
                       </span>
                     </div>
-                    {!isSOSActive && (
-                      <p className="text-[9px] font-bold text-zinc-800 uppercase italic">Protegido</p>
-                    )}
                   </div>
                </Card>
 
@@ -259,9 +253,9 @@ export default function PetProfilePage({ params }: PetPageProps) {
           {isSOSActive && (
             <Card className="bg-red-950/10 border-red-600/30 backdrop-blur-2xl p-6 md:p-8 rounded-[2.5rem] space-y-6">
               <div className="text-center space-y-2">
-                <h2 className="text-red-500 font-black text-2xl uppercase tracking-tighter italic">PET ENCONTRA-SE PERDIDO</h2>
+                <h2 className="text-red-500 font-black text-2xl uppercase tracking-tighter italic">PET PERDIDO</h2>
                 <p className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold max-w-sm mx-auto leading-relaxed">
-                  ESTE ANIMAL FAZ PARTE DA REDE HALL BLACK. POR FAVOR, AJUDE-O A VOLTAR PARA CASA USANDO OS CANAIS DE CONTATO ABAIXO.
+                  ESTE ANIMAL FAZ PARTE DA REDE HALL BLACK. POR FAVOR, ENTRE EM CONTATO COM O GUARDIÃO.
                 </p>
               </div>
               
@@ -269,7 +263,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                 <Button asChild className="flex-1 h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-[11px] rounded-2xl group">
                   <a href={telUrl} className="flex items-center justify-center gap-2">
                     <PhoneCall className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    Lugar para o Dono
+                    Ligar Agora
                   </a>
                 </Button>
                 <Button asChild className="flex-1 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase tracking-widest text-[11px] rounded-2xl group">
@@ -289,7 +283,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
              </p>
           </div>
 
-          <footer className="pt-12 text-center opacity-30">
+          <footer className="pt-8 md:pt-12 text-center opacity-30">
             <p className="text-[8px] text-zinc-800 uppercase tracking-[0.5em] font-black">
               HALL BLACK PET IDENTITY PROTOCOL © {new Date().getFullYear()}
             </p>
