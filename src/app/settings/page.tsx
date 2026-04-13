@@ -276,7 +276,7 @@ export default function SettingsPage() {
                   <Input 
                     className="bg-black/50 border-zinc-800 h-14 font-bold focus:ring-primary" 
                     value={settingsCity} 
-                    onChange={(e) => setSettingsCity(e.target.value)} 
+                    onChange={(e) => setSettingsName(e.target.value)} 
                     placeholder="Ex: São Paulo" 
                   />
                 </div>
@@ -285,7 +285,7 @@ export default function SettingsPage() {
                   <Input 
                     className="bg-black/50 border-zinc-800 h-14 font-bold focus:ring-primary" 
                     value={settingsState} 
-                    onChange={(e) => setSettingsState(e.target.value)} 
+                    onChange={(e) => setSettingsName(e.target.value)} 
                     placeholder="Ex: SP" 
                   />
                 </div>
@@ -315,7 +315,7 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   onClick={() => setIsTransferOpen(true)}
-                  className="w-full h-14 rounded-xl border-zinc-800 text-zinc-500 hover:text-red-500 hover:border-red-600/50 hover:bg-red-950/10 transition-all text-xs font-black uppercase tracking-widest"
+                  className="w-full h-auto min-h-14 py-3 rounded-xl border-zinc-800 text-zinc-500 hover:text-red-500 hover:border-red-600/50 hover:bg-red-950/10 transition-all text-[10px] font-black uppercase tracking-wider leading-tight px-4 whitespace-normal"
                 >
                   Solicitar Transferência de Credencial
                 </Button>
