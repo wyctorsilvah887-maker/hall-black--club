@@ -7,7 +7,7 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Crown, Gem, ShieldCheck, Trophy, ArrowLeft, ShieldAlert, MapPin, User } from "lucide-react";
+import { Crown, Gem, ShieldCheck, Trophy, ArrowLeft, ShieldAlert, MapPin, User, Calendar, Quote } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
@@ -121,6 +121,17 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
           </Badge>
         </div>
 
+        {profile.bio && (
+          <div className="relative group">
+            <Quote className="absolute -top-4 -left-4 w-8 h-8 text-zinc-900 group-hover:text-primary/20 transition-colors" />
+            <div className="bg-zinc-950/40 border border-zinc-900/50 p-8 rounded-[2rem] backdrop-blur-xl">
+              <p className="text-zinc-400 text-sm md:text-base font-medium leading-relaxed italic">
+                "{profile.bio}"
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 md:p-8 space-y-6">
             <CardHeader className="p-0">
@@ -131,11 +142,17 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
             </CardHeader>
             <CardContent className="p-0 space-y-3">
               <div className="flex justify-between items-center p-4 rounded-xl bg-black/40 border border-zinc-800/30">
-                <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Nº Registro</span>
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-4 h-4 text-zinc-700" />
+                  <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Nº Registro</span>
+                </div>
                 <span className="text-xs font-mono font-black text-white">{memberRegistrationId}</span>
               </div>
               <div className="flex justify-between items-center p-4 rounded-xl bg-black/40 border border-zinc-800/30">
-                <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Acreditação</span>
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-zinc-700" />
+                  <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Acreditação</span>
+                </div>
                 <span className="text-xs font-mono font-bold text-zinc-300">
                   {profile.registrationDateTime ? new Date(profile.registrationDateTime).toLocaleDateString('pt-BR') : '---'}
                 </span>

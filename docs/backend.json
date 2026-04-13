@@ -63,6 +63,10 @@
           "type": "string",
           "description": "Base64 representation of the user's profile photo."
         },
+        "bio": {
+          "type": "string",
+          "description": "A short biography of the member."
+        },
         "city": {
           "type": "string",
           "description": "The city where the user is located."

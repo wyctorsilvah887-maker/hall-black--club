@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -44,6 +45,7 @@ export default function SettingsPage() {
   const [settingsPhone, setSettingsPhone] = useState('');
   const [settingsCity, setSettingsCity] = useState('');
   const [settingsState, setSettingsState] = useState('');
+  const [settingsBio, setSettingsBio] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
   const [isPublic, setIsPublic] = useState(true);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
@@ -65,6 +67,7 @@ export default function SettingsPage() {
       setSettingsPhone(profile.emergencyContact || '');
       setSettingsCity(profile.city || '');
       setSettingsState(profile.state || '');
+      setSettingsBio(profile.bio || '');
       setSettingsPhoto(profile.photo || null);
       setIsPublic(profile.isPublicProfile ?? true);
     }
@@ -117,6 +120,7 @@ export default function SettingsPage() {
         emergencyContact: settingsPhone,
         city: settingsCity,
         state: settingsState,
+        bio: settingsBio,
         photo: settingsPhoto
       });
       toast({ title: "PERFIL SINCRONIZADO", description: "Suas credenciais foram atualizadas na rede." });
@@ -242,13 +246,6 @@ export default function SettingsPage() {
               </div>
               <Switch checked={isPublic} onCheckedChange={handleTogglePrivacy} />
             </div>
-            <div className="flex items-center justify-between px-4 py-4 opacity-40">
-              <div className="space-y-0.5">
-                <p className="text-[11px] font-black uppercase tracking-widest">Modo Invisível</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Ocultar status de presença (Em breve)</p>
-              </div>
-              <Switch checked={false} disabled />
-            </div>
           </div>
         </div>
 
@@ -301,7 +298,7 @@ export default function SettingsPage() {
             </button>
           </div>
           
-          <div className="p-6 space-y-8">
+          <div className="p-6 space-y-8 pb-20">
             <DialogDescription className="sr-only">Altere seus dados de titularidade e foto de credencial.</DialogDescription>
             
             <div className="flex flex-col items-center gap-4">
@@ -331,15 +328,32 @@ export default function SettingsPage() {
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Nome Completo</Label>
+                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <User className="w-3 h-3" /> Nome Completo
+                </Label>
                 <Input 
                   value={settingsName || ''} 
                   onChange={(e) => setSettingsName(e.target.value)}
                   className="bg-zinc-950 border-zinc-900 h-12 font-bold uppercase focus-visible:ring-primary"
                 />
               </div>
+
               <div className="space-y-2">
-                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Contato Emergencial</Label>
+                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <AlignLeft className="w-3 h-3" /> Biografia
+                </Label>
+                <Textarea 
+                  value={settingsBio || ''} 
+                  onChange={(e) => setSettingsBio(e.target.value)}
+                  placeholder="Conte um pouco sobre sua trajetória no mundo pet..."
+                  className="bg-zinc-950 border-zinc-900 min-h-[100px] font-medium focus-visible:ring-primary resize-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <ShieldCheck className="w-3 h-3" /> Contato Emergencial
+                </Label>
                 <Input 
                   value={settingsPhone || ''} 
                   onChange={handlePhoneChange}
@@ -347,9 +361,12 @@ export default function SettingsPage() {
                   className="bg-zinc-950 border-zinc-900 h-12 font-mono focus-visible:ring-primary"
                 />
               </div>
+
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2 space-y-2">
-                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Cidade</Label>
+                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapPin className="w-3 h-3" /> Cidade
+                  </Label>
                   <Input 
                     value={settingsCity || ''} 
                     onChange={(e) => setSettingsCity(e.target.value)}
@@ -357,7 +374,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Estado</Label>
+                  <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1 text-center">UF</Label>
                   <Input 
                     value={settingsState || ''} 
                     maxLength={2}
