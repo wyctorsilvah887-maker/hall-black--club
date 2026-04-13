@@ -4,13 +4,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, AlertCircle, ArrowRightLeft, Loader2, ShieldX, Settings, Save, Lock, Eye, EyeOff, ShieldCheck, ChevronRight } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -189,7 +188,7 @@ export default function SettingsPage() {
           <Link href="/" className="p-2 -ml-2 hover:bg-zinc-900 rounded-full transition-colors">
             <ArrowLeft className="w-6 h-6" />
           </Link>
-          <h1 className="text-sm font-black uppercase tracking-widest">Configurações de Elite</h1>
+          <h1 className="text-sm font-black uppercase tracking-widest">Configurações</h1>
           <button 
             onClick={handleUpdateSettings} 
             disabled={isUpdatingSettings}
@@ -199,74 +198,74 @@ export default function SettingsPage() {
           </button>
         </header>
 
-        {/* FOTO DE PERFIL */}
-        <div className="flex flex-col items-center gap-4 mb-12">
-          <div 
-            onClick={() => profilePicInputRef.current?.click()}
-            className={cn("w-24 h-24 rounded-full border-2 overflow-hidden relative group cursor-pointer", themeBorder)}
-          >
-            {settingsPhoto ? (
-              <NextImage src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-zinc-950">
-                <User className="w-8 h-8 text-zinc-800" />
+        {/* SEÇÃO: EDITAR PERFIL */}
+        <div className="mb-10">
+          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Editar Perfil</p>
+          
+          <div className="bg-zinc-950/50 border-y border-zinc-900 px-4 py-8 flex flex-col items-center gap-4 mb-2">
+            <div 
+              onClick={() => profilePicInputRef.current?.click()}
+              className={cn("w-28 h-28 rounded-full border-2 overflow-hidden relative group cursor-pointer", themeBorder)}
+            >
+              {settingsPhoto ? (
+                <NextImage src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-zinc-950">
+                  <User className="w-10 h-10 text-zinc-800" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="w-6 h-6 text-white" />
               </div>
-            )}
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera className="w-6 h-6" />
             </div>
+            <button 
+              onClick={() => profilePicInputRef.current?.click()}
+              className={cn("text-[10px] font-black uppercase tracking-widest", themeColor)}
+            >
+              Alterar Foto de Elite
+            </button>
+            <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
           </div>
-          <button 
-            onClick={() => profilePicInputRef.current?.click()}
-            className={cn("text-[10px] font-black uppercase tracking-widest", themeColor)}
-          >
-            Alterar foto de elite
-          </button>
-          <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
-        </div>
 
-        {/* LISTA DE OPÇÕES: EDITAR PERFIL */}
-        <div className="space-y-1 mb-10">
-          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Informações de Titularidade</p>
           <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
             <div className="flex items-center px-4 py-4 gap-4">
               <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Nome</Label>
               <Input 
-                value={settingsName} 
+                value={settingsName || ''} 
                 onChange={(e) => setSettingsName(e.target.value)}
-                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0"
+                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0 placeholder:text-zinc-800"
               />
             </div>
             <div className="flex items-center px-4 py-4 gap-4">
               <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Contato</Label>
               <Input 
-                value={settingsPhone} 
+                value={settingsPhone || ''} 
                 onChange={handlePhoneChange}
                 placeholder="(00) 00000-0000"
-                className="bg-transparent border-none h-auto p-0 text-sm font-mono focus-visible:ring-0"
+                className="bg-transparent border-none h-auto p-0 text-sm font-mono focus-visible:ring-0 placeholder:text-zinc-800"
               />
             </div>
             <div className="flex items-center px-4 py-4 gap-4">
               <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Cidade</Label>
               <Input 
-                value={settingsCity} 
+                value={settingsCity || ''} 
                 onChange={(e) => setSettingsCity(e.target.value)}
-                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0"
+                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0 placeholder:text-zinc-800"
               />
             </div>
             <div className="flex items-center px-4 py-4 gap-4">
               <Label className="w-24 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Estado</Label>
               <Input 
-                value={settingsState} 
+                value={settingsState || ''} 
                 maxLength={2}
                 onChange={(e) => setSettingsState(e.target.value.toUpperCase())}
-                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0"
+                className="bg-transparent border-none h-auto p-0 text-sm font-bold uppercase focus-visible:ring-0 placeholder:text-zinc-800"
               />
             </div>
           </div>
         </div>
 
-        {/* LISTA DE OPÇÕES: PRIVACIDADE */}
+        {/* SEÇÃO: PRIVACIDADE */}
         <div className="space-y-1 mb-10">
           <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Privacidade de Elite</p>
           <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
@@ -284,17 +283,10 @@ export default function SettingsPage() {
               </div>
               <Switch checked={false} disabled />
             </div>
-            <div className="flex items-center justify-between px-4 py-4">
-              <div className="space-y-0.5">
-                <p className="text-[11px] font-black uppercase tracking-widest">Segurança Biométrica</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Autenticação em duas etapas</p>
-              </div>
-              <Switch checked={true} disabled />
-            </div>
           </div>
         </div>
 
-        {/* LISTA DE OPÇÕES: CONTA E SEGURANÇA */}
+        {/* SEÇÃO: GERENCIAMENTO */}
         <div className="space-y-1">
           <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Gerenciamento de Conta</p>
           <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
@@ -304,7 +296,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <ArrowRightLeft className="w-4 h-4 text-red-600" />
-                <p className="text-[11px] font-black uppercase tracking-widest text-red-600">Transferir Credencial de Elite</p>
+                <p className="text-[11px] font-black uppercase tracking-widest text-red-600">Transferir Credencial</p>
               </div>
               <ChevronRight className="w-4 h-4 text-zinc-800 group-hover:text-red-600 transition-colors" />
             </button>
@@ -314,7 +306,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <ShieldCheck className="w-4 h-4 text-zinc-600" />
-                <p className="text-[11px] font-black uppercase tracking-widest text-zinc-300">Encerrar Sessão de Segurança</p>
+                <p className="text-[11px] font-black uppercase tracking-widest text-zinc-300">Encerrar Sessão</p>
               </div>
               <ChevronRight className="w-4 h-4 text-zinc-800" />
             </button>
@@ -351,7 +343,7 @@ export default function SettingsPage() {
                     type="email" required 
                     placeholder="novo.membro@hallblack.com"
                     className="bg-zinc-900/50 border-zinc-800 h-14 rounded-2xl text-sm font-bold"
-                    value={transferEmail}
+                    value={transferEmail || ''}
                     onChange={(e) => setTransferEmail(e.target.value)}
                     disabled={isTransferring}
                   />
