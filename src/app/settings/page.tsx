@@ -45,6 +45,7 @@ export default function SettingsPage() {
   const [settingsCity, setSettingsCity] = useState('');
   const [settingsState, setSettingsState] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
+  const [isPublic, setIsPublic] = useState(true);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
 
   const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
@@ -65,6 +66,7 @@ export default function SettingsPage() {
       setSettingsCity(profile.city || '');
       setSettingsState(profile.state || '');
       setSettingsPhoto(profile.photo || null);
+      setIsPublic(profile.isPublicProfile ?? true);
     }
   }, [profile]);
 
@@ -124,6 +126,19 @@ export default function SettingsPage() {
     } finally {
       setIsUpdatingSettings(false);
     }
+  };
+
+  const handleTogglePrivacy = (checked: boolean) => {
+    if (!profile?.id || !db) return;
+    setIsPublic(checked);
+    const userRef = doc(db, 'users', profile.id);
+    updateDocumentNonBlocking(userRef, {
+      isPublicProfile: checked
+    });
+    toast({ 
+      title: checked ? "PERFIL PÚBLICO ATIVO" : "PERFIL RESTRITO", 
+      description: checked ? "Sua credencial agora está visível na rede." : "Sua identidade foi ocultada da busca pública." 
+    });
   };
 
   const handleInitiateTransfer = async (e: React.FormEvent) => {
@@ -191,10 +206,10 @@ export default function SettingsPage() {
             <ArrowLeft className="w-6 h-6" />
           </Link>
           <h1 className="text-sm font-black uppercase tracking-widest">Configurações</h1>
-          <div className="w-10" /> {/* Espaçador para centralizar título */}
+          <div className="w-10" />
         </header>
 
-        {/* SEÇÃO: CONTA */}
+        {/* SEÇÃO: PERFIL */}
         <div className="mb-10">
           <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Minha Conta</p>
           <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
@@ -216,21 +231,21 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* SEÇÃO: PRIVACIDADE */}
+        {/* SEÇÃO: PRIVACIDADE FUNCIONAL */}
         <div className="space-y-1 mb-10">
           <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-4 mb-3">Privacidade de Elite</p>
           <div className="bg-zinc-950/50 border-y border-zinc-900 divide-y divide-zinc-900">
             <div className="flex items-center justify-between px-4 py-4">
               <div className="space-y-0.5">
                 <p className="text-[11px] font-black uppercase tracking-widest">Perfil Público</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Visível para outros membros</p>
+                <p className="text-[9px] text-zinc-600 uppercase font-bold">Visível para outros membros na rede</p>
               </div>
-              <Switch checked={true} disabled />
+              <Switch checked={isPublic} onCheckedChange={handleTogglePrivacy} />
             </div>
-            <div className="flex items-center justify-between px-4 py-4">
+            <div className="flex items-center justify-between px-4 py-4 opacity-40">
               <div className="space-y-0.5">
                 <p className="text-[11px] font-black uppercase tracking-widest">Modo Invisível</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Ocultar presença na rede</p>
+                <p className="text-[9px] text-zinc-600 uppercase font-bold">Ocultar status de presença (Em breve)</p>
               </div>
               <Switch checked={false} disabled />
             </div>
@@ -351,12 +366,6 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-            </div>
-            
-            <div className="pt-8">
-               <p className="text-[8px] text-center text-zinc-700 uppercase tracking-[0.4em] leading-relaxed">
-                 OS DADOS ACIMA SÃO EXIBIDOS EM SUA CREDENCIAL PÚBLICA E NO SISTEMA DE BUSCA SOS PARA PETS.
-               </p>
             </div>
           </div>
         </DialogContent>
