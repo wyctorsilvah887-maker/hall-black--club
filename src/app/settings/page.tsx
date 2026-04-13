@@ -21,6 +21,11 @@ import { cn } from '@/lib/utils';
 import { sendTransferConfirmationEmail } from '@/app/actions';
 import { signOut } from 'firebase/auth';
 
+/**
+ * @fileOverview Página de configurações de elite do Hall Black Club.
+ * Oferece edição de perfil, gestão de privacidade e protocolo de transferência.
+ */
+
 export default function SettingsPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
@@ -331,12 +336,12 @@ export default function SettingsPage() {
                 <div className="p-4 rounded-3xl bg-red-950/20 border border-red-900/50">
                   <ShieldAlert className="w-10 h-10 text-red-600" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl font-black uppercase tracking-tighter">Cessão de Credencial</h3>
-                  <p className="text-[9px] text-red-500 uppercase tracking-widest font-bold leading-relaxed max-w-xs mx-auto">
+                <DialogHeader className="space-y-2">
+                  <DialogTitle className="text-xl font-black uppercase tracking-tighter text-center">Cessão de Credencial</DialogTitle>
+                  <DialogDescription className="text-[9px] text-red-500 uppercase tracking-widest font-bold leading-relaxed max-w-xs mx-auto text-center">
                     ESTE PROCESSO É IRREVERSÍVEL E RESULTARÁ NA REVOGAÇÃO IMEDIATA DA SUA IDENTIDADE.
-                  </p>
-                </div>
+                  </DialogDescription>
+                </DialogHeader>
               </div>
 
               <form onSubmit={handleInitiateTransfer} className="space-y-6">
@@ -368,14 +373,16 @@ export default function SettingsPage() {
             <div className="py-16 px-8 flex flex-col items-center text-center space-y-8 animate-in zoom-in duration-500">
               <ShieldX className="w-20 h-20 text-red-600 animate-pulse" />
               <div className="space-y-4">
-                <h3 className="text-xl font-black uppercase tracking-widest">Protocolo Emitido</h3>
+                <DialogHeader className="space-y-2">
+                  <DialogTitle className="text-xl font-black uppercase tracking-widest text-center">Protocolo Emitido</DialogTitle>
+                  <DialogDescription className="text-[9px] text-zinc-500 uppercase font-bold leading-relaxed text-center">
+                    Sua identidade foi revogada. Informe o código abaixo ao novo titular para concluir a herança da credencial.
+                  </DialogDescription>
+                </DialogHeader>
                 <div className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
                    <p className="text-zinc-600 text-[8px] font-black uppercase tracking-[0.4em] mb-2">Código de Segurança</p>
                    <p className="text-4xl font-mono font-black text-white tracking-[0.3em]">{transferCode}</p>
                 </div>
-                <p className="text-[9px] text-zinc-500 uppercase font-bold leading-relaxed">
-                  Sua identidade foi revogada. Informe o código acima ao novo titular para concluir a herança da credencial.
-                </p>
               </div>
             </div>
           )}
@@ -387,6 +394,7 @@ export default function SettingsPage() {
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 rounded-3xl z-[300]">
           <DialogHeader>
             <DialogTitle className="text-lg font-black uppercase tracking-tighter">Ajuste de Credencial</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500 uppercase tracking-widest">Enquadramento oficial para rede de elite.</DialogDescription>
           </DialogHeader>
           {editorState && (
             <ImageEditor image={editorState.image} cropShape="round" onCancel={() => setEditorState(null)} onConfirm={handleEditorConfirm} />
