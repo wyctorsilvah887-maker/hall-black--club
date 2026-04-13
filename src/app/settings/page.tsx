@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Calendar, Info } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -47,10 +47,16 @@ export default function SettingsPage() {
   const [settingsState, setSettingsState] = useState('');
   const [settingsBio, setSettingsBio] = useState('');
   const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
+  
+  // Estados de Privacidade
   const [isPublic, setIsPublic] = useState(true);
+  const [showBio, setShowBio] = useState(true);
+  const [showLocation, setShowLocation] = useState(true);
+  const [showJoinDate, setShowJoinDate] = useState(true);
+  
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
-
   const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
+  
   const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [transferEmail, setTransferEmail] = useState('');
   const [isTransferring, setIsTransferring] = useState(false);
@@ -70,6 +76,9 @@ export default function SettingsPage() {
       setSettingsBio(profile.bio || '');
       setSettingsPhoto(profile.photo || null);
       setIsPublic(profile.isPublicProfile ?? true);
+      setShowBio(profile.showBio ?? true);
+      setShowLocation(profile.showLocation ?? true);
+      setShowJoinDate(profile.showJoinDate ?? true);
     }
   }, [profile]);
 
@@ -132,16 +141,23 @@ export default function SettingsPage() {
     }
   };
 
-  const handleTogglePrivacy = (checked: boolean) => {
+  const handleTogglePrivacyField = (field: string, value: boolean) => {
     if (!profile?.id || !db) return;
-    setIsPublic(checked);
+    
+    // Update local state first for responsiveness
+    if (field === 'isPublicProfile') setIsPublic(value);
+    if (field === 'showBio') setShowBio(value);
+    if (field === 'showLocation') setShowLocation(value);
+    if (field === 'showJoinDate') setShowJoinDate(value);
+
     const userRef = doc(db, 'users', profile.id);
     updateDocumentNonBlocking(userRef, {
-      isPublicProfile: checked
+      [field]: value
     });
+
     toast({ 
-      title: checked ? "PERFIL PÚBLICO ATIVO" : "PERFIL RESTRITO", 
-      description: checked ? "Sua credencial agora está visível na rede." : "Sua identidade foi ocultada da busca pública." 
+      title: "PRIVACIDADE ATUALIZADA", 
+      description: "Suas preferências de visibilidade foram sincronizadas." 
     });
   };
 
@@ -242,9 +258,33 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between px-4 py-4">
               <div className="space-y-0.5">
                 <p className="text-[11px] font-black uppercase tracking-widest">Perfil Público</p>
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Visível para outros membros na rede</p>
+                <p className="text-[9px] text-zinc-600 uppercase font-bold">Visibilidade global na rede</p>
               </div>
-              <Switch checked={isPublic} onCheckedChange={handleTogglePrivacy} />
+              <Switch checked={isPublic} onCheckedChange={(val) => handleTogglePrivacyField('isPublicProfile', val)} />
+            </div>
+            
+            <div className="flex items-center justify-between px-4 py-4">
+              <div className="space-y-0.5">
+                <p className="text-[11px] font-black uppercase tracking-widest">Exibir Localização</p>
+                <p className="text-[9px] text-zinc-600 uppercase font-bold">Cidade e Estado no perfil público</p>
+              </div>
+              <Switch checked={showLocation} onCheckedChange={(val) => handleTogglePrivacyField('showLocation', val)} />
+            </div>
+
+            <div className="flex items-center justify-between px-4 py-4">
+              <div className="space-y-0.5">
+                <p className="text-[11px] font-black uppercase tracking-widest">Exibir Biografia</p>
+                <p className="text-[9px] text-zinc-600 uppercase font-bold">Apresentação pessoal na rede</p>
+              </div>
+              <Switch checked={showBio} onCheckedChange={(val) => handleTogglePrivacyField('showBio', val)} />
+            </div>
+
+            <div className="flex items-center justify-between px-4 py-4">
+              <div className="space-y-0.5">
+                <p className="text-[11px] font-black uppercase tracking-widest">Exibir Data de Admissão</p>
+                <p className="text-[9px] text-zinc-600 uppercase font-bold">Ano de entrada na elite</p>
+              </div>
+              <Switch checked={showJoinDate} onCheckedChange={(val) => handleTogglePrivacyField('showJoinDate', val)} />
             </div>
           </div>
         </div>

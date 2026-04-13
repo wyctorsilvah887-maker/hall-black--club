@@ -73,6 +73,11 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
 
   const memberRegistrationId = `HB-${profile.id?.slice(0, 5).toUpperCase() || 'XXXXX'}`;
 
+  // Verificar preferências de privacidade
+  const showBio = profile.showBio !== false;
+  const showLocation = profile.showLocation !== false;
+  const showJoinDate = profile.showJoinDate !== false;
+
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white ${themeClass}`}>
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-20 space-y-10 md:space-y-12">
@@ -100,7 +105,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
               <p className="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-bold">Membro Verificado</p>
               <h1 className="text-3xl sm:text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none break-words max-w-md">{profile.name}</h1>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-1">
-                {(profile.city || profile.state) && (
+                {showLocation && (profile.city || profile.state) && (
                   <div className="flex items-center gap-2 text-zinc-500">
                     <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                     <span className="text-[10px] md:text-[12px] font-black uppercase tracking-widest italic">
@@ -121,7 +126,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
           </Badge>
         </div>
 
-        {profile.bio && (
+        {showBio && profile.bio && (
           <div className="relative group">
             <Quote className="absolute -top-4 -left-4 w-8 h-8 text-zinc-900 group-hover:text-primary/20 transition-colors" />
             <div className="bg-zinc-950/40 border border-zinc-900/50 p-8 rounded-[2rem] backdrop-blur-xl">
@@ -148,15 +153,17 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
                 </div>
                 <span className="text-xs font-mono font-black text-white">{memberRegistrationId}</span>
               </div>
-              <div className="flex justify-between items-center p-4 rounded-xl bg-black/40 border border-zinc-800/30">
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-zinc-700" />
-                  <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Acreditação</span>
+              {showJoinDate && (
+                <div className="flex justify-between items-center p-4 rounded-xl bg-black/40 border border-zinc-800/30">
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4 text-zinc-700" />
+                    <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Acreditação</span>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-zinc-300">
+                    {profile.registrationDateTime ? new Date(profile.registrationDateTime).toLocaleDateString('pt-BR') : '---'}
+                  </span>
                 </div>
-                <span className="text-xs font-mono font-bold text-zinc-300">
-                  {profile.registrationDateTime ? new Date(profile.registrationDateTime).toLocaleDateString('pt-BR') : '---'}
-                </span>
-              </div>
+              )}
             </CardContent>
           </Card>
 

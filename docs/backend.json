@@ -92,6 +92,18 @@
           "type": "boolean",
           "description": "Indicates whether the user's profile is visible to other members."
         },
+        "showBio": {
+          "type": "boolean",
+          "description": "Controls if the bio is visible on the public profile."
+        },
+        "showLocation": {
+          "type": "boolean",
+          "description": "Controls if the city and state are visible on the public profile."
+        },
+        "showJoinDate": {
+          "type": "boolean",
+          "description": "Controls if the registration date is visible on the public profile."
+        },
         "status": {
           "type": "string",
           "description": "Elite status: MYTHIC, AMBER or LEGENDARY."
