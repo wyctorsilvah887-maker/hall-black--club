@@ -38,7 +38,6 @@ import { RankBadge } from './MythicIcons';
 import { ToastAction } from "@/components/ui/toast";
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
-import { sendTransferConfirmationEmail } from '@/app/actions';
 
 interface MythicDashboardProps {
   profile: any;
@@ -51,12 +50,10 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editPetFileInputRef = useRef<HTMLInputElement>(null);
-  const profilePicInputRef = useRef<HTMLInputElement>(null);
   
   const [isAddPetOpen, setIsAddPetOpen] = useState(false);
   const [isEditPetOpen, setIsEditPetOpen] = useState(false);
   const [isHealthDialogOpen, setIsHealthDialogOpen] = useState(false);
-  const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -70,7 +67,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
     image: string;
-    target: 'profile' | 'newPet' | 'editPet';
+    target: 'newPet' | 'editPet';
   } | null>(null);
 
   const [newPetName, setNewPetName] = useState('');
@@ -81,42 +78,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [editPetSpecies, setEditPetSpecies] = useState('');
   const [editPetPhoto, setEditPetPhoto] = useState<string | null>(null);
 
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
-  const [settingsName, setSettingsName] = useState('');
-  const [settingsPhone, setSettingsPhone] = useState('');
-  const [settingsCity, setSettingsCity] = useState('');
-  const [settingsState, setSettingsState] = useState('');
-  const [settingsPhoto, setSettingsPhoto] = useState<string | null>(null);
-
-  const [transferEmail, setTransferEmail] = useState('');
-  const [isTransferring, setIsTransferring] = useState(false);
-  const [transferProtocolStatus, setTransferProtocolStatus] = useState<'idle' | 'initiating' | 'done'>('idle');
-  const [transferCode, setTransferCode] = useState('');
-
-  useEffect(() => {
-    if (profile && isSettingsOpen) {
-      setSettingsName(profile.name || '');
-      setSettingsPhone(profile.emergencyContact || '');
-      setSettingsCity(profile.city || '');
-      setSettingsState(profile.state || '');
-      setSettingsPhoto(profile.photo || null);
-    }
-  }, [profile, isSettingsOpen]);
-
-  const formatPhoneMask = (value: string) => {
-    const digits = value.replace(/\D/g, '');
-    if (!digits) return '';
-    if (digits.length <= 2) return `(${digits}`;
-    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSettingsPhone(formatPhoneMask(e.target.value));
-  };
-
   const petsQuery = useMemoFirebase(() => {
     if (!profile?.id) return null;
     return collection(db, 'users', profile.id, 'pets');
@@ -124,7 +85,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'profile' | 'newPet' | 'editPet') => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'newPet' | 'editPet') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -146,7 +107,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     
     try {
       const compressed = await compressImage(croppedImage);
-      if (currentTarget === 'profile') setSettingsPhoto(compressed);
       if (currentTarget === 'newPet') setNewPetPhoto(compressed);
       if (currentTarget === 'editPet') setEditPetPhoto(compressed);
       
@@ -242,39 +202,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     }
   };
 
-  const handleUpdateSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!profile?.id) return;
-
-    setIsUpdatingSettings(true);
-    try {
-      const userRef = doc(db, 'users', profile.id);
-      updateDocumentNonBlocking(userRef, {
-        name: settingsName,
-        emergencyContact: settingsPhone,
-        city: settingsCity,
-        state: settingsState,
-        photo: settingsPhoto
-      });
-
-      toast({
-        title: "PERFIL ATUALIZADO",
-        description: "SUAS CREDENCIAIS FORAM SINCRONIZADAS. RECARREGUE PARA ATUALIZAR A INTERFACE.",
-        action: (
-          <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
-            RECARREGAR
-          </ToastAction>
-        ),
-      });
-
-      setIsSettingsOpen(false);
-    } catch (err) {
-      toast({ variant: "destructive", title: "ERRO AO SALVAR", description: "Falha ao atualizar perfil." });
-    } finally {
-      setIsUpdatingSettings(false);
-    }
-  };
-
   const handleDeletePet = (petId: string, petName: string) => {
     if (!profile?.id) return;
     const petRef = doc(db, 'users', profile.id, 'pets', petId);
@@ -311,60 +238,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </ToastAction>
       ),
     });
-  };
-
-  const handleInitiateTransfer = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!transferEmail || !profile?.id || !db) return;
-
-    setIsTransferring(true);
-    setTransferProtocolStatus('initiating');
-    
-    const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setTransferCode(confirmationCode);
-    const statusRank = profile.status || 'MYTHIC';
-
-    try {
-      const requestsRef = collection(db, 'transferRequests');
-      addDocumentNonBlocking(requestsRef, {
-        fromUserId: profile.id,
-        fromUserName: profile.name,
-        fromUserEmail: profile.email,
-        toUserEmail: transferEmail,
-        confirmationCode,
-        statusRank,
-        status: 'pending',
-        timestamp: new Date().toISOString()
-      });
-
-      await sendTransferConfirmationEmail({
-        fromName: profile.name,
-        fromEmail: profile.email,
-        toEmail: transferEmail,
-        confirmationCode,
-        statusRank
-      });
-
-      setTransferProtocolStatus('done');
-      
-      toast({
-        variant: "destructive",
-        title: "PROTOCOLO DE SEGURANÇA INICIADO",
-        description: `Código ${confirmationCode} processado. O acesso será encerrado por segurança.`,
-      });
-      
-      setTimeout(() => {
-        signOut(auth);
-      }, 15000);
-    } catch (err) {
-      toast({
-        variant: "destructive",
-        title: "ERRO NO PROTOCOLO",
-        description: "Falha ao registrar a solicitação no ecossistema.",
-      });
-      setIsTransferring(false);
-      setTransferProtocolStatus('idle');
-    }
   };
 
   const isLegendary = profile.status === 'LEGENDARY';
@@ -428,15 +301,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                   </p>
                 </div>
                 <DropdownMenuSeparator className="bg-zinc-800" />
-                <DropdownMenuItem 
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setIsSettingsOpen(true);
-                  }}
-                  className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5"
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Configurações</span>
+                <DropdownMenuItem asChild className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
+                  <Link href="/settings">
+                    <Settings className="w-4 h-4 mr-2" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Configurações</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
                   <Link href={`/profile/${profile.id}`}>
@@ -744,170 +613,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tighter">Configurações de Elite</DialogTitle>
-            <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest">Gerencie suas credenciais e identidade mística.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleUpdateSettings} className="space-y-6 pt-4">
-            <div className="flex flex-col items-center gap-3">
-              <div 
-                onClick={() => profilePicInputRef.current?.click()} 
-                className="w-24 h-24 rounded-full border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group"
-              >
-                {settingsPhoto ? (
-                  <NextImage src={settingsPhoto} alt="Profile" fill className="object-cover" unoptimized />
-                ) : (
-                  <div className="flex flex-col items-center gap-1 text-zinc-600">
-                    <User className="w-8 h-8" />
-                    <span className="text-[8px] font-black uppercase">Foto</span>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Camera className="w-6 h-6 text-white" />
-                </div>
-              </div>
-              <input type="file" ref={profilePicInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'profile')} />
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2 sm:col-span-2">
-                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome Completo</Label>
-                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsName} onChange={(e) => setSettingsName(e.target.value)} required />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Contato de Emergência</Label>
-                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsPhone} onChange={handlePhoneChange} placeholder="(00) 00000-0000" required />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Cidade</Label>
-                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsCity} onChange={(e) => setSettingsCity(e.target.value)} placeholder="Ex: São Paulo" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Estado</Label>
-                <Input className="bg-black/50 border-zinc-800 h-11" value={settingsState} onChange={(e) => setSettingsState(e.target.value)} placeholder="Ex: SP" />
-              </div>
-            </div>
-
-            <Button type="submit" className={`w-full h-12 font-black uppercase tracking-widest ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary'}`} disabled={isUpdatingSettings}>
-              {isUpdatingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar Alterações'}
-            </Button>
-            
-            <Separator className="bg-zinc-900" />
-            
-            <div className="space-y-4 pt-2">
-              <div className="flex items-center gap-2 text-zinc-500">
-                <ArrowRightLeft className={cn("w-4 h-4", themeColorClass)} />
-                <h3 className="text-xs font-black uppercase tracking-widest">Protocolo de Transferência</h3>
-              </div>
-              <p className="text-[10px] text-zinc-600 uppercase tracking-widest leading-relaxed">
-                Deseja transferir sua titularidade para outro membro? Este processo requer validação de segurança e é permanente.
-              </p>
-              <Button 
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setIsSettingsOpen(false);
-                  setIsTransferOpen(true);
-                }}
-                className="w-full h-12 rounded-xl border-zinc-800 text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-widest"
-              >
-                Solicitar Transferência de Credencial
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md rounded-2xl z-[200]">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-red-950/20 border border-red-900/50">
-                <ShieldAlert className="w-5 h-5 text-red-500" />
-              </div>
-              <DialogTitle className="text-xl font-black uppercase tracking-tighter">Protocolo de Cessão</DialogTitle>
-            </div>
-            <DialogDescription className="text-zinc-500 text-xs uppercase tracking-widest leading-relaxed">
-              {transferProtocolStatus === 'done' 
-                ? 'IDENTIDADE REVOGADA. O ACESSO SERÁ ENCERRADO.'
-                : 'Inicie a transferência permanente de sua credencial de elite para um novo guardião.'}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {transferProtocolStatus !== 'done' ? (
-            <form onSubmit={handleInitiateTransfer} className="space-y-6 pt-4">
-              <div className="bg-red-950/10 border border-red-900/30 p-4 rounded-xl space-y-2">
-                <p className="text-[10px] text-red-500 font-black uppercase tracking-widest flex items-center gap-2">
-                  <AlertCircle className="w-3 h-3" /> Atenção
-                </p>
-                <p className="text-[9px] text-zinc-500 uppercase tracking-widest leading-relaxed">
-                  Ao finalizar, um e-mail de confirmação será enviado para você. Você perderá acesso imediato a todos os privilégios Hall Black.
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Email do Novo Titular</Label>
-                <Input 
-                  type="email" 
-                  required 
-                  placeholder="novo.membro@exemplo.com"
-                  className="bg-black/50 border-zinc-800 h-12 text-white"
-                  value={transferEmail}
-                  onChange={(e) => setTransferEmail(e.target.value)}
-                  disabled={isTransferring}
-                />
-              </div>
-              
-              <DialogFooter className="flex flex-col sm:flex-row gap-3">
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  onClick={() => setIsTransferOpen(false)}
-                  className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest border border-zinc-900 text-zinc-500 hover:text-white"
-                  disabled={isTransferring}
-                >
-                  Cancelar
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={isTransferring || !transferEmail}
-                  className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-widest"
-                >
-                  {isTransferring ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Protocolo'}
-                </Button>
-              </DialogFooter>
-            </form>
-          ) : (
-            <div className="py-12 flex flex-col items-center justify-center text-center space-y-8 animate-in zoom-in duration-500">
-              <div className="relative">
-                 <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full" />
-                 <ShieldX className="w-20 h-20 text-red-600 relative z-10 animate-pulse" />
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <h3 className="text-white font-black text-xl uppercase tracking-widest">Protocolo Emitido</h3>
-                  <p className="text-zinc-500 text-[10px] uppercase tracking-widest max-w-[250px] mx-auto leading-relaxed">
-                    Sua identidade Hall Black está sendo revogada da rede. Use o código abaixo para qualquer auditoria futura.
-                  </p>
-                </div>
-                
-                <div className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-3xl space-y-2">
-                   <p className="text-zinc-600 text-[9px] font-black uppercase tracking-widest">Código de Auditoria</p>
-                   <p className="text-3xl font-mono font-black text-white tracking-[0.3em]">{transferCode}</p>
-                </div>
-
-                <div className="flex flex-col items-center gap-3">
-                   <p className="text-red-500 text-[10px] font-black uppercase tracking-widest animate-pulse">Encerrando sessão em 15s...</p>
-                   <Loader2 className="w-6 h-6 animate-spin text-zinc-800" />
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[95vw] max-w-md p-6 z-[300] rounded-2xl">
           <DialogHeader>
@@ -917,7 +622,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           {editorState && (
             <ImageEditor 
               image={editorState.image}
-              cropShape={editorState.target === 'profile' ? 'round' : 'rect'}
+              cropShape="rect"
               onCancel={() => setEditorState(null)}
               onConfirm={handleEditorConfirm}
             />
