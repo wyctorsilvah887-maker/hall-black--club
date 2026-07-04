@@ -4,12 +4,11 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * Hall Black Club Security Rules - v2026.5
-     * Protocolos de segurança auditados para o ecossistema de elite.
+     * HALL BLACK CLUB - PROTOCOLO DE SEGURANÇA v2026.8
+     * Sistema de regras auditado para ecossistema de elite.
      * 
-     * NOTA: A listagem de usuários deve ser pública para permitir o funcionamento 
-     * do contador de exclusividade (60 slots) e a transparência da rede.
-     * Os detalhes sensíveis de cada membro permanecem protegidos.
+     * NOTA: A listagem de usuários (/users) é pública para permitir o 
+     * funcionamento do contador de slots e a transparência da rede.
      */
 
     function isSignedIn() {
@@ -20,12 +19,7 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    function isExistingOwner(userId) {
-      return resource != null && isOwner(userId);
-    }
-
     // --- Regras de Chaves de Acesso ---
-
     match /mythicCodes/{mythicCodeId} {
       allow get: if true;
       allow list: if false;
@@ -34,34 +28,30 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // --- Regras de Dossiês de Usuários ---
-
+    // --- Regras de Membros (Dossiês) ---
+    // Match na coleção e documentos de usuários
     match /users/{userId} {
-      // Listagem pública obrigatória para visualização da rede e contador de slots
+      // Listagem pública para contador de slots e High Council
       allow list: if true;
       
-      // Get permitido se for o próprio dono ou se o perfil for explicitamente público
+      // Get permitido se for o dono ou se o perfil for público
       allow get: if isSignedIn() || (resource != null && resource.data.isPublicProfile == true);
       
       allow create: if isOwner(userId);
       
-      // Permite update se for o dono OU se for uma revogação autorizada durante transferência
-      allow update: if isExistingOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
+      // Permite update se for o dono OU se for uma revogação via transferência
+      allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
       
-      allow delete: if isExistingOwner(userId);
+      allow delete: if isOwner(userId);
 
-      // Subcoleção de Pets
+      // Subcoleção de Pets (Acesso total para o dono, leitura para rede)
       match /pets/{petId} {
-        allow get: if true; 
-        allow list: if true; 
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId);
-        allow delete: if isExistingOwner(userId);
+        allow read: if true; 
+        allow write: if isOwner(userId);
       }
     }
 
     // --- Regras de Protocolos de Transferência ---
-
     match /transferRequests/{requestId} {
       allow create: if isSignedIn() && request.resource.data.fromUserId == request.auth.uid;
       allow list, get: if isSignedIn(); 
@@ -70,9 +60,8 @@ service cloud.firestore {
     }
 
     // --- Regras do Cofre de Elite (The Vault) ---
-
     match /vault/{articleId} {
-      // Acesso restrito ao conhecimento apenas para membros autenticados
+      // Acesso ao conhecimento exclusivo para membros autenticados
       allow list, get: if isSignedIn();
     }
   }
