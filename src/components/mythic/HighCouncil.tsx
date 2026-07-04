@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { User, ShieldCheck, MapPin, Lock } from "lucide-react";
 import Image from 'next/image';
 
@@ -15,17 +15,23 @@ import Image from 'next/image';
 export function HighCouncil({ profile }: { profile: any }) {
   const db = useFirestore();
   
+  // Simplificamos a query para evitar problemas de permissão e índices complexos
+  // O filtro de REVOKED é feito em memória para garantir estabilidade
   const councilQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(
       collection(db, 'users'), 
-      where('status', '!=', 'REVOKED'),
       orderBy('memberNumber', 'asc'),
-      limit(60)
+      limit(100) // Buscamos um pouco mais para garantir que teremos 60 após o filtro
     );
   }, [db]);
   
-  const { data: members, isLoading } = useCollection(councilQuery as any);
+  const { data: allMembers, isLoading } = useCollection(councilQuery);
+
+  // Filtramos membros ativos e limitamos aos 60 oficiais
+  const members = allMembers 
+    ? allMembers.filter(m => m.status !== 'REVOKED').slice(0, 60)
+    : [];
 
   return (
     <div className="space-y-12">
@@ -41,7 +47,7 @@ export function HighCouncil({ profile }: { profile: any }) {
           Array(12).fill(0).map((_, i) => (
             <div key={i} className="aspect-[3/4] bg-zinc-900/20 rounded-[1.5rem] animate-pulse" />
           ))
-        ) : members?.map((member) => (
+        ) : members.map((member) => (
           <div 
             key={member.id} 
             className="group relative aspect-[3/4] bg-zinc-950 border border-zinc-900 rounded-[2rem] overflow-hidden hover:border-zinc-700 transition-all duration-700"
@@ -82,7 +88,7 @@ export function HighCouncil({ profile }: { profile: any }) {
         ))}
         
         {/* SLOTS VAZIOS */}
-        {members && members.length < 60 && Array(60 - members.length).fill(0).map((_, i) => (
+        {!isLoading && members.length < 60 && Array(60 - members.length).fill(0).map((_, i) => (
           <div key={`empty-${i}`} className="aspect-[3/4] bg-zinc-950/20 border border-zinc-900 border-dashed rounded-[2rem] flex flex-col items-center justify-center opacity-20">
              <Lock className="w-6 h-6 mb-2" />
              <span className="text-[7px] font-black uppercase tracking-widest">Aguardando Sucessão</span>

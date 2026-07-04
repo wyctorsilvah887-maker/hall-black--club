@@ -4,11 +4,8 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * HALL BLACK CLUB - PROTOCOLO DE SEGURANÇA v2026.8
-     * Sistema de regras auditado para ecossistema de elite.
-     * 
-     * NOTA: A listagem de usuários (/users) é pública para permitir o 
-     * funcionamento do contador de slots e a transparência da rede.
+     * HALL BLACK CLUB - PROTOCOLO DE SEGURANÇA v2026.9
+     * Sistema de regras otimizado para hub de prestígio e aprendizado.
      */
 
     function isSignedIn() {
@@ -19,50 +16,47 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // --- Regras de Chaves de Acesso ---
-    match /mythicCodes/{mythicCodeId} {
-      allow get: if true;
-      allow list: if false;
-      allow create: if false;
-      allow update: if isSignedIn();
-      allow delete: if false;
-    }
-
     // --- Regras de Membros (Dossiês) ---
-    // Match na coleção e documentos de usuários
     match /users/{userId} {
-      // Listagem pública para contador de slots e High Council
+      // Listagem e visualização de perfis são públicas para manter o prestígio e a vitrine do clube
       allow list: if true;
+      allow get: if true;
       
-      // Get permitido se for o dono ou se o perfil for público
-      allow get: if isSignedIn() || (resource != null && resource.data.isPublicProfile == true);
-      
+      // Criação e exclusão restritas ao titular
       allow create: if isOwner(userId);
-      
-      // Permite update se for o dono OU se for uma revogação via transferência
-      allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
-      
       allow delete: if isOwner(userId);
+      
+      // Atualização permitida ao dono ou via protocolo de revogação por transferência
+      allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
 
-      // Subcoleção de Pets (Acesso total para o dono, leitura para rede)
+      // Subcoleção de Pets (Leitura pública, escrita do dono)
       match /pets/{petId} {
         allow read: if true; 
         allow write: if isOwner(userId);
       }
     }
 
+    // --- Regras do Cofre (The Vault) ---
+    match /vault/{articleId} {
+      // Acesso ao conhecimento exclusivo para membros autenticados
+      allow read: if isSignedIn();
+    }
+
+    // --- Regras de Chaves de Acesso ---
+    match /mythicCodes/{mythicCodeId} {
+      allow get: if true;
+      allow update: if isSignedIn();
+      allow list, create, delete: if false;
+    }
+
     // --- Regras de Protocolos de Transferência ---
     match /transferRequests/{requestId} {
       allow create: if isSignedIn() && request.resource.data.fromUserId == request.auth.uid;
-      allow list, get: if isSignedIn(); 
-      allow update: if isSignedIn(); 
+      allow read: if isSignedIn();
+      allow update: if isSignedIn();
       allow delete: if false;
     }
-
-    // --- Regras do Cofre de Elite (The Vault) ---
-    match /vault/{articleId} {
-      // Acesso ao conhecimento exclusivo para membros autenticados
-      allow list, get: if isSignedIn();
-    }
+    
+    // Trigger de deploy: Protocolo de Elite v2026.9.1
   }
 }
