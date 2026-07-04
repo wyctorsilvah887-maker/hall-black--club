@@ -1,11 +1,9 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * HALL BLACK CLUB - PROTOCOLO DE SEGURANÇA v2026.9
-     * Sistema de regras otimizado para hub de prestígio e aprendizado.
+     * HALL BLACK CLUB - PROTOCOLO DE ELITE v2026.10
      */
 
     function isSignedIn() {
@@ -16,47 +14,33 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // --- Regras de Membros (Dossiês) ---
     match /users/{userId} {
-      // Listagem e visualização de perfis são públicas para manter o prestígio e a vitrine do clube
-      allow list: if true;
-      allow get: if true;
-      
-      // Criação e exclusão restritas ao titular
+      allow read, list: if true; // Vitrine pública de prestígio
       allow create: if isOwner(userId);
       allow delete: if isOwner(userId);
-      
-      // Atualização permitida ao dono ou via protocolo de revogação por transferência
       allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
 
-      // Subcoleção de Pets (Leitura pública, escrita do dono)
       match /pets/{petId} {
         allow read: if true; 
         allow write: if isOwner(userId);
       }
     }
 
-    // --- Regras do Cofre (The Vault) ---
     match /vault/{articleId} {
-      // Acesso ao conhecimento exclusivo para membros autenticados
       allow read: if isSignedIn();
     }
 
-    // --- Regras de Chaves de Acesso ---
     match /mythicCodes/{mythicCodeId} {
       allow get: if true;
-      allow update: if isSignedIn();
+      allow update: if true;
       allow list, create, delete: if false;
     }
 
-    // --- Regras de Protocolos de Transferência ---
     match /transferRequests/{requestId} {
-      allow create: if isSignedIn() && request.resource.data.fromUserId == request.auth.uid;
+      allow create: if isSignedIn();
       allow read: if isSignedIn();
-      allow update: if isSignedIn();
+      allow update: if true;
       allow delete: if false;
     }
-    
-    // Trigger de deploy: Protocolo de Elite v2026.9.1
   }
 }

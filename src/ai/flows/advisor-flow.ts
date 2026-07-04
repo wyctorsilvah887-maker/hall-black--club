@@ -23,6 +23,7 @@ export type AdvisoryOutput = z.infer<typeof AdvisoryOutputSchema>;
 
 const prompt = ai.definePrompt({
   name: 'blackAdvisorPrompt',
+  model: 'googleai/gemini-1.5-flash',
   input: { schema: AdvisoryInputSchema },
   output: { schema: AdvisoryOutputSchema },
   prompt: `Você é o Black Advisor, o consultor supremo do Hall Black Club. 
@@ -50,7 +51,7 @@ const advisorFlow = ai.defineFlow(
   async (input) => {
     const { output } = await prompt(input);
     if (!output) {
-      throw new Error('O Advisor não retornou dados válidos.');
+      throw new Error('O Advisor não retornou dados válidos para esta consulta de linhagem.');
     }
     return output;
   }

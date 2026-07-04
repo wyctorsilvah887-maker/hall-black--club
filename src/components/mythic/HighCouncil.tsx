@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -15,20 +14,17 @@ import Image from 'next/image';
 export function HighCouncil({ profile }: { profile: any }) {
   const db = useFirestore();
   
-  // Simplificamos a query para evitar problemas de permissão e índices complexos
-  // O filtro de REVOKED é feito em memória para garantir estabilidade
   const councilQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(
       collection(db, 'users'), 
       orderBy('memberNumber', 'asc'),
-      limit(100) // Buscamos um pouco mais para garantir que teremos 60 após o filtro
+      limit(100)
     );
   }, [db]);
   
   const { data: allMembers, isLoading } = useCollection(councilQuery);
 
-  // Filtramos membros ativos e limitamos aos 60 oficiais
   const members = allMembers 
     ? allMembers.filter(m => m.status !== 'REVOKED').slice(0, 60)
     : [];
@@ -87,8 +83,7 @@ export function HighCouncil({ profile }: { profile: any }) {
           </div>
         ))}
         
-        {/* SLOTS VAZIOS */}
-        {!isLoading && members.length < 60 && Array(60 - members.length).fill(0).map((_, i) => (
+        {!isLoading && members.length < 60 && Array(Math.max(0, 60 - members.length)).fill(0).map((_, i) => (
           <div key={`empty-${i}`} className="aspect-[3/4] bg-zinc-950/20 border border-zinc-900 border-dashed rounded-[2rem] flex flex-col items-center justify-center opacity-20">
              <Lock className="w-6 h-6 mb-2" />
              <span className="text-[7px] font-black uppercase tracking-widest">Aguardando Sucessão</span>
