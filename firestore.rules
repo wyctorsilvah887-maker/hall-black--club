@@ -4,10 +4,11 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * Hall Black Club Security Rules - v2026.3
+     * Hall Black Club Security Rules - v2026.4
      * Protocolos de segurança otimizados para o Elite Hub.
-     * Permite visibilidade da rede (listagem) para manter o desejo e prestígio,
+     * Permitimos visibilidade da rede (listagem) para manter o desejo e prestígio,
      * enquanto protege a integridade dos dossiês individuais.
+     * NOTA: A listagem pública é necessária para o contador de slots e a galeria do conselho.
      */
 
     function isSignedIn() {
@@ -37,6 +38,7 @@ service cloud.firestore {
 
     match /users/{userId} {
       // Permitimos listagem pública para o contador de slots e galeria do conselho (Desejabilidade)
+      // Essencial para o funcionamento do EliteHub e AccessGate.
       allow list: if true;
       
       // Permitimos get se for o próprio dono ou se o perfil for explicitamente público
