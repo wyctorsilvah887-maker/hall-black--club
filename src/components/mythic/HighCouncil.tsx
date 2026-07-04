@@ -4,11 +4,17 @@
 import React from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, where, orderBy, limit } from 'firebase/firestore';
-import { User, ShieldCheck, MapPin } from "lucide-react";
+import { User, ShieldCheck, MapPin, Lock } from "lucide-react";
 import Image from 'next/image';
+
+/**
+ * @fileOverview Galeria do Alto Conselho.
+ * Exibe os 60 detentores das chaves Hall Black com estética de prestígio.
+ */
 
 export function HighCouncil({ profile }: { profile: any }) {
   const db = useFirestore();
+  
   const councilQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(
@@ -20,10 +26,6 @@ export function HighCouncil({ profile }: { profile: any }) {
   }, [db]);
   
   const { data: members, isLoading } = useCollection(councilQuery as any);
-
-  const isLegendary = profile.status === 'LEGENDARY';
-  const isAmber = profile.status === 'AMBER';
-  const themeColor = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
 
   return (
     <div className="space-y-12">
@@ -50,6 +52,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                 alt={member.name} 
                 fill 
                 className="object-cover opacity-40 group-hover:opacity-80 transition-opacity grayscale group-hover:grayscale-0 duration-700" 
+                unoptimized
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
