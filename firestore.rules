@@ -4,9 +4,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * Hall Black Club Security Rules - v2026.2
-     * Protocolos de segurança atualizados para suporte total ao Elite Hub.
-     * Foco em privacidade, exclusividade e integridade da linhagem.
+     * Hall Black Club Security Rules - v2026.3
+     * Protocolos de segurança otimizados para o Elite Hub.
+     * Permite visibilidade da rede (listagem) para manter o desejo e prestígio,
+     * enquanto protege a integridade dos dossiês individuais.
      */
 
     function isSignedIn() {
@@ -35,8 +36,8 @@ service cloud.firestore {
     // --- Regras de Dossiês de Usuários ---
 
     match /users/{userId} {
-      // Permitimos listagem (Alto Conselho) para qualquer membro autenticado
-      allow list: if isSignedIn();
+      // Permitimos listagem pública para o contador de slots e galeria do conselho (Desejabilidade)
+      allow list: if true;
       
       // Permitimos get se for o próprio dono ou se o perfil for explicitamente público
       allow get: if isSignedIn() || (resource != null && resource.data.isPublicProfile == true);
@@ -51,7 +52,7 @@ service cloud.firestore {
       // Subcoleção de Pets
       match /pets/{petId} {
         allow get: if true; // Identidade do pet é consultável via QR Code
-        allow list: if isSignedIn();
+        allow list: if true; // Listagem permitida para verificação de linhagem
         allow create: if isOwner(userId) && request.resource.data.userId == userId;
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
         allow delete: if isExistingOwner(userId);
