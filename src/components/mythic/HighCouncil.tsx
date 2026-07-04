@@ -16,9 +16,9 @@ export function HighCouncil({ profile }: { profile: any }) {
   
   const councilQuery = useMemoFirebase(() => {
     if (!db) return null;
+    // Simplificamos a query para evitar erros de permissão e índices complexos
     return query(
       collection(db, 'users'), 
-      orderBy('memberNumber', 'asc'),
       limit(100)
     );
   }, [db]);
