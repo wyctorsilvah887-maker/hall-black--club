@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -32,7 +31,7 @@ export function EliteHub({ profile }: EliteHubProps) {
   const themeColor = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary/30">
+    <div className="min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden">
       {/* NAVEGAÇÃO LATERAL MINIMALISTA (DESKTOP) / INFERIOR (MOBILE) */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-zinc-900 md:top-0 md:bottom-auto md:h-20 md:border-t-0 md:border-b">
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
@@ -70,7 +69,7 @@ export function EliteHub({ profile }: EliteHubProps) {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 pt-10 pb-32 md:pt-32 md:pb-12 space-y-12">
+      <main className="max-w-7xl mx-auto px-6 pt-10 pb-32 md:pt-32 md:pb-12 space-y-12 relative z-10">
         {/* CABEÇALHO DE PRESTÍGIO */}
         <section className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 border-b border-zinc-900 pb-12">
           <div className="space-y-4">
@@ -104,8 +103,11 @@ export function EliteHub({ profile }: EliteHubProps) {
         </div>
       </main>
 
-      <footer className="fixed bottom-24 right-6 hidden md:block opacity-20 pointer-events-none">
-        <p className="text-[8px] font-black uppercase tracking-[0.8em] vertical-text">Hall Black Elite Protocol v2.0</p>
+      {/* MARCA D'ÁGUA LATERAL DE PROTOCOLO */}
+      <footer className="fixed top-1/2 -right-16 md:-right-20 -translate-y-1/2 hidden md:block opacity-10 pointer-events-none rotate-180 z-0">
+        <p className="text-[7px] md:text-[8px] font-black uppercase tracking-[1.2em] vertical-text text-zinc-400">
+          Hall Black Elite Protocol v2.0
+        </p>
       </footer>
     </div>
   );

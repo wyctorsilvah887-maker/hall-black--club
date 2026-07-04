@@ -55,6 +55,13 @@
   }
 }
 
+@layer utilities {
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+}
+
 @keyframes ruby-glow {
   0% { box-shadow: 0 0 5px hsla(350, 82%, 35%, 0.2); }
   50% { box-shadow: 0 0 20px hsla(350, 82%, 35%, 0.6); }
