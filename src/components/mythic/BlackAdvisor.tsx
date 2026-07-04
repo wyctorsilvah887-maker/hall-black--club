@@ -1,11 +1,10 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap } from "lucide-react";
+import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 
 export function BlackAdvisor({ profile }: { profile: any }) {
@@ -43,10 +42,16 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           note: result.data.confidentialityNote
         }]);
       } else {
-        setLogs(prev => [...prev, { type: 'error', content: 'Protocolo de comunicação interrompido.' }]);
+        setLogs(prev => [...prev, { 
+          type: 'error', 
+          content: result.error || 'Protocolo de comunicação interrompido.' 
+        }]);
       }
     } catch (err) {
-      setLogs(prev => [...prev, { type: 'error', content: 'Falha no link de dados elite.' }]);
+      setLogs(prev => [...prev, { 
+        type: 'error', 
+        content: 'Falha crítica no link de dados elite.' 
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +68,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           <Terminal className={themeColor} />
           <div>
             <h3 className="text-xl font-black uppercase tracking-tighter">Black Advisor</h3>
-            <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Consultoria de Linhagem via Genkit v1.2</p>
+            <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Consultoria de Linhagem via Gemini 2.5 Flash</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -104,7 +109,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                     {log.content}
                   </p>
                   
-                  {log.insights && (
+                  {log.insights && log.insights.length > 0 && (
                     <div className="mt-8 pt-8 border-t border-zinc-900 space-y-4">
                        <p className={`text-[9px] font-black uppercase tracking-widest ${themeColor}`}>Insights Acionáveis</p>
                        <ul className="space-y-3">
@@ -123,8 +128,9 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                 </p>
               </div>
             ) : (
-              <div className="text-red-900 text-[10px] font-black uppercase tracking-widest bg-red-950/20 p-4 rounded-xl border border-red-900/30">
-                {log.content}
+              <div className="flex items-center gap-3 text-red-900 text-[10px] font-black uppercase tracking-widest bg-red-950/20 p-5 rounded-[2rem] border border-red-900/30 max-w-md">
+                <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+                <p>{log.content}</p>
               </div>
             )}
           </div>

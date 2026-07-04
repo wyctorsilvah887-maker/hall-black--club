@@ -37,10 +37,6 @@ Se a pergunta for irrelevante ao prestígio do clube, recuse educadamente inform
 Responda em um formato de dossiê técnico. O campo 'confidentialityNote' deve conter um código de protocolo fictício e uma nota de sigilo.`,
 });
 
-export async function askBlackAdvisor(input: AdvisoryInput): Promise<AdvisoryOutput> {
-  return advisorFlow(input);
-}
-
 const advisorFlow = ai.defineFlow(
   {
     name: 'advisorFlow',
@@ -55,3 +51,8 @@ const advisorFlow = ai.defineFlow(
     return output;
   }
 );
+
+export async function askBlackAdvisor(input: AdvisoryInput): Promise<AdvisoryOutput> {
+  // Chamada direta ao fluxo registrado
+  return advisorFlow(input);
+}
