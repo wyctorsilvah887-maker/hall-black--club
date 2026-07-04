@@ -1,4 +1,3 @@
-
 "use server"
 
 /**
@@ -24,6 +23,10 @@ export async function consultBlackAdvisor(input: AdvisoryInput) {
     return { success: true, data: result };
   } catch (error) {
     console.error("Erro no advisor:", error);
-    return { success: false, error: "Sistema Advisor indisponível no momento." };
+    // Garantimos que o erro seja capturado e retornado de forma estruturada para o componente
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Sistema Advisor indisponível." 
+    };
   }
 }

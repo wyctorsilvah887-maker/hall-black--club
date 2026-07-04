@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Black Advisor AI Agent.
@@ -35,7 +34,7 @@ Consulta: {{{query}}}
 Sua missão é prover conhecimento de elite sobre saúde pet avançada, genética, longevidade e lifestyle de luxo. 
 Se a pergunta for irrelevante ao prestígio do clube, recuse educadamente informando que seu intelecto é reservado a assuntos de linhagem.
 
-Responda em um formato de dossiê técnico.`,
+Responda em um formato de dossiê técnico. O campo 'confidentialityNote' deve conter um código de protocolo fictício e uma nota de sigilo.`,
 });
 
 export async function askBlackAdvisor(input: AdvisoryInput): Promise<AdvisoryOutput> {
@@ -50,6 +49,9 @@ const advisorFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await prompt(input);
-    return output!;
+    if (!output) {
+      throw new Error('O Advisor não retornou dados válidos.');
+    }
+    return output;
   }
 );
