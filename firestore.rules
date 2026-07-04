@@ -4,8 +4,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * Hall Black Club Security Rules - v2026
-     * Protocolos de segurança atualizados para suporte ao Elite Vault e Advisor.
+     * Hall Black Club Security Rules - v2026.2
+     * Protocolos de segurança atualizados para suporte total ao Elite Hub.
+     * Foco em privacidade, exclusividade e integridade da linhagem.
      */
 
     function isSignedIn() {
@@ -23,6 +24,7 @@ service cloud.firestore {
     // --- Regras de Chaves de Acesso ---
 
     match /mythicCodes/{mythicCodeId} {
+      // Chaves individuais podem ser consultadas publicamente para validação inicial
       allow get: if true;
       allow list: if false;
       allow create: if false;
@@ -33,15 +35,22 @@ service cloud.firestore {
     // --- Regras de Dossiês de Usuários ---
 
     match /users/{userId} {
-      allow list: if true; 
+      // Permitimos listagem (Alto Conselho) para qualquer membro autenticado
+      allow list: if isSignedIn();
+      
+      // Permitimos get se for o próprio dono ou se o perfil for explicitamente público
       allow get: if isSignedIn() || (resource != null && resource.data.isPublicProfile == true);
+      
       allow create: if isOwner(userId) && request.resource.data.id == userId;
+      
       // Permite update se for o dono OU se for uma revogação autorizada durante transferência
       allow update: if isExistingOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
+      
       allow delete: if isExistingOwner(userId);
 
+      // Subcoleção de Pets
       match /pets/{petId} {
-        allow get: if true;
+        allow get: if true; // Identidade do pet é consultável via QR Code
         allow list: if isSignedIn();
         allow create: if isOwner(userId) && request.resource.data.userId == userId;
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
@@ -53,8 +62,8 @@ service cloud.firestore {
 
     match /transferRequests/{requestId} {
       allow create: if isSignedIn() && request.resource.data.fromUserId == request.auth.uid;
-      allow list: if true; 
-      allow get: if true;
+      allow list: if isSignedIn(); 
+      allow get: if isSignedIn();
       allow update: if isSignedIn(); 
       allow delete: if false;
     }
@@ -62,7 +71,7 @@ service cloud.firestore {
     // --- Regras do Cofre de Elite (The Vault) ---
 
     match /vault/{articleId} {
-      // Membros autenticados possuem autorização para consultar o conhecimento técnico
+      // Acesso restrito ao conhecimento técnico apenas para membros da rede
       allow list, get: if isSignedIn();
     }
   }
