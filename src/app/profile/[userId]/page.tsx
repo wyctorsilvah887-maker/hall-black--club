@@ -2,7 +2,7 @@
 "use client"
 
 import React, { use } from 'react';
-import { useDoc, useFirestore } from '@/firebase';
+import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +20,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
   const { userId } = use(params);
   const db = useFirestore();
   
-  const userRef = React.useMemo(() => {
+  const userRef = useMemoFirebase(() => {
     if (!db || !userId) return null;
     return doc(db, 'users', userId);
   }, [db, userId]);

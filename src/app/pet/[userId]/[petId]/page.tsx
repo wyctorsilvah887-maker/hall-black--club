@@ -2,7 +2,7 @@
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
-import { useDoc, useFirestore, useUser } from '@/firebase';
+import { useDoc, useFirestore, useUser, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -53,12 +53,12 @@ export default function PetProfilePage({ params }: PetPageProps) {
     };
   }, []);
 
-  const petRef = React.useMemo(() => {
+  const petRef = useMemoFirebase(() => {
     if (!db || !userId || !petId) return null;
     return doc(db, 'users', userId, 'pets', petId);
   }, [db, userId, petId]);
 
-  const ownerRef = React.useMemo(() => {
+  const ownerRef = useMemoFirebase(() => {
     if (!db || !userId) return null;
     return doc(db, 'users', userId);
   }, [db, userId]);

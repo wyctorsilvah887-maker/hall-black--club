@@ -3,13 +3,16 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Lock, FileText, ChevronRight, Zap } from "lucide-react";
-import { useFirestore, useCollection } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
 
 export function TheVault({ profile }: { profile: any }) {
   const db = useFirestore();
-  const vaultQuery = React.useMemo(() => {
+  
+  const vaultQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(collection(db, 'vault'), orderBy('timestamp', 'desc'));
   }, [db]);
