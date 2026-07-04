@@ -23,7 +23,6 @@ export type AdvisoryOutput = z.infer<typeof AdvisoryOutputSchema>;
 
 const prompt = ai.definePrompt({
   name: 'blackAdvisorPrompt',
-  model: 'googleai/gemini-1.5-flash',
   input: { schema: AdvisoryInputSchema },
   output: { schema: AdvisoryOutputSchema },
   prompt: `Você é o Black Advisor, o consultor supremo do Hall Black Club. 
