@@ -5,6 +5,7 @@ service cloud.firestore {
 
     /**
      * Hall Black Club Security Rules - v2026
+     * Protocolos de segurança atualizados para suporte ao Elite Vault e Advisor.
      */
 
     function isSignedIn() {
@@ -19,7 +20,7 @@ service cloud.firestore {
       return resource != null && isOwner(userId);
     }
 
-    // --- Collection Rules ---
+    // --- Regras de Chaves de Acesso ---
 
     match /mythicCodes/{mythicCodeId} {
       allow get: if true;
@@ -28,6 +29,8 @@ service cloud.firestore {
       allow update: if isSignedIn();
       allow delete: if false;
     }
+
+    // --- Regras de Dossiês de Usuários ---
 
     match /users/{userId} {
       allow list: if true; 
@@ -46,12 +49,21 @@ service cloud.firestore {
       }
     }
 
+    // --- Regras de Protocolos de Transferência ---
+
     match /transferRequests/{requestId} {
       allow create: if isSignedIn() && request.resource.data.fromUserId == request.auth.uid;
       allow list: if true; 
       allow get: if true;
       allow update: if isSignedIn(); 
       allow delete: if false;
+    }
+
+    // --- Regras do Cofre de Elite (The Vault) ---
+
+    match /vault/{articleId} {
+      // Membros autenticados possuem autorização para consultar o conhecimento técnico
+      allow list, get: if isSignedIn();
     }
   }
 }
