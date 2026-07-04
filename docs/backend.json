@@ -2,220 +2,65 @@
 {
   "entities": {
     "MythicCode": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "MythicCode",
       "type": "object",
-      "description": "Represents a unique Mythic Code used for initial access and activation of club membership.",
+      "description": "Chaves de acesso originais da rede.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the MythicCode entity."
-        },
-        "code": {
-          "type": "string",
-          "description": "The actual unique mythic code string provided to users for club access."
-        },
-        "status": {
-          "type": "string",
-          "description": "The current status of the mythic code, e.g., 'available' or 'activated'.",
-          "format": "enum"
-        },
-        "activationDateTime": {
-          "type": "string",
-          "description": "Timestamp when the mythic code was activated.",
-          "format": "date-time"
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the UserProfile entity that activated this code."
-        }
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "activated"] },
+        "status_rank": { "type": "string" },
+        "theme": { "type": "string" }
       },
-      "required": [
-        "id",
-        "code",
-        "status"
-      ]
+      "required": ["id", "code", "status"]
     },
     "UserProfile": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Stores detailed information about a club member, associated with an activated Mythic Code.",
+      "description": "Dossiê do membro elite.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the UserProfile entity."
-        },
-        "mythicCodeId": {
-          "type": "string",
-          "description": "Reference to the MythicCode entity used by this user."
-        },
-        "name": {
-          "type": "string",
-          "description": "The full name of the club member."
-        },
-        "email": {
-          "type": "string",
-          "description": "The email address of the club member.",
-          "format": "email"
-        },
-        "photo": {
-          "type": "string",
-          "description": "Base64 representation of the user's profile photo."
-        },
-        "bio": {
-          "type": "string",
-          "description": "A short biography of the member."
-        },
-        "city": {
-          "type": "string",
-          "description": "The city where the user is located."
-        },
-        "state": {
-          "type": "string",
-          "description": "The state where the user is located."
-        },
-        "emergencyContact": {
-          "type": "string",
-          "description": "Emergency contact phone number for the member."
-        },
-        "registrationDateTime": {
-          "type": "string",
-          "description": "Timestamp when the user profile was fully registered.",
-          "format": "date-time"
-        },
-        "rankingScore": {
-          "type": "number",
-          "description": "The user's current score or rank within the club."
-        },
-        "isPublicProfile": {
-          "type": "boolean",
-          "description": "Indicates whether the user's profile is visible to other members."
-        },
-        "showBio": {
-          "type": "boolean",
-          "description": "Controls if the bio is visible on the public profile."
-        },
-        "showLocation": {
-          "type": "boolean",
-          "description": "Controls if the city and state are visible on the public profile."
-        },
-        "showJoinDate": {
-          "type": "boolean",
-          "description": "Controls if the registration date is visible on the public profile."
-        },
-        "status": {
-          "type": "string",
-          "description": "Elite status: MYTHIC, AMBER or LEGENDARY."
-        },
-        "theme": {
-          "type": "string",
-          "description": "UI theme based on status."
-        },
-        "memberNumber": {
-          "type": "number",
-          "description": "The sequential registration number (1-60) based on entry order."
-        }
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "status": { "type": "string" },
+        "theme": { "type": "string" },
+        "memberNumber": { "type": "number" },
+        "registrationDateTime": { "type": "string", "format": "date-time" },
+        "pedigreeScore": { "type": "number", "description": "Pontuação de prestígio baseada em linhagem e tempo." },
+        "isPublicProfile": { "type": "boolean" }
       },
-      "required": [
-        "id",
-        "name",
-        "email",
-        "registrationDateTime",
-        "isPublicProfile"
-      ]
+      "required": ["id", "name", "email"]
     },
-    "Pet": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Pet",
+    "VaultArticle": {
+      "title": "VaultArticle",
       "type": "object",
-      "description": "Records details about a pet owned by a club member.",
+      "description": "Conhecimento técnico e masterclasses exclusivas.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Pet entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the UserProfile entity that owns this pet."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the pet."
-        },
-        "species": {
-          "type": "string",
-          "description": "The species of the pet."
-        },
-        "photo": {
-          "type": "string",
-          "description": "Compressed base64 representation of the pet photo."
-        },
-        "registrationDateTime": {
-          "type": "string",
-          "description": "Timestamp when the pet was registered.",
-          "format": "date-time"
-        },
-        "isEmergencyActive": {
-          "type": "boolean",
-          "description": "Indicates if the emergency protocol is currently active for this pet."
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "name",
-        "species",
-        "registrationDateTime"
-      ]
-    },
-    "TransferRequest": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "TransferRequest",
-      "type": "object",
-      "description": "Logs a request to transfer membership from one person to another.",
-      "properties": {
-        "fromUserId": { "type": "string" },
-        "fromUserName": { "type": "string" },
-        "fromUserEmail": { "type": "string" },
-        "toUserEmail": { "type": "string" },
-        "confirmationCode": { "type": "string" },
-        "statusRank": { "type": "string" },
-        "status": { "type": "string", "enum": ["pending", "processed"] },
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string", "enum": ["GENETICS", "HEALTH", "LIFESTYLE"] },
+        "content": { "type": "string" },
+        "restrictedTo": { "type": "string", "enum": ["MYTHIC", "AMBER", "LEGENDARY"] },
         "timestamp": { "type": "string", "format": "date-time" }
       },
-      "required": ["fromUserId", "toUserEmail", "status", "timestamp", "confirmationCode", "statusRank"]
+      "required": ["id", "title", "content", "category"]
     }
   },
   "auth": {
-    "providers": [
-      "password"
-    ]
+    "providers": ["password"]
   },
   "firestore": {
     "/mythicCodes/{mythicCodeId}": {
-      "schema": {
-        "$ref": "#/backend/entities/MythicCode"
-      },
-      "description": "Unique mythic codes for elite access."
+      "schema": "MythicCode",
+      "description": "Controle de chaves HB."
     },
     "/users/{userId}": {
-      "schema": {
-        "$ref": "#/backend/entities/UserProfile"
-      },
-      "description": "Member profiles, keyed by Auth UID."
+      "schema": "UserProfile",
+      "description": "Dossiês de membros."
     },
-    "/users/{userId}/pets/{petId}": {
-      "schema": {
-        "$ref": "#/backend/entities/Pet"
-      },
-      "description": "Pets belonging to members."
-    },
-    "/transferRequests/{requestId}": {
-      "schema": {
-        "$ref": "#/backend/entities/TransferRequest"
-      },
-      "description": "Logs for membership transfers."
+    "/vault/{articleId}": {
+      "schema": "VaultArticle",
+      "description": "Cofre de conhecimento restrito."
     }
   }
 }
