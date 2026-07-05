@@ -238,9 +238,14 @@ export function TheVault({ profile }: { profile: any }) {
                     <Share2 className="w-4 h-4 text-zinc-700 hover:text-white cursor-pointer transition-colors" />
                   </div>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-tight text-white">
-                  {readingArticle.title}
-                </h2>
+                <DialogHeader className="text-left">
+                  <DialogTitle className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-tight text-white">
+                    {readingArticle.title}
+                  </DialogTitle>
+                  <DialogDescription className="sr-only">
+                    Documento restrito: {readingArticle.title}
+                  </DialogDescription>
+                </DialogHeader>
                 <div className="flex items-center gap-4 mt-4 text-zinc-600">
                   <span className="text-[8px] font-black uppercase tracking-widest">Ref: HB-DOC-{readingArticle.id.substring(0,6).toUpperCase()}</span>
                   <span className="w-1 h-1 rounded-full bg-zinc-800" />

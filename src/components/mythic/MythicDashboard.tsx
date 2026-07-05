@@ -221,8 +221,13 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       {/* MODAL ADICIONAR PET */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-900 text-white w-[92vw] max-w-sm rounded-[1.5rem] p-6 z-[200]">
-          <DialogHeader><DialogTitle className="uppercase font-black">Registrar Pet</DialogTitle></DialogHeader>
-          <form onSubmit={handleAddPet} className="space-y-4">
+          <DialogHeader>
+            <DialogTitle className="uppercase font-black text-white">Registrar Pet</DialogTitle>
+            <DialogDescription className="text-[10px] text-zinc-500 uppercase tracking-widest">
+              Adicione um novo animal à linhagem oficial da elite.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddPet} className="space-y-4 mt-4">
              <div onClick={() => fileInputRef.current?.click()} className="w-24 h-24 mx-auto border-2 border-dashed border-zinc-800 rounded-2xl flex items-center justify-center cursor-pointer overflow-hidden relative">
                 {newPetPhoto ? <NextImage src={newPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <Camera className="text-zinc-800" />}
              </div>
