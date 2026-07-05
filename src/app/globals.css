@@ -26,8 +26,24 @@
     --radius: 0.75rem;
   }
 
+  .theme-hallblack {
+    --primary: 350 100% 25%; /* Obsidiana Rubi */
+    --primary-foreground: 0 0% 100%;
+    --accent: 347 100% 50%;
+    --ring: 350 100% 30%;
+    --border: 350 40% 10%;
+  }
+
+  .theme-mythic {
+    --primary: 350 82% 35%; /* Rubi Mítico */
+    --primary-foreground: 0 0% 100%;
+    --accent: 347 92% 48%;
+    --ring: 347 92% 48%;
+    --border: 350 50% 20%;
+  }
+
   .theme-legendary {
-    --primary: 47 100% 50%;
+    --primary: 47 100% 50%; /* Gold */
     --primary-foreground: 0 0% 0%;
     --accent: 45 100% 58%;
     --ring: 47 100% 50%;
@@ -35,7 +51,7 @@
   }
 
   .theme-amber {
-    --primary: 35 100% 50%;
+    --primary: 35 100% 50%; /* Laranja Legendário */
     --primary-foreground: 0 0% 0%;
     --accent: 30 100% 60%;
     --ring: 35 100% 50%;
@@ -43,7 +59,7 @@
   }
 
   .theme-elite {
-    --primary: 0 0% 80%;
+    --primary: 0 0% 80%; /* Silver */
     --primary-foreground: 0 0% 0%;
     --accent: 0 0% 95%;
     --ring: 0 0% 80%;
@@ -51,7 +67,7 @@
   }
 
   .theme-master {
-    --primary: 35 60% 40%;
+    --primary: 35 60% 40%; /* Bronze */
     --primary-foreground: 0 0% 100%;
     --accent: 35 70% 50%;
     --ring: 35 60% 40%;

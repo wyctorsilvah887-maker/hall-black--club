@@ -50,3 +50,14 @@ export function getRankLabel(status: string): string {
     default: return 'MESTRE DO CLUBE';
   }
 }
+
+export function getThemeClass(status: string): string {
+  switch (status) {
+    case 'HALL_BLACK': return 'theme-hallblack';
+    case 'MYTHIC': return 'theme-mythic';
+    case 'AMBER': return 'theme-amber';
+    case 'LEGENDARY': return 'theme-legendary';
+    case 'ELITE': return 'theme-elite';
+    default: return 'theme-master';
+  }
+}

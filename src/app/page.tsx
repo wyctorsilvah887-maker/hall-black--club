@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -7,6 +6,7 @@ import { AuthGate } from '@/components/mythic/AuthGate';
 import { EliteHub } from '@/components/mythic/EliteHub';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
+import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Página principal do Hall Black Club.
@@ -62,11 +62,8 @@ export default function Home() {
       name: user.displayName || tempProfile?.name || 'Membro Elite'
     };
 
-    const themeClass = activeProfile?.theme === 'legendary' 
-      ? 'theme-legendary' 
-      : activeProfile?.theme === 'amber' 
-      ? 'theme-amber' 
-      : '';
+    const currentRank = calculateRankByTime(activeProfile.registrationDateTime, activeProfile.status);
+    const themeClass = getThemeClass(currentRank);
 
     return (
       <main className={`min-h-screen bg-black ${themeClass}`}>
@@ -76,11 +73,8 @@ export default function Home() {
   }
 
   if (isCodeValidated) {
-    const themeClass = tempProfile?.theme === 'legendary' 
-      ? 'theme-legendary' 
-      : tempProfile?.theme === 'amber' 
-      ? 'theme-amber' 
-      : '';
+    const currentRank = calculateRankByTime(tempProfile?.registrationDateTime, tempProfile?.status);
+    const themeClass = getThemeClass(currentRank);
 
     return (
       <main className={`min-h-screen bg-black ${themeClass}`}>

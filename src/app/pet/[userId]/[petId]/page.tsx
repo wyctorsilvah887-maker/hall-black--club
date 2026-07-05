@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
@@ -11,6 +10,7 @@ import { Heart, ArrowLeft, ShieldAlert, User, MapPin, ShieldCheck, ChevronRight,
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
+import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 interface PetPageProps {
   params: Promise<{ userId: string; petId: string }>;
@@ -26,7 +26,6 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const [introPhase, setIntroPhase] = useState<IntroPhase>('initial');
 
   useEffect(() => {
-    // Sequência de animação otimizada
     setIntroPhase('shutdown');
     
     const tStamp = setTimeout(() => {
@@ -89,11 +88,22 @@ export default function PetProfilePage({ params }: PetPageProps) {
     );
   }
 
-  const isLegendary = owner.status === 'LEGENDARY';
-  const isAmber = owner.status === 'AMBER';
-  const themeClass = isLegendary ? 'theme-legendary' : isAmber ? 'theme-amber' : '';
-  const themeColorClass = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
-  const themeBorderClass = isLegendary ? 'border-yellow-500/30' : isAmber ? 'border-orange-500/30' : 'border-primary/30';
+  const currentRank = calculateRankByTime(owner.registrationDateTime, owner.status);
+  const themeClass = getThemeClass(currentRank);
+  
+  const themeColorClass = 
+    currentRank === 'HALL_BLACK' ? 'text-white' : 
+    currentRank === 'MYTHIC' ? 'text-primary' :
+    currentRank === 'AMBER' ? 'text-orange-500' :
+    currentRank === 'LEGENDARY' ? 'text-yellow-500' :
+    currentRank === 'ELITE' ? 'text-zinc-400' : 'text-orange-900';
+
+  const themeBorderClass = 
+    currentRank === 'HALL_BLACK' ? 'border-zinc-800' : 
+    currentRank === 'MYTHIC' ? 'border-primary/30' :
+    currentRank === 'AMBER' ? 'border-orange-500/30' :
+    currentRank === 'LEGENDARY' ? 'border-yellow-500/30' :
+    currentRank === 'ELITE' ? 'border-zinc-400/30' : 'border-orange-900/30';
 
   const isSOSActive = pet.isEmergencyActive;
   
@@ -114,7 +124,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
 
           {(introPhase === 'stamp' || introPhase === 'fade_stamp') && (
             <div className={`flex flex-col items-center gap-10 backface-hidden px-5 ${introPhase === 'stamp' ? 'animate-badge-stamp' : 'animate-badge-fade-out'}`}>
-              <RankBadge status={owner.status} id={owner.id} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)] scale-90 md:scale-125" />
+              <RankBadge status={currentRank} id={owner.id} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)] scale-90 md:scale-125" />
               <div className="space-y-3 text-center">
                 <p className={`text-[11px] md:text-[13px] font-black uppercase tracking-[0.8em] md:tracking-[1em] ${themeColorClass} animate-pulse`}>Identidade Confirmada</p>
                 <p className="text-zinc-700 text-[9px] md:text-[10px] font-bold uppercase tracking-widest italic opacity-60">Hall Black Elite Identity</p>
@@ -138,7 +148,11 @@ export default function PetProfilePage({ params }: PetPageProps) {
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="flex flex-col items-center gap-2">
               <div className={`relative w-40 h-40 md:w-56 md:h-56 rounded-[2rem] overflow-hidden border shadow-2xl transition-all duration-700
-                ${isSOSActive ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.4)]' : isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary animate-ruby-glow'}`}>
+                ${isSOSActive ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.4)]' : 
+                  currentRank === 'HALL_BLACK' ? 'border-zinc-800' :
+                  currentRank === 'MYTHIC' ? 'border-primary animate-ruby-glow' :
+                  currentRank === 'LEGENDARY' ? 'border-yellow-500 animate-gold-glow' : 
+                  currentRank === 'AMBER' ? 'border-orange-500 animate-amber-glow' : 'border-zinc-700'}`}>
                 
                 {pet.photo ? (
                   <Image 
@@ -160,7 +174,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   </div>
                 )}
               </div>
-              <RankBadge status={owner.status} id={owner.id} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+              <RankBadge status={currentRank} id={owner.id} className="-mt-14 scale-75 md:scale-100 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             </div>
             
             <div className="space-y-3">
@@ -196,7 +210,10 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   <div className="space-y-1">
                     <p className="text-white font-black text-xl uppercase tracking-tight">{owner.name}</p>
                     <p className={`text-[9px] font-bold uppercase tracking-widest ${themeColorClass}`}>
-                      {owner.status === 'LEGENDARY' ? 'PLATINUM LENDÁRIO' : owner.status === 'AMBER' ? 'RUBI LEGENDÁRIO' : 'MEMBRO MÍTICO'}
+                      {currentRank === 'HALL_BLACK' ? 'ÁPICE HALL BLACK' : 
+                       currentRank === 'MYTHIC' ? 'MEMBRO MÍTICO' :
+                       currentRank === 'AMBER' ? 'LEGENDÁRIO ÂMBAR' :
+                       currentRank === 'LEGENDARY' ? 'PLATINUM LENDÁRIO' : 'MEMBRO ELITE'}
                     </p>
                   </div>
                   {user && (

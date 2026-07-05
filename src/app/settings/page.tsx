@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -20,6 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { cn } from '@/lib/utils';
 import { sendTransferConfirmationEmail } from '@/app/actions';
 import { signOut } from 'firebase/auth';
+import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Página de configurações de elite do Hall Black Club.
@@ -202,13 +202,25 @@ export default function SettingsPage() {
     );
   }
 
-  const isLegendary = profile?.status === 'LEGENDARY';
-  const isAmber = profile?.status === 'AMBER';
-  const themeColor = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
-  const themeBorder = isLegendary ? 'border-yellow-500/30' : isAmber ? 'border-orange-500/30' : 'border-zinc-900';
+  const currentRank = calculateRankByTime(profile?.registrationDateTime, profile?.status);
+  const themeClass = getThemeClass(currentRank);
+  
+  const themeColor = 
+    currentRank === 'HALL_BLACK' ? 'text-white' : 
+    currentRank === 'MYTHIC' ? 'text-primary' :
+    currentRank === 'AMBER' ? 'text-orange-500' :
+    currentRank === 'LEGENDARY' ? 'text-yellow-500' :
+    currentRank === 'ELITE' ? 'text-zinc-400' : 'text-orange-900';
+
+  const themeBorder = 
+    currentRank === 'HALL_BLACK' ? 'border-zinc-800' : 
+    currentRank === 'MYTHIC' ? 'border-primary/30' :
+    currentRank === 'AMBER' ? 'border-orange-500/30' :
+    currentRank === 'LEGENDARY' ? 'border-yellow-500/30' :
+    currentRank === 'ELITE' ? 'border-zinc-400/30' : 'border-orange-900/30';
 
   return (
-    <main className={cn("min-h-screen bg-black text-white selection:bg-primary/30 animate-in fade-in duration-700", isLegendary ? 'theme-legendary' : isAmber ? 'theme-amber' : '')}>
+    <main className={cn("min-h-screen bg-black text-white selection:bg-primary/30 animate-in fade-in duration-700", themeClass)}>
       <div className="max-w-xl mx-auto">
         
         {/* HEADER MOBILE-FIRST */}

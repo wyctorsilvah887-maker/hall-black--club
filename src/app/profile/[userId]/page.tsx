@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use } from 'react';
@@ -7,10 +6,11 @@ import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Crown, Gem, ShieldCheck, Trophy, ArrowLeft, ShieldAlert, MapPin, User, Calendar, Quote } from "lucide-react";
+import { Crown, Gem, ShieldCheck, Trophy, ArrowLeft, ShieldAlert, MapPin, User, Calendar, Quote, Star } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
+import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 interface ProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -61,17 +61,26 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
     );
   }
 
-  const isLegendary = profile.status === 'LEGENDARY';
-  const isAmber = profile.status === 'AMBER';
-  const themeClass = isLegendary ? 'theme-legendary' : isAmber ? 'theme-amber' : '';
+  const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
+  const themeClass = getThemeClass(currentRank);
 
-  const badgeInfo = isLegendary 
-    ? { text: 'ACREDITAÇÃO LENDÁRIA', icon: <Crown className="w-4 h-4" />, style: 'border-yellow-500/50 bg-yellow-500/20 text-yellow-500 animate-gold-glow' }
-    : isAmber 
-    ? { text: 'STATUS LEGENDÁRIO', icon: <Gem className="w-4 h-4" />, style: 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' }
-    : { text: 'MEMBRO MÍTICO', icon: <CollarIcon className="w-4 h-4" />, style: 'border-primary/50 bg-primary/10 text-primary' };
+  const getBadgeInfo = (rank: string) => {
+    switch (rank) {
+      case 'HALL_BLACK': 
+        return { text: 'ÁPICE HALL BLACK', icon: <Star className="w-4 h-4" />, style: 'border-zinc-700 bg-zinc-900/50 text-white' };
+      case 'MYTHIC':
+        return { text: 'MEMBRO MÍTICO', icon: <CollarIcon className="w-4 h-4" />, style: 'border-primary/50 bg-primary/10 text-primary animate-ruby-glow' };
+      case 'AMBER':
+        return { text: 'LEGENDÁRIO ÂMBAR', icon: <Gem className="w-4 h-4" />, style: 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' };
+      case 'LEGENDARY':
+        return { text: 'ACREDITAÇÃO LENDÁRIA', icon: <Crown className="w-4 h-4" />, style: 'border-yellow-500/50 bg-yellow-500/20 text-yellow-500 animate-gold-glow' };
+      default:
+        return { text: 'MEMBRO ELITE', icon: <ShieldCheck className="w-4 h-4" />, style: 'border-zinc-500/50 bg-zinc-500/10 text-zinc-400' };
+    }
+  };
 
-  // Verificar preferências de privacidade
+  const badgeInfo = getBadgeInfo(currentRank);
+
   const showBio = profile.showBio !== false;
   const showLocation = profile.showLocation !== false;
   const showJoinDate = profile.showJoinDate !== false;
@@ -87,7 +96,10 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
             <div className="flex flex-col items-center gap-2">
               <div className={`w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 shadow-2xl transition-transform hover:scale-105 duration-500 flex-shrink-0
-                ${isLegendary ? 'border-yellow-500 animate-gold-glow' : isAmber ? 'border-orange-500 animate-amber-glow' : 'border-primary'}`}>
+                ${currentRank === 'HALL_BLACK' ? 'border-zinc-800' : 
+                  currentRank === 'MYTHIC' ? 'border-primary animate-ruby-glow' :
+                  currentRank === 'AMBER' ? 'border-orange-500 animate-amber-glow' :
+                  currentRank === 'LEGENDARY' ? 'border-yellow-500 animate-gold-glow' : 'border-zinc-700'}`}>
                 {profile.photo ? (
                   <Image src={profile.photo} alt={profile.name} width={160} height={160} className="object-cover w-full h-full" unoptimized />
                 ) : (
@@ -96,7 +108,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
                   </div>
                 )}
               </div>
-              <RankBadge status={profile.status} id={profile.id} size="md" className="-mt-12 scale-75 md:scale-100" />
+              <RankBadge status={currentRank} id={profile.id} size="md" className="-mt-12 scale-75 md:scale-100" />
             </div>
             
             <div className="space-y-2 text-center md:text-left">
@@ -135,7 +147,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
           <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 md:p-8 space-y-6 rounded-[2rem]">
             <CardHeader className="p-0">
               <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500 flex items-center gap-2">
-                <ShieldCheck className={`w-4 h-4 ${isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary'}`} />
+                <ShieldCheck className={`w-4 h-4 ${badgeInfo.style}`} />
                 Dados da Credencial
               </CardTitle>
             </CardHeader>
@@ -164,7 +176,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
           </Card>
 
           <Card className="bg-zinc-900/30 border-zinc-800/50 backdrop-blur-xl p-6 md:p-8 flex flex-col justify-center items-center text-center space-y-4 rounded-[2rem]">
-            <Trophy className={`w-10 h-10 md:w-12 md:h-12 mb-2 ${isLegendary ? 'text-yellow-500 animate-gold-glow' : isAmber ? 'text-orange-500 animate-amber-glow' : 'text-primary'}`} />
+            <Trophy className={`w-10 h-10 md:w-12 md:h-12 mb-2 ${currentRank === 'HALL_BLACK' ? 'text-white' : currentRank === 'MYTHIC' ? 'text-primary' : currentRank === 'AMBER' ? 'text-orange-500' : 'text-yellow-500'}`} />
             <h3 className="text-base md:text-lg font-black uppercase tracking-tighter">Status de Elite</h3>
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest leading-relaxed max-w-xs">
               Membro certificado com acesso total às funcionalidades e eventos exclusivos Hall Black. Identidade verificada em rede segura.

@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useMemo } from 'react';
@@ -14,7 +13,7 @@ import { BlackAdvisor } from './BlackAdvisor';
 import { HighCouncil } from './HighCouncil';
 import { TheVault } from './TheVault';
 import { RankBadge } from './MythicIcons';
-import { calculateRankByTime, getRankLabel } from '@/lib/rank-utils';
+import { calculateRankByTime, getRankLabel, getThemeClass } from '@/lib/rank-utils';
 import { Button } from "@/components/ui/button";
 
 interface EliteHubProps {
@@ -36,9 +35,10 @@ export function EliteHub({ profile }: EliteHubProps) {
   const isHallBlack = currentRank === 'HALL_BLACK';
   
   const themeColor = isHallBlack ? 'text-white' : isMythic ? 'text-primary' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-zinc-400';
+  const themeClass = getThemeClass(currentRank);
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden">
+    <div className={`min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden ${themeClass}`}>
       {/* NAVEGAÇÃO LATERAL MINIMALISTA (DESKTOP) / INFERIOR (MOBILE) */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-zinc-900 md:top-0 md:bottom-auto md:h-20 md:border-t-0 md:border-b">
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
