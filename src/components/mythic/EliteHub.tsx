@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useMemo } from 'react';
@@ -32,16 +31,16 @@ export function EliteHub({ profile }: EliteHubProps) {
   }, [profile.registrationDateTime, profile.status]);
 
   const themeClass = getThemeClass(currentRank);
-  // Agora usamos text-primary para que o CSS do tema controle a cor dinamicamente
+  // text-primary herda a cor do tema aplicado no pai
   const themeColor = 'text-primary';
 
   return (
-    <div className={`min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden ${themeClass}`}>
+    <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden transition-colors duration-700", themeClass)}>
       {/* NAVEGAÇÃO LATERAL MINIMALISTA (DESKTOP) / INFERIOR (MOBILE) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-zinc-900 md:top-0 md:bottom-auto md:h-20 md:border-t-0 md:border-b">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-zinc-900 md:top-0 md:bottom-auto md:h-20 md:border-t-0 md:border-b border-zinc-900/50">
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
           <div className="hidden md:flex items-center gap-4">
-            <Cpu className={themeColor} />
+            <Cpu className={cn("w-6 h-6", themeColor)} />
             <h1 className={cn("text-xl font-black uppercase tracking-tighter", themeColor)}>Hall Black Hub</h1>
           </div>
           
@@ -59,7 +58,7 @@ export function EliteHub({ profile }: EliteHubProps) {
                   activeTab === tab.id ? themeColor : 'text-zinc-600 hover:text-zinc-400'
                 )}
               >
-                <tab.icon className="w-5 h-5 group-active:scale-90 transition-transform" />
+                <tab.icon className={cn("w-5 h-5 group-active:scale-90 transition-transform", activeTab === tab.id ? themeColor : '')} />
                 <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
               </button>
             ))}
@@ -81,7 +80,7 @@ export function EliteHub({ profile }: EliteHubProps) {
         <section className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 border-b border-zinc-900 pb-12">
           <div className="space-y-4">
              <div className="flex items-center gap-3 text-zinc-500">
-               <ShieldCheck className="w-4 h-4" />
+               <ShieldCheck className={cn("w-4 h-4", themeColor)} />
                <span className="text-[10px] font-black uppercase tracking-[0.5em]">Identidade Verificada</span>
              </div>
              <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tight leading-none">
