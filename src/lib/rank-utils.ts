@@ -3,22 +3,23 @@
  * @fileOverview Utilitários para cálculo de patente baseada em tempo de casa.
  */
 
-export type RankStatus = 'MASTER' | 'ELITE' | 'AMBER' | 'LEGENDARY' | 'MYTHIC';
+export type RankStatus = 'MASTER' | 'ELITE' | 'LEGENDARY' | 'AMBER' | 'MYTHIC';
 
 /**
  * Calcula a patente atual baseada na data de registro.
  * - MASTER: 0-4 meses
  * - ELITE: 4-9 meses
- * - AMBER (Legendário Âmbar): 9+ meses
+ * - LEGENDARY (Lendário Gold): 9-12 meses
+ * - AMBER (Legendário Âmbar): 12+ meses (Nível superior temporal)
  * 
- * Patentes MYTHIC e LEGENDARY (Gold) são mantidas se já estiverem no perfil.
+ * A patente MYTHIC é o ápice absoluto e mantida se já atribuída.
  */
 export function calculateRankByTime(registrationDate: string | undefined, currentStatus?: string): RankStatus {
   if (!registrationDate) return (currentStatus as RankStatus) || 'MASTER';
 
-  // Se o usuário já é Mítico ou Lendário, não reduzimos a patente (honra adquirida)
-  if (currentStatus === 'MYTHIC' || currentStatus === 'LEGENDARY') {
-    return currentStatus as RankStatus;
+  // O nível Mítico é o ápice e não é reduzido
+  if (currentStatus === 'MYTHIC') {
+    return 'MYTHIC';
   }
 
   const start = new Date(registrationDate);
@@ -27,8 +28,10 @@ export function calculateRankByTime(registrationDate: string | undefined, curren
   // Cálculo de meses totais
   const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
 
-  if (diffMonths >= 9) {
-    return 'AMBER'; // Legendário Âmbar
+  if (diffMonths >= 12) {
+    return 'AMBER'; // Legendário Âmbar (Superior)
+  } else if (diffMonths >= 9) {
+    return 'LEGENDARY'; // Lendário (Gold)
   } else if (diffMonths >= 4) {
     return 'ELITE'; // Membro Elite
   }
@@ -39,8 +42,8 @@ export function calculateRankByTime(registrationDate: string | undefined, curren
 export function getRankLabel(status: string): string {
   switch (status) {
     case 'MYTHIC': return 'MEMBRO MÍTICO';
-    case 'LEGENDARY': return 'LENDÁRIO';
     case 'AMBER': return 'LEGENDÁRIO ÂMBAR';
+    case 'LEGENDARY': return 'LENDÁRIO';
     case 'ELITE': return 'MEMBRO ELITE';
     default: return 'MESTRE DO CLUBE';
   }

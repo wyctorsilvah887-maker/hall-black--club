@@ -51,8 +51,8 @@ interface RankBadgeProps {
 export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps) => {
   const reactId = useId();
   const isMythic = status === 'MYTHIC';
-  const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
+  const isLegendary = status === 'LEGENDARY';
   const isElite = status === 'ELITE';
   const isMaster = status === 'MASTER' || !status;
   
@@ -62,21 +62,21 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
 
   const getColors = () => {
     if (isMythic) return { primary: '#ff1a1a', secondary: '#660000', vibrant: '#ff4d4d', deep: '#b30000', aura: 'rgba(255,0,0,0.4)' };
-    if (isLegendary) return { primary: '#FFD700', secondary: '#B8860B', vibrant: '#FFF2AC', deep: '#bf953f', aura: 'rgba(255,215,0,0.2)' };
     if (isAmber) return { primary: '#F59E0B', secondary: '#D97706', vibrant: '#fbbf24', deep: '#d97706', aura: 'rgba(245,158,11,0.2)' };
+    if (isLegendary) return { primary: '#FFD700', secondary: '#B8860B', vibrant: '#FFF2AC', deep: '#bf953f', aura: 'rgba(255,215,0,0.2)' };
     if (isElite) return { primary: '#E5E4E2', secondary: '#71706E', vibrant: '#FFFFFF', deep: '#A9A9A9', aura: 'rgba(229, 228, 226, 0.2)' };
     return { primary: '#CD7F32', secondary: '#8B4513', vibrant: '#E3A857', deep: '#A0522D', aura: 'rgba(205, 127, 50, 0.2)' };
   };
 
   const colors = getColors();
   
-  // Nomes diferenciados conforme solicitado
+  // Hierarquia: Mítico > Legendário (Âmbar) > Lendário (Gold) > Elite > Mestre
   const labelText = isMythic ? 'MÍTICO' : 
-                   isLegendary ? 'LENDÁRIO' : 
                    isAmber ? 'LEGENDÁRIO' :
+                   isLegendary ? 'LENDÁRIO' : 
                    isElite ? 'ELITE' : 'MESTRE';
 
-  const starsCount = (isMythic || isLegendary || isAmber) ? 5 : 3;
+  const starsCount = (isMythic || isAmber || isLegendary) ? 5 : 3;
   
   const labelFontSize = 
     labelText === 'MÍTICO' ? '22px' : 
