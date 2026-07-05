@@ -68,7 +68,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           <Terminal className={themeColor} />
           <div>
             <h3 className="text-xl font-black uppercase tracking-tighter">Black Advisor</h3>
-            <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Consultoria de Linhagem via Gemini 2.5 Flash</p>
+            <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Consultoria de Linhagem via IA</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
