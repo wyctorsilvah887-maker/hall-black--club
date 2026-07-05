@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode, validateTransferClaim } from "@/lib/mythic-service";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, where } from 'firebase/firestore';
-import { Loader2, Crown, Users, LogIn, ArrowRightLeft, ShieldCheck, Mail } from "lucide-react";
+import { useFirestore } from "@/firebase";
+import { Loader2, Crown, LogIn, ArrowRightLeft, ShieldCheck, Mail } from "lucide-react";
 
 interface AccessGateProps {
   onSuccess: (profile: any) => void;
@@ -24,15 +23,6 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
   
   const { toast } = useToast();
   const db = useFirestore();
-
-  const usersQuery = useMemoFirebase(() => {
-    if (!db) return null;
-    // Filtra apenas usuários que não foram revogados por transferência
-    return query(collection(db, 'users'), where('status', '!=', 'REVOKED'));
-  }, [db]);
-  
-  const { data: usersData } = useCollection(usersQuery);
-  const memberCount = usersData?.length || 0;
 
   const handleClaimAccess = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,12 +75,9 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white">
             HALL <span className="text-primary animate-text-ruby-glow">BLACK</span>
           </h1>
-          <div className="flex items-center justify-center gap-2 mt-2 px-3 py-1 rounded-full border border-zinc-900 bg-zinc-950/40 w-fit mx-auto">
-            <Users className="w-3 h-3 text-primary/60" />
-            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
-              {memberCount.toString().padStart(2, '0')} / 60 SLOTS OCUPADOS
-            </span>
-          </div>
+          <p className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mt-2">
+            Protocolo de Elite v2026.12
+          </p>
         </div>
 
         <form onSubmit={handleClaimAccess} className="space-y-5 md:space-y-6 mt-8 md:mt-12 bg-zinc-900/20 p-6 md:p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-md shadow-2xl">
