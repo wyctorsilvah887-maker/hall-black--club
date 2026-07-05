@@ -15,7 +15,7 @@ export default function BadgeGalleryPage() {
   const ranks = [
     { status: 'MYTHIC', label: 'Mítico (Rubi)', description: 'O Ápice da Linhagem Hall Black. Autoridade suprema e acesso ao conselho secreto.' },
     { status: 'LEGENDARY', label: 'Lendário (Gold)', description: 'Nível de prestígio superior alcançado por mérito ou linhagem direta.' },
-    { status: 'AMBER', label: 'Lendário (Laranja)', description: 'Título alcançado automaticamente após 9 meses de permanência ativa.' },
+    { status: 'AMBER', label: 'Legendário (Laranja)', description: 'Título alcançado automaticamente após 9 meses de permanência ativa.' },
     { status: 'ELITE', label: 'Membro Elite (Prata)', description: 'Patente intermediária alcançada após 4 meses como Mestre.' },
     { status: 'MASTER', label: 'Mestre do Clube (Bronze)', description: 'Nível de Entrada. O início da jornada na elite Hall Black.' }
   ];
@@ -32,7 +32,7 @@ export default function BadgeGalleryPage() {
             </Link>
             <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">Protocolo de Patentes</h1>
             <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold max-w-xl leading-relaxed">
-              Exposição técnica das credenciais de linhagem. O sistema evolui conforme o tempo de casa: Mestre {'>'} Elite (4m) {'>'} Lendário (9m).
+              Exposição técnica das credenciais de linhagem. O sistema evolui conforme o tempo de casa: Mestre {'>'} Elite (4m) {'>'} Legendário (9m).
             </p>
           </div>
           <div className="flex items-center gap-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-900">

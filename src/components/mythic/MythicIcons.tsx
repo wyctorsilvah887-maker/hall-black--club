@@ -70,17 +70,17 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
 
   const colors = getColors();
   
-  // Nomes atualizados: Ambos os níveis superiores agora são "LENDÁRIO"
+  // Nomes diferenciados conforme solicitado
   const labelText = isMythic ? 'MÍTICO' : 
-                   (isLegendary || isAmber) ? 'LENDÁRIO' : 
+                   isLegendary ? 'LENDÁRIO' : 
+                   isAmber ? 'LEGENDÁRIO' :
                    isElite ? 'ELITE' : 'MESTRE';
 
-  const subText = '';
-  
   const starsCount = (isMythic || isLegendary || isAmber) ? 5 : 3;
   
   const labelFontSize = 
     labelText === 'MÍTICO' ? '22px' : 
+    labelText === 'LEGENDÁRIO' ? '15px' :
     labelText === 'LENDÁRIO' ? '18px' :
     '24px';
     
