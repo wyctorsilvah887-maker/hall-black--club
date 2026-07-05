@@ -23,14 +23,14 @@
         "name": { "type": "string" },
         "email": { "type": "string" },
         "status": { "type": "string" },
-        "role": { "type": "string", "enum": ["member", "admin"] },
+        "role": { "type": "string", "enum": ["member", "admin"], "description": "Define o nível de acesso: 'member' para uso comum ou 'admin' para acesso ao Painel Staff." },
         "theme": { "type": "string" },
         "memberNumber": { "type": "number" },
         "registrationDateTime": { "type": "string", "format": "date-time" },
         "pedigreeScore": { "type": "number", "description": "Pontuação de prestígio baseada em linhagem e tempo." },
         "isPublicProfile": { "type": "boolean" }
       },
-      "required": ["id", "name", "email"]
+      "required": ["id", "name", "email", "role"]
     },
     "VaultArticle": {
       "title": "VaultArticle",
