@@ -1,12 +1,12 @@
 
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, AlertCircle, Users, Trophy, ChevronRight, Activity, ArrowRightLeft, ShieldAlert, MailCheck, ShieldX } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, Activity, Users, Trophy } from "lucide-react";
 import NextImage from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc, query, where } from 'firebase/firestore';
@@ -37,7 +37,6 @@ import { ImageEditor } from './ImageEditor';
 import { RankBadge } from './MythicIcons';
 import { ToastAction } from "@/components/ui/toast";
 import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
 
 interface MythicDashboardProps {
   profile: any;
@@ -88,47 +87,27 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'newPet' | 'editPet') => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = () => {
-      setEditorState({
-        isOpen: true,
-        image: reader.result as string,
-        target
-      });
-    };
+    reader.onload = () => setEditorState({ isOpen: true, image: reader.result as string, target });
     reader.readAsDataURL(file);
     e.target.value = '';
   };
 
   const handleEditorConfirm = async (croppedImage: string) => {
     if (!editorState) return;
-    const currentTarget = editorState.target;
-    
     try {
       const compressed = await compressImage(croppedImage);
-      if (currentTarget === 'newPet') setNewPetPhoto(compressed);
-      if (currentTarget === 'editPet') setEditPetPhoto(compressed);
-      
+      if (editorState.target === 'newPet') setNewPetPhoto(compressed);
+      else setEditPetPhoto(compressed);
       setEditorState(null);
-      toast({
-        title: "IMAGEM PROCESSADA",
-        description: "A foto foi ajustada e otimizada com sucesso.",
-      });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "ERRO NO PROCESSAMENTO",
-        description: "Falha ao otimizar a imagem editada.",
-      });
-      setEditorState(null);
+      toast({ variant: "destructive", title: "ERRO", description: "Falha ao processar imagem." });
     }
   };
 
   const handleAddPet = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPetName || !newPetSpecies || !profile?.id) return;
-
     setIsSubmitting(true);
     try {
       const petsRef = collection(db, 'users', profile.id, 'pets');
@@ -140,491 +119,129 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
         registrationDateTime: new Date().toISOString(),
         isEmergencyActive: false,
       });
-
-      toast({
-        title: "PET REGISTRADO",
-        description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.`,
-        action: (
-          <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
-            RECARREGAR
-          </ToastAction>
-        ),
-      });
-
-      setNewPetName('');
-      setNewPetSpecies('');
-      setNewPetPhoto(null);
+      toast({ title: "PET REGISTRADO", description: `${newPetName.toUpperCase()} AGORA FAZ PARTE DA ELITE.` });
+      setNewPetName(''); setNewPetSpecies(''); setNewPetPhoto(null);
       setIsAddPetOpen(false);
-    } catch (err) {
-      toast({ variant: "destructive", title: "ERRO AO SALVAR", description: "Não foi possível registrar o pet." });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleOpenEditPet = (pet: any) => {
-    setEditingPet(pet);
-    setEditPetName(pet.name);
-    setEditPetSpecies(pet.species);
-    setEditPetPhoto(pet.photo);
-    setIsEditPetOpen(true);
-  };
-
-  const handleUpdatePet = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingPet || !profile?.id) return;
-
-    setIsSubmitting(true);
-    try {
-      const petRef = doc(db, 'users', profile.id, 'pets', editingPet.id);
-      updateDocumentNonBlocking(petRef, {
-        name: editPetName,
-        species: editPetSpecies,
-        photo: editPetPhoto
-      });
-
-      toast({
-        title: "IDENTIDADE ATUALIZADA",
-        description: `AS CREDENCIAIS DE ${editPetName.toUpperCase()} FORAM SINCRONIZADAS. RECARREGUE PARA ATUALIZAR.`,
-        action: (
-          <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
-            RECARREGAR
-          </ToastAction>
-        ),
-      });
-
-      setIsEditPetOpen(false);
-      setEditingPet(null);
-    } catch (err) {
-      toast({ variant: "destructive", title: "ERRO NA ATUALIZAÇÃO", description: "Falha ao sincronizar dados do pet." });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDeletePet = (petId: string, petName: string) => {
-    if (!profile?.id) return;
-    const petRef = doc(db, 'users', profile.id, 'pets', petId);
-    deleteDocumentNonBlocking(petRef);
-    toast({ 
-      title: "PET REMOVIDO", 
-      description: `${petName.toUpperCase()} FOI RETIRADO DA LINHAGEM.`,
-      action: (
-        <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
-          RECARREGAR
-        </ToastAction>
-      ),
-    });
+    } finally { setIsSubmitting(false); }
   };
 
   const handleToggleEmergency = (pet: any) => {
     if (!profile?.id) return;
     const petRef = doc(db, 'users', profile.id, 'pets', pet.id);
     const newState = !pet.isEmergencyActive;
-    
-    updateDocumentNonBlocking(petRef, {
-      isEmergencyActive: newState
-    });
-
-    toast({
-      variant: newState ? "destructive" : "default",
-      title: newState ? "SOS ATIVADO" : "SOS DESATIVADO",
-      description: newState 
-        ? `PROTOCOLO DE EMERGÊNCIA INICIADO PARA ${pet.name.toUpperCase()}.`
-        : `SITUAÇÃO NORMALIZADA PARA ${pet.name.toUpperCase()}.`,
-      action: (
-        <ToastAction altText="Recarregar" onClick={() => window.location.reload()}>
-          RECARREGAR
-        </ToastAction>
-      ),
-    });
+    updateDocumentNonBlocking(petRef, { isEmergencyActive: newState });
+    toast({ variant: newState ? "destructive" : "default", title: newState ? "SOS ATIVADO" : "SOS DESATIVADO" });
   };
 
   const isLegendary = profile.status === 'LEGENDARY';
   const isAmber = profile.status === 'AMBER';
-  const themeColorClass = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
-  const themeBadgeStyle = isLegendary ? 'border-yellow-500/50 bg-yellow-500/20 text-yellow-500 animate-gold-glow' : 
-                          isAmber ? 'border-orange-500/50 bg-orange-500/20 text-orange-500 animate-amber-glow' : 
-                          'border-primary/50 bg-primary/10 text-primary';
-
-  const memberRegistrationId = `HB-${profile.id?.slice(0, 5).toUpperCase() || 'XXXXX'}`;
+  const isMythic = profile.status === 'MYTHIC';
+  const isElite = profile.status === 'ELITE';
+  const isMaster = profile.status === 'MASTER';
+  
+  const themeColorClass = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : isMythic ? 'text-primary' : isElite ? 'text-zinc-300' : 'text-orange-900';
+  const badgeText = isLegendary ? 'ACREDITAÇÃO LENDÁRIA' : isAmber ? 'STATUS LEGENDÁRIO' : isMythic ? 'MEMBRO MÍTICO' : isElite ? 'MEMBRO ELITE' : 'MESTRE DO CLUB';
 
   return (
-    <div className="min-h-screen bg-black text-white animate-in fade-in duration-1000 overflow-x-hidden">
-      {/* HEADER OTIMIZADO */}
-      <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-800/50">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 md:h-20 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 md:gap-3 min-w-0">
-             <Crown className={cn("w-4 h-4 md:w-6 md:h-6 flex-shrink-0", themeColorClass)} />
-             <h2 className={`text-xs sm:text-lg md:text-2xl font-black font-headline uppercase tracking-tighter truncate
-              ${isLegendary ? 'gold-gradient-text' : isAmber ? 'amber-gradient-text' : 'text-primary'}`}>
-              {isLegendary ? 'HB LENDÁRIO' : isAmber ? 'HB LEGENDÁRIO' : 'HALL BLACK'}
-            </h2>
-          </div>
+    <div className="min-h-screen bg-black text-white selection:bg-primary/30">
+      <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-900/50 h-16 md:h-20 flex items-center justify-between px-6">
+        <div className="flex items-center gap-3">
+           <Crown className={cn("w-5 h-5", themeColorClass)} />
+           <h2 className="text-sm md:text-xl font-black uppercase tracking-tighter">Hall Black Hub</h2>
+        </div>
 
-          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-900 bg-zinc-950/50">
-              <Users className={`w-3 h-3 ${themeColorClass}`} />
-              <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500">
-                {memberCount.toString().padStart(2, '0')} / 60
-              </span>
-            </div>
-
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setIsAddPetOpen(true)}
-              className="h-8 md:h-9 rounded-full border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 gap-1.5 md:gap-2 px-2.5 md:px-4 transition-all"
-            >
-              <PlusCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider hidden xs:inline">Novo Pet</span>
-            </Button>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className={`w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center border-2 transition-all bg-zinc-900/80 outline-none overflow-hidden
-                  ${isLegendary ? 'border-yellow-500 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 
-                    isAmber ? 'border-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 
-                    'border-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]'}`}>
-                  {profile.photo ? (
-                    <NextImage src={profile.photo} alt={profile.name} width={44} height={44} className="object-cover w-full h-full" unoptimized />
-                  ) : (
-                    <User className={`w-3.5 h-3.5 md:w-5 md:h-5 ${themeColorClass}`} />
-                  )}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300">
-                <DropdownMenuLabel className="font-black text-[10px] uppercase tracking-widest text-zinc-500 px-3 pt-3">Conta Elite</DropdownMenuLabel>
-                <div className="px-3 pb-3">
-                  <p className="font-bold text-sm text-white truncate">{profile.name}</p>
-                  <p className={`text-[9px] font-black uppercase tracking-tighter ${themeColorClass}`}>
-                    REGISTRO: {memberRegistrationId}
-                  </p>
-                </div>
-                <DropdownMenuSeparator className="bg-zinc-800" />
-                <DropdownMenuItem asChild className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
-                  <Link href="/settings">
-                    <Settings className="w-4 h-4 mr-2" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Configurações</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="focus:bg-zinc-900 focus:text-white cursor-pointer py-2.5">
-                  <Link href={`/profile/${profile.id}`}>
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Ver Perfil Público</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-zinc-800" />
-                <DropdownMenuItem onClick={() => signOut(auth)} className="focus:bg-red-950/30 focus:text-red-500 text-red-600 cursor-pointer py-2.5">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Encerrar Sessão</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+        <div className="flex items-center gap-4">
+          <Button onClick={() => setIsAddPetOpen(true)} size="sm" variant="outline" className="h-9 rounded-full border-zinc-800 bg-zinc-900/50">
+            <PlusCircle className="w-4 h-4 mr-2" /> <span className="hidden sm:inline">Novo Pet</span>
+          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className={cn("w-10 h-10 rounded-full border-2 overflow-hidden bg-zinc-900", isLegendary ? 'border-yellow-500' : 'border-zinc-800')}>
+                {profile.photo ? <NextImage src={profile.photo} alt={profile.name} width={40} height={40} className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300">
+              <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+              <DropdownMenuItem asChild><Link href="/settings">Configurações</Link></DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut(auth)}>Sair</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-8 md:space-y-12">
-        {/* WELCOME SECTION OTIMIZADA */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-900 pb-8 md:pb-12">
-          <div className="space-y-1 w-full">
-            <p className="text-zinc-500 text-[9px] md:text-[12px] uppercase tracking-[0.4em] font-bold">Bem-vindo ao Elite</p>
-            <h1 className="text-2xl sm:text-4xl md:text-6xl font-black tracking-tight uppercase leading-tight break-words max-w-full md:max-w-2xl">{profile.name}</h1>
-            <div className="flex flex-wrap items-center gap-3 md:gap-4 mt-2">
-              {(profile.city || profile.state) && (
-                <div className="flex items-center gap-2 text-zinc-500">
-                  <MapPin className="w-3 h-3" />
-                  <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest">{profile.city}{profile.city && profile.state ? ', ' : ''}{profile.state}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-2 text-zinc-600">
-                <ShieldCheck className="w-3 h-3" />
-                <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest">IDENTIDADE CONFIRMADA</span>
-              </div>
-            </div>
+      <main className="max-w-7xl mx-auto p-6 space-y-12">
+        <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-900 pb-12">
+          <div className="space-y-2">
+            <p className="text-zinc-600 text-[10px] uppercase tracking-[0.4em] font-bold">Identidade de Elite</p>
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight">{profile.name}</h1>
+            <Badge variant="outline" className={cn("py-1 px-4 rounded-full font-black text-[9px] tracking-widest", themeColorClass)}>
+              {badgeText}
+            </Badge>
           </div>
-          <Badge variant="outline" className={`py-2 px-4 md:px-5 flex items-center gap-2 rounded-full font-bold tracking-widest text-[9px] md:text-xs w-full sm:w-fit justify-center ${themeBadgeStyle}`}>
-            {isLegendary ? <Crown className="w-3.5 h-3.5 md:w-4 md:h-4" /> : isAmber ? <Gem className="w-3.5 h-3.5 md:w-4 md:h-4" /> : <CollarIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />}
-            {isLegendary ? 'ACREDITAÇÃO LENDÁRIA' : isAmber ? 'STATUS LEGENDÁRIO' : 'MEMBRO MÍTICO'}
-          </Badge>
-        </div>
+          <div className="scale-75 md:scale-100 origin-left md:origin-right">
+             <RankBadge status={profile.status} id={profile.id} regNumber={profile.memberNumber} />
+          </div>
+        </section>
 
-        {/* TOP CARDS GRID OTIMIZADO */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <Button 
-            onClick={() => setIsHealthDialogOpen(true)}
-            className={`w-full h-14 sm:h-16 md:h-20 text-[10px] sm:text-sm md:text-xl font-black tracking-[0.2em] uppercase rounded-2xl group transition-all duration-500
-              ${isLegendary ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 hover:scale-[1.01] shadow-yellow-500/20' : 
-                isAmber ? 'bg-gradient-to-r from-orange-600 to-orange-400 hover:scale-[1.01] shadow-orange-500/20' : 
-                'bg-gradient-to-r from-red-800 to-primary hover:scale-[1.01] shadow-primary/20'}`}
-          >
-            <Stethoscope className="w-5 h-5 md:w-8 md:h-8 mr-2 md:mr-4 group-hover:rotate-12 transition-transform" />
-            SAÚDE MUNDO PET
-          </Button>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card className="bg-zinc-950/40 border-zinc-900 p-6 flex flex-col items-center justify-center text-center space-y-4 rounded-3xl">
+             <Trophy className={cn("w-10 h-10", themeColorClass)} />
+             <div className="space-y-1">
+               <h3 className="text-xl font-black uppercase">Pedigree Score</h3>
+               <p className="text-4xl font-black tracking-tighter">{profile.pedigreeScore || '100'}</p>
+             </div>
+             <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">Baseado em Tempo e Atividade</p>
+          </Card>
 
-          <Card className="bg-zinc-950/40 border-zinc-900 border-dashed rounded-2xl flex items-center justify-between px-6 md:px-8 py-4 md:py-0">
-            <div className="space-y-0.5 md:space-y-1">
-              <p className="text-zinc-600 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Censo de Elite</p>
-              <h3 className="text-lg md:text-2xl font-black uppercase tracking-tighter">Membros Ativos</h3>
-            </div>
-            <div className="text-right">
-              <p className={`text-2xl md:text-4xl font-black tracking-tighter ${themeColorClass}`}>
-                {memberCount.toString().padStart(2, '0')} <span className="text-zinc-800 text-lg md:text-xl">/ 60</span>
-              </p>
-              <p className="text-[7px] md:text-[8px] text-zinc-700 font-bold uppercase tracking-widest">Slots Mundiais</p>
+          <Card className="bg-zinc-950/40 border-zinc-900 p-6 rounded-3xl col-span-1 lg:col-span-2">
+            <CardHeader className="p-0 mb-6">
+              <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                <PawPrint className={themeColorClass} /> Meus Pets na Linhagem
+              </CardTitle>
+            </CardHeader>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {petsData?.map((pet) => (
+                <div key={pet.id} className="flex items-center justify-between p-3 rounded-2xl bg-black/60 border border-zinc-900 group">
+                   <div className="flex items-center gap-3">
+                     <div className="w-12 h-12 rounded-lg bg-zinc-900 overflow-hidden relative">
+                        {pet.photo && <NextImage src={pet.photo} alt={pet.name} fill className="object-cover" unoptimized />}
+                     </div>
+                     <div>
+                       <p className="font-black text-xs uppercase">{pet.name}</p>
+                       <p className="text-[8px] text-zinc-600 uppercase font-bold">{pet.species}</p>
+                     </div>
+                   </div>
+                   <div className="flex gap-1">
+                     <Button size="icon" variant="ghost" className={cn("h-8 w-8", pet.isEmergencyActive ? "text-red-600" : "text-zinc-700")} onClick={() => handleToggleEmergency(pet)}>
+                       <Siren className="w-4 h-4" />
+                     </Button>
+                     <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-700" asChild>
+                        <Link href={`/pet/${profile.id}/${pet.id}`}><ExternalLink className="w-4 h-4" /></Link>
+                     </Button>
+                   </div>
+                </div>
+              ))}
             </div>
           </Card>
         </div>
-
-        {/* MAIN CONTENT GRID OTIMIZADO */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-          {/* COLUNA CREDENCIAL */}
-          <div className="lg:col-span-4 space-y-6">
-            <Card className={`bg-zinc-900/40 border-zinc-800/50 backdrop-blur-xl relative overflow-hidden group 
-              ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
-              <div className={`absolute -top-4 -right-4 p-8 opacity-[0.05] group-hover:opacity-[0.15] transition-opacity rotate-12 pointer-events-none ${themeColorClass}`}>
-                {isLegendary ? <Crown className="w-16 h-16 md:w-24 md:h-24" /> : isAmber ? <Gem className="w-16 h-16 md:w-24 md:h-24" /> : <RubyShield className="w-16 h-16 md:w-24 md:h-24" />}
-              </div>
-              <CardHeader className="pb-3 md:pb-4 p-5 md:p-6">
-                <CardTitle className="flex items-center gap-3 text-base md:text-xl tracking-tight uppercase">
-                  <ShieldCheck className={`w-4 h-4 md:w-5 md:h-5 ${themeColorClass}`} />
-                  Identidade Digital
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 md:space-y-6 p-5 md:p-6 pt-0">
-                <div className="flex flex-col items-center justify-center py-2 md:py-4">
-                  <RankBadge status={profile.status} id={profile.id} regNumber={profile.memberNumber} />
-                </div>
-
-                <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl bg-black/60 border border-zinc-800/50">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-zinc-800 relative flex-shrink-0">
-                    {profile.photo ? <NextImage src={profile.photo} alt={profile.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
-                  </div>
-                  <div className="text-sm space-y-0.5 min-w-0">
-                    <p className="text-zinc-500 uppercase text-[7px] md:text-[9px] tracking-widest font-semibold">Titular Oficial</p>
-                    <p className="font-bold text-sm md:text-lg truncate">{profile.name}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-black/40 border border-zinc-800/30">
-                  <Phone className={`w-3.5 h-3.5 flex-shrink-0 ${themeColorClass}`} />
-                  <div className="text-sm min-w-0">
-                    <p className="text-zinc-500 uppercase text-[7px] md:text-[9px] tracking-widest font-semibold">Contato Emergencial</p>
-                    <p className="font-mono text-white text-[11px] md:text-sm truncate">{profile.emergencyContact || 'NÃO CONFIGURADO'}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* COLUNA PETS OTIMIZADA */}
-          <div className="lg:col-span-8">
-            <Card className={`bg-zinc-900/40 border-zinc-800/50 overflow-hidden group relative flex flex-col h-full ${isLegendary ? 'border-yellow-500/20' : isAmber ? 'border-orange-500/20' : ''}`}>
-              <CardHeader className="pb-3 md:pb-4 p-5 md:p-6">
-                <CardTitle className="flex items-center gap-3 text-base md:text-xl tracking-tight uppercase">
-                  <PawPrint className={`w-4 h-4 md:w-5 md:h-5 ${themeColorClass}`} />
-                  Linhagem de Pets
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4 p-5 md:p-6 pt-0">
-                {isPetsLoading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-6 h-6 animate-spin text-zinc-800" />
-                  </div>
-                ) : !petsData || petsData.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-8 md:py-12 text-center space-y-3 opacity-30">
-                    <CollarIcon className="w-10 h-10 md:w-12 md:h-12 text-zinc-700" />
-                    <p className="text-[9px] uppercase tracking-widest font-bold max-w-[150px]">Nenhum pet registrado na linhagem.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {petsData.map((pet) => (
-                      <div key={pet.id} className={`flex items-center justify-between p-2 md:p-3 rounded-xl bg-black/60 border group/item transition-all duration-300
-                        ${pet.isEmergencyActive ? 'border-red-600/50 shadow-[0_0_15px_rgba(220,38,38,0.2)]' : 'border-zinc-800/50 hover:border-zinc-700'}`}>
-                        <Link href={`/pet/${profile.id}/${pet.id}`} className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg border border-zinc-800 overflow-hidden relative flex-shrink-0
-                            ${pet.isEmergencyActive ? 'border-red-600' : isLegendary ? 'group-hover/item:border-yellow-500/30' : isAmber ? 'group-hover/item:border-orange-500/30' : 'group-hover/item:border-primary/30'}`}>
-                            {pet.photo ? (
-                              <NextImage src={pet.photo} alt={pet.name} fill className="object-cover" unoptimized />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-zinc-900">
-                                <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${themeColorClass}`} />
-                              </div>
-                            )}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-white font-black text-xs md:text-sm uppercase tracking-tighter truncate">{pet.name}</p>
-                            <p className="text-zinc-500 text-[8px] md:text-[9px] uppercase tracking-widest truncate">{pet.species}</p>
-                          </div>
-                        </Link>
-                        <div className="flex items-center gap-0.5 md:gap-1">
-                          <Button 
-                            size="icon" 
-                            variant="ghost" 
-                            className={`h-8 w-8 transition-all ${pet.isEmergencyActive ? 'text-red-500 bg-red-950/20' : 'text-zinc-700 hover:text-red-500'}`}
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleEmergency(pet); }}
-                          >
-                            <Siren className={`w-3.5 h-3.5 md:w-4 md:h-4 ${pet.isEmergencyActive ? 'animate-pulse' : ''}`} />
-                          </Button>
-                          <Button 
-                            size="icon" 
-                            variant="ghost" 
-                            className="h-8 w-8 text-zinc-700 hover:text-primary"
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenEditPet(pet); }}
-                          >
-                            <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                          </Button>
-                          <Button 
-                            size="icon" 
-                            variant="ghost" 
-                            className="h-8 w-8 text-zinc-700 hover:text-red-500 hover:bg-red-950/20"
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDeletePet(pet.id, pet.name); }}
-                          >
-                            <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <Button onClick={() => setIsAddPetOpen(true)} className={`w-full h-11 md:h-12 text-[10px] md:text-xs font-black uppercase tracking-widest transition-all mt-2 md:mt-4 ${isLegendary ? 'bg-yellow-500 hover:bg-yellow-400 text-black' : isAmber ? 'bg-orange-500 hover:bg-orange-400 text-black' : 'bg-primary hover:bg-accent text-white'}`}>
-                  <PlusCircle className="w-4 h-4 mr-2" /> ADICIONAR NOVO PET
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
       </main>
 
-      {/* DIÁLOGO SAÚDE MUNDO PET OTIMIZADO */}
-      <Dialog open={isHealthDialogOpen} onOpenChange={setIsHealthDialogOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[92vw] max-w-md rounded-[2rem] overflow-hidden p-0 z-[200]">
-          <div className={`absolute top-0 inset-x-0 h-1.5 ${isLegendary ? 'bg-yellow-500' : isAmber ? 'bg-orange-500' : 'bg-primary'}`} />
-          <div className="p-6 md:p-8 space-y-6">
-            <div className="flex flex-col items-center text-center space-y-4">
-              <div className={`p-4 rounded-2xl bg-black border ${isLegendary ? 'border-yellow-500/30' : isAmber ? 'border-orange-500/30' : 'border-primary/30'}`}>
-                <Activity className={`w-8 h-8 md:w-10 md:h-10 ${themeColorClass} animate-pulse`} />
-              </div>
-              <DialogHeader>
-                <DialogTitle className="text-xl md:text-2xl font-black uppercase tracking-tighter text-center">Protocolos de Saúde</DialogTitle>
-                <DialogDescription className="text-zinc-500 text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-center pt-1">Ecossistema Hall Black Elite</DialogDescription>
-              </DialogHeader>
-            </div>
-
-            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-5 md:p-6 space-y-4">
-              <p className="text-zinc-400 text-[11px] md:text-xs leading-relaxed text-center font-medium">
-                Para acessar <span className="text-white font-bold">prontuários digitais, gestão vacinal e telemedicina de elite</span>, sua linhagem deve estar registrada na rede Mundo Pet.
-              </p>
-              <div className="h-px w-full bg-zinc-800/50" />
-              <p className="text-zinc-500 text-[8px] md:text-[10px] text-center uppercase tracking-widest font-black italic">
-                Sincronização biométrica obrigatória.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                onClick={() => setIsHealthDialogOpen(false)}
-                variant="ghost" 
-                className="flex-1 h-12 md:h-14 rounded-xl md:rounded-2xl border border-zinc-900 text-zinc-500 text-[9px] md:text-[10px] font-black uppercase tracking-widest"
-              >
-                Agora não
-              </Button>
-              <Button 
-                onClick={() => {
-                  window.location.href = 'https://mundopet-wsstudios.online/signup';
-                  setIsHealthDialogOpen(false);
-                }}
-                className={`flex-1 h-12 md:h-14 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-[11px] ${isLegendary ? 'bg-yellow-500 text-black hover:bg-yellow-400' : isAmber ? 'bg-orange-500 text-black hover:bg-orange-400' : 'bg-primary text-white hover:bg-accent'}`}
-              >
-                Cadastrar Agora
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* ADICIONAR PET DIALOG */}
+      {/* MODAL ADICIONAR PET */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[92vw] max-w-sm rounded-[1.5rem] p-6 z-[200]">
-          <DialogHeader>
-            <DialogTitle className="text-lg md:text-xl font-black uppercase tracking-tighter">Registrar Novo Pet</DialogTitle>
-            <DialogDescription className="text-zinc-500 text-[10px] uppercase tracking-widest">Nova identidade na linhagem.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleAddPet} className="space-y-6 pt-2">
-            <div className="flex flex-col items-center gap-3">
-              <div onClick={() => fileInputRef.current?.click()} className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
-                {newPetPhoto ? <NextImage src={newPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-5 h-5 md:w-6 md:h-6" /><span className="text-[7px] font-black uppercase">Foto</span></div>}
-              </div>
-              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'newPet')} />
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-[9px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome do Pet</Label>
-                <Input placeholder="EX: THOR" className="bg-black/50 border-zinc-800 font-bold uppercase h-11 text-sm" value={newPetName} onChange={(e) => setNewPetName(e.target.value)} required />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[9px] uppercase tracking-[0.2em] font-bold text-zinc-500">Espécie / Raça</Label>
-                <Input placeholder="EX: DOBERMAN" className="bg-black/50 border-zinc-800 font-bold uppercase h-11 text-sm" value={newPetSpecies} onChange={(e) => setNewPetSpecies(e.target.value)} required />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" className={`w-full h-12 font-black uppercase tracking-widest text-[10px] ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary'}`} disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Registro'}
-              </Button>
-            </DialogFooter>
+        <DialogContent className="bg-zinc-950 border-zinc-900 text-white w-[92vw] max-w-sm rounded-[1.5rem] p-6 z-[200]">
+          <DialogHeader><DialogTitle className="uppercase font-black">Registrar Pet</DialogTitle></DialogHeader>
+          <form onSubmit={handleAddPet} className="space-y-4">
+             <div onClick={() => fileInputRef.current?.click()} className="w-24 h-24 mx-auto border-2 border-dashed border-zinc-800 rounded-2xl flex items-center justify-center cursor-pointer overflow-hidden relative">
+                {newPetPhoto ? <NextImage src={newPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <Camera className="text-zinc-800" />}
+             </div>
+             <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'newPet')} />
+             <div className="space-y-4">
+               <Input placeholder="NOME DO PET" value={newPetName} onChange={(e) => setNewPetName(e.target.value.toUpperCase())} required className="bg-black border-zinc-900 h-12 font-bold" />
+               <Input placeholder="ESPÉCIE / RAÇA" value={newPetSpecies} onChange={(e) => setNewPetSpecies(e.target.value.toUpperCase())} required className="bg-black border-zinc-900 h-12 font-bold" />
+             </div>
+             <Button type="submit" className="w-full h-12 font-black uppercase bg-primary" disabled={isSubmitting}>Confirmar</Button>
           </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* EDITAR PET DIALOG */}
-      <Dialog open={isEditPetOpen} onOpenChange={(open) => { setIsEditPetOpen(open); if(!open) setEditingPet(null); }}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[92vw] max-w-sm rounded-[1.5rem] p-6 z-[200]">
-          <DialogHeader>
-            <DialogTitle className="text-lg md:text-xl font-black uppercase tracking-tighter">Editar Identidade</DialogTitle>
-            <DialogDescription className="text-zinc-500 text-[10px] uppercase tracking-widest">Atualizar credenciais.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleUpdatePet} className="space-y-6 pt-2">
-            <div className="flex flex-col items-center gap-3">
-              <div onClick={() => editPetFileInputRef.current?.click()} className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-dashed border-zinc-800 flex items-center justify-center cursor-pointer hover:border-primary/50 overflow-hidden relative group">
-                {editPetPhoto ? <NextImage src={editPetPhoto} alt="Preview" fill className="object-cover" unoptimized /> : <div className="flex flex-col items-center gap-1 text-zinc-600"><Camera className="w-5 h-5 md:w-6 md:h-6" /><span className="text-[7px] font-black uppercase">Foto</span></div>}
-              </div>
-              <input type="file" ref={editPetFileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'editPet')} />
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-[9px] uppercase tracking-[0.2em] font-bold text-zinc-500">Nome do Pet</Label>
-                <Input className="bg-black/50 border-zinc-800 font-bold uppercase h-11 text-sm" value={editPetName} onChange={(e) => setEditPetName(e.target.value)} required />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[9px] uppercase tracking-[0.2em] font-bold text-zinc-500">Espécie / Raça</Label>
-                <Input className="bg-black/50 border-zinc-800 font-bold uppercase h-11 text-sm" value={editPetSpecies} onChange={(e) => setEditPetSpecies(e.target.value)} required />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" className={`w-full h-12 font-black uppercase tracking-widest text-[10px] ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary'}`} disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sincronizar Dados'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* EDITOR DE IMAGEM */}
-      <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
-        <DialogContent className="bg-zinc-950 border-zinc-800 text-white w-[92vw] max-w-md p-5 md:p-6 z-[300] rounded-[1.5rem]">
-          <DialogHeader>
-            <DialogTitle className="text-lg md:text-xl font-black uppercase tracking-tighter">Ajuste de Imagem</DialogTitle>
-            <DialogDescription className="text-zinc-500 text-[10px] uppercase tracking-widest">Enquadramento oficial para a elite.</DialogDescription>
-          </DialogHeader>
-          {editorState && (
-            <ImageEditor 
-              image={editorState.image}
-              cropShape="rect"
-              onCancel={() => setEditorState(null)}
-              onConfirm={handleEditorConfirm}
-            />
-          )}
         </DialogContent>
       </Dialog>
     </div>

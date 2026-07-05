@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -41,6 +42,22 @@
     --ring: 35 100% 50%;
     --border: 35 50% 20%;
   }
+
+  .theme-elite {
+    --primary: 0 0% 80%;
+    --primary-foreground: 0 0% 0%;
+    --accent: 0 0% 95%;
+    --ring: 0 0% 80%;
+    --border: 0 0% 30%;
+  }
+
+  .theme-master {
+    --primary: 35 60% 40%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 35 70% 50%;
+    --ring: 35 60% 40%;
+    --border: 35 40% 20%;
+  }
 }
 
 @layer base {
@@ -62,42 +79,33 @@
   }
 }
 
-@keyframes ruby-glow {
-  0% { box-shadow: 0 0 5px hsla(350, 82%, 35%, 0.2); }
-  50% { box-shadow: 0 0 20px hsla(350, 82%, 35%, 0.6); }
-  100% { box-shadow: 0 0 5px hsla(350, 82%, 35%, 0.2); }
+@keyframes bronze-glow {
+  0% { box-shadow: 0 0 5px hsla(35, 60%, 40%, 0.2); }
+  50% { box-shadow: 0 0 20px hsla(35, 60%, 40%, 0.5); }
+  100% { box-shadow: 0 0 5px hsla(35, 60%, 40%, 0.2); }
 }
 
-@keyframes gold-glow {
-  0% { box-shadow: 0 0 5px hsla(47, 100%, 50%, 0.2); }
-  50% { box-shadow: 0 0 25px hsla(47, 100%, 50%, 0.7); }
-  100% { box-shadow: 0 0 5px hsla(47, 100%, 50%, 0.2); }
+@keyframes silver-glow {
+  0% { box-shadow: 0 0 5px hsla(0, 0%, 80%, 0.2); }
+  50% { box-shadow: 0 0 20px hsla(0, 0%, 80%, 0.5); }
+  100% { box-shadow: 0 0 5px hsla(0, 0%, 80%, 0.2); }
 }
 
-@keyframes amber-glow {
-  0% { box-shadow: 0 0 5px hsla(35, 100%, 50%, 0.2); }
-  50% { box-shadow: 0 0 25px hsla(35, 100%, 50%, 0.7); }
-  100% { box-shadow: 0 0 5px hsla(35, 100%, 50%, 0.2); }
+.animate-bronze-glow {
+  animation: bronze-glow 3s infinite ease-in-out;
 }
 
-@keyframes text-ruby-glow {
-  0%, 100% { text-shadow: 0 0 10px hsla(350, 82%, 35%, 0.4); }
-  50% { text-shadow: 0 0 25px hsla(350, 82%, 35%, 0.9); }
-}
-
-@keyframes text-gold-glow {
-  0%, 100% { text-shadow: 0 0 10px hsla(47, 100%, 50%, 0.4); }
-  50% { text-shadow: 0 0 30px hsla(47, 100%, 50%, 1); }
-}
-
-@keyframes text-amber-glow {
-  0%, 100% { text-shadow: 0 0 10px hsla(35, 100%, 50%, 0.4); }
-  50% { text-shadow: 0 0 30px hsla(35, 100%, 50%, 1); }
+.animate-silver-glow {
+  animation: silver-glow 3s infinite ease-in-out;
 }
 
 @keyframes gold-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+.mythic-shine-sweep {
+  animation: shine-sweep 3s infinite ease-in-out;
 }
 
 @keyframes shine-sweep {
@@ -111,95 +119,8 @@
   50% { fill: currentColor; stroke-opacity: 1; }
 }
 
-@keyframes tv-shutdown {
-  0% { transform: scaleX(1) scaleY(1); opacity: 1; background: white; filter: brightness(1); }
-  45% { transform: scaleX(1) scaleY(0.003); opacity: 1; background: white; filter: brightness(1.5); }
-  90% { transform: scaleX(0.003) scaleY(0.003); opacity: 1; background: white; filter: brightness(2); }
-  100% { transform: scaleX(0) scaleY(0); opacity: 0; background: white; filter: brightness(5); }
-}
-
-@keyframes badge-stamp {
-  0% { transform: scale(3.5); opacity: 0; filter: blur(30px) brightness(4); }
-  40% { transform: scale(1); opacity: 1; filter: blur(0) brightness(1.5); }
-  100% { transform: scale(1); opacity: 1; filter: blur(0) brightness(1); }
-}
-
-@keyframes badge-fade-out {
-  0% { opacity: 1; transform: scale(1); filter: blur(0); }
-  100% { opacity: 0; transform: scale(0.96); filter: blur(15px); }
-}
-
-@keyframes slow-reveal-elite {
-  0% { opacity: 0; filter: brightness(0); transform: scale(1.01); }
-  100% { opacity: 1; filter: brightness(1); transform: scale(1); }
-}
-
-.animate-ruby-glow {
-  animation: ruby-glow 3s infinite ease-in-out;
-}
-
-.animate-gold-glow {
-  animation: gold-glow 3s infinite ease-in-out;
-}
-
-.animate-amber-glow {
-  animation: amber-glow 3s infinite ease-in-out;
-}
-
-.animate-text-ruby-glow {
-  animation: text-ruby-glow 2.5s infinite ease-in-out;
-}
-
-.animate-text-gold-glow {
-  animation: text-gold-glow 2.5s infinite ease-in-out;
-}
-
-.animate-text-amber-glow {
-  animation: text-amber-glow 2.5s infinite ease-in-out;
-}
-
-.mythic-shine-sweep {
-  animation: shine-sweep 3s infinite ease-in-out;
-}
-
 .animate-star-fill-loop {
   animation: star-fill 2s infinite ease-in-out;
-}
-
-.animate-tv-shutdown {
-  animation: tv-shutdown 2.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-  will-change: transform, opacity, filter;
-}
-
-.animate-badge-stamp {
-  animation: badge-stamp 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  will-change: transform, opacity, filter;
-}
-
-.animate-badge-fade-out {
-  animation: badge-fade-out 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  will-change: transform, opacity, filter;
-}
-
-.animate-slow-reveal {
-  animation: slow-reveal-elite 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity, filter, transform;
-}
-
-.gold-gradient-text {
-  background: linear-gradient(90deg, #ffd700, #fff2ac, #ffd700, #bf953f, #fcf6ba);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gold-shimmer 4s linear infinite;
-}
-
-.amber-gradient-text {
-  background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b, #d97706, #fbbf24);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gold-shimmer 4s linear infinite;
 }
 
 .glass-card {

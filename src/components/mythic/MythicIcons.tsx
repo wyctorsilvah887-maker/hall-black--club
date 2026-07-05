@@ -50,29 +50,33 @@ interface RankBadgeProps {
 export const RankBadge = ({ status, className, size = 'md', id, regNumber }: RankBadgeProps) => {
   const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
-  const isMythic = status === 'MYTHIC' || !status;
+  const isMythic = status === 'MYTHIC';
+  const isElite = status === 'ELITE';
+  const isMaster = status === 'MASTER' || !status;
   
   const scale = size === 'sm' ? 'scale-[0.6]' : size === 'lg' ? 'scale-125' : 'scale-100';
-
   const uniqueId = id ? id.replace(/\W/g, '') : Math.random().toString(36).substring(7);
 
-  const colors = {
-    primary: isLegendary ? '#FFD700' : isAmber ? '#F59E0B' : '#ff1a1a',
-    secondary: isLegendary ? '#B8860B' : isAmber ? '#D97706' : '#660000',
-    vibrant: isLegendary ? '#FFF2AC' : isAmber ? '#fbbf24' : '#ff4d4d',
-    deep: isLegendary ? '#bf953f' : isAmber ? '#d97706' : '#b30000',
-    aura: isLegendary ? 'rgba(255,215,0,0.2)' : isAmber ? 'rgba(245,158,11,0.2)' : 'rgba(255,0,0,0.3)',
+  const getColors = () => {
+    if (isLegendary) return { primary: '#FFD700', secondary: '#B8860B', vibrant: '#FFF2AC', deep: '#bf953f', aura: 'rgba(255,215,0,0.2)' };
+    if (isAmber) return { primary: '#F59E0B', secondary: '#D97706', vibrant: '#fbbf24', deep: '#d97706', aura: 'rgba(245,158,11,0.2)' };
+    if (isMythic) return { primary: '#ff1a1a', secondary: '#660000', vibrant: '#ff4d4d', deep: '#b30000', aura: 'rgba(255,0,0,0.3)' };
+    if (isElite) return { primary: '#E5E4E2', secondary: '#71706E', vibrant: '#FFFFFF', deep: '#A9A9A9', aura: 'rgba(229, 228, 226, 0.2)' };
+    // Default MASTER (Bronze)
+    return { primary: '#CD7F32', secondary: '#8B4513', vibrant: '#E3A857', deep: '#A0522D', aura: 'rgba(205, 127, 50, 0.2)' };
   };
 
-  const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : 'MÍTICO';
-  const starsCount = isMythic ? 6 : 5;
+  const colors = getColors();
+  const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : isMythic ? 'MÍTICO' : isElite ? 'ELITE' : 'MESTRE';
+  const starsCount = (isLegendary || isAmber || isMythic) ? 5 : 3;
   
   const labelFontSize = 
     labelText === 'LEGENDÁRIO' ? '12px' : 
     labelText === 'LENDÁRIO' ? '18px' : 
-    '22px';
+    labelText === 'MÍTICO' ? '22px' :
+    '24px';
     
-  const labelYPosition = labelText === 'LEGENDÁRIO' ? '57' : '58';
+  const labelYPosition = '58';
   
   const getFallbackRegNumber = (uid?: string) => {
     if (!uid) return '00';
@@ -121,7 +125,7 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
 
           <linearGradient id={`text-gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#fff" />
-            <stop offset="50%" stopColor={isMythic ? '#ffcccc' : '#fff2ac'} />
+            <stop offset="50%" stopColor={isMaster ? '#ffcc99' : '#ffffff'} />
             <stop offset="100%" stopColor={colors.primary} />
           </linearGradient>
 

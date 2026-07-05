@@ -12,7 +12,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile 
 } from "firebase/auth";
-import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs, deleteDoc, query, where } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs, query, where } from "firebase/firestore";
 import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -39,8 +39,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   useEffect(() => {
     if (tempProfile?.email) {
       setEmail(tempProfile.email);
-    } else {
-      setEmail('');
     }
     if (hasValidEntry) {
       setIsLogin(false);
@@ -73,22 +71,21 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         await signInWithEmailAndPassword(auth, email, password);
         toast({ title: "BEM-VINDO", description: "Identidade confirmada." });
       } else {
-        if (!hasValidEntry) throw new Error("Acesso negado: Validação pendente.");
-
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const userId = userCredential.user.uid;
         await updateProfile(userCredential.user, { displayName: name });
         
         let memberNumber = 0;
+        // Todos novos usuários sem código específico entram como MASTER
         let inheritedData = {
           city: '',
           state: '',
           isPublicProfile: true,
-          status: tempProfile?.status || 'MYTHIC',
-          theme: tempProfile?.theme || 'mythic'
+          status: tempProfile?.status || 'MASTER',
+          theme: tempProfile?.theme || 'master'
         };
 
-        if (tempProfile.isTransfer && tempProfile.fromUserId) {
+        if (tempProfile?.isTransfer && tempProfile?.fromUserId) {
           const originalProfileRef = doc(db, 'users', tempProfile.fromUserId);
           const originalSnap = await getDoc(originalProfileRef).catch(err => {
             errorEmitter.emit('permission-error', new FirestorePermissionError({ path: originalProfileRef.path, operation: 'get' }));
@@ -102,8 +99,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               city: data.city || '',
               state: data.state || '',
               isPublicProfile: data.isPublicProfile ?? true,
-              status: data.status || tempProfile?.status || 'MYTHIC',
-              theme: data.theme || tempProfile?.theme || 'mythic'
+              status: data.status || 'MASTER',
+              theme: data.theme || 'master'
             };
 
             // Migrar Pets
@@ -126,18 +123,16 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               });
             }
 
-            // Marcar perfil antigo como revogado para herdar o slot sem duplicar contagem
+            // Marcar perfil antigo como revogado
             await updateDoc(originalProfileRef, { 
               status: 'REVOKED', 
-              revokedAt: new Date().toISOString(),
-              isPublicProfile: false 
+              revokedAt: new Date().toISOString()
             }).catch(err => {
               errorEmitter.emit('permission-error', new FirestorePermissionError({ path: originalProfileRef.path, operation: 'update' }));
             });
           }
         }
 
-        // Se não houver número herdado, gera um novo baseado no contador
         if (memberNumber === 0) {
           const usersSnapshot = await getCountFromServer(query(collection(db, 'users'), where('status', '!=', 'REVOKED')));
           memberNumber = usersSnapshot.data().count + 1;
@@ -150,6 +145,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           email: email,
           emergencyContact: emergencyPhone,
           registrationDateTime: new Date().toISOString(),
+          pedigreeScore: 100, // Score inicial
           ...inheritedData,
           memberNumber: memberNumber
         };
@@ -159,8 +155,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           throw err;
         });
 
-        // Concluir os protocolos de acesso
-        if (tempProfile.codeId) {
+        if (tempProfile?.codeId) {
           const codeRef = doc(db, 'mythicCodes', tempProfile.codeId);
           await updateDoc(codeRef, {
             status: 'activated',
@@ -169,7 +164,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           }).catch(err => {
             errorEmitter.emit('permission-error', new FirestorePermissionError({ path: codeRef.path, operation: 'update' }));
           });
-        } else if (tempProfile.transferRequestId) {
+        } else if (tempProfile?.transferRequestId) {
           const transferRef = doc(db, 'transferRequests', tempProfile.transferRequestId);
           await updateDoc(transferRef, {
             status: 'processed',
@@ -181,13 +176,12 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         }
 
         toast({
-          title: "HERANÇA CONCLUÍDA",
-          description: `Credencial #${memberNumber.toString().padStart(2, '0')} ativada com sucesso.`,
+          title: "BEM-VINDO AO CLUB",
+          description: `Sua credencial de Mestre #${memberNumber.toString().padStart(2, '0')} foi ativada.`,
         });
       }
     } catch (error: any) {
-      const isPermissionError = error.message?.includes('Missing or insufficient permissions');
-      if (!isPermissionError) {
+      if (!error.message?.includes('Missing or insufficient permissions')) {
         toast({
           variant: "destructive",
           title: "ERRO DE ACESSO",
@@ -199,7 +193,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
     }
   };
 
-  const themeTextClass = theme === 'legendary' ? 'text-yellow-500 animate-text-gold-glow' : theme === 'amber' ? 'text-orange-500 animate-text-amber-glow' : 'text-primary animate-text-ruby-glow';
+  const themeTextClass = theme === 'legendary' ? 'text-yellow-500' : theme === 'amber' ? 'text-orange-500' : theme === 'elite' ? 'text-zinc-400' : theme === 'master' ? 'text-orange-900' : 'text-primary';
   const themeBtnClass = theme === 'legendary' ? 'bg-yellow-500 text-black' : theme === 'amber' ? 'bg-orange-500 text-black' : 'bg-primary text-white';
 
   return (
@@ -208,17 +202,17 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
       
       <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="text-center space-y-2">
-          <Shield className={`w-12 h-12 mx-auto mb-4 ${theme === 'legendary' ? 'text-yellow-500' : theme === 'amber' ? 'text-orange-500' : 'text-primary'}`} />
+          <Shield className="w-12 h-12 mx-auto mb-4 text-zinc-500" />
           <h2 className={`text-3xl md:text-4xl font-black uppercase tracking-tighter ${themeTextClass}`}>
-            {isLogin ? 'Confirmar Identidade' : 'Finalizar Credencial'}
+            {isLogin ? 'Confirmar Identidade' : 'Entrar para a Elite'}
           </h2>
           <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em] font-bold">
-            Portal Seguro Hall Black v2026
+            Protocolo de Entrada Hall Black
           </p>
         </div>
 
         <form onSubmit={handleAuth} className="space-y-4 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
-          {!isLogin && hasValidEntry && (
+          {!isLogin && (
             <>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Nome Completo</Label>
@@ -246,26 +240,25 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           )}
 
           <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">E-mail Autorizado</Label>
+            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">E-mail</Label>
             <Input
               type="email"
               placeholder="email@exemplo.com"
               required
               className="bg-black/50 border-zinc-800 h-12"
-              value={email || ''}
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={!isLogin && tempProfile?.isTransfer}
             />
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha de Elite {!isLogin && '(Mín. 6 caracteres)'}</Label>
+            <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1">Senha</Label>
             <Input
               type="password"
               placeholder="••••••••"
               required
               className="bg-black/50 border-zinc-800 h-12"
-              value={password || ''}
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
@@ -278,22 +271,20 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : (
               <span className="flex items-center gap-2">
                 {isLogin ? <LogIn className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                {isLogin ? 'AUTENTICAR' : 'CRIAR CONTA ELITE'}
+                {isLogin ? 'AUTENTICAR' : 'REGISTRAR COMO MESTRE'}
               </span>
             )}
           </Button>
         </form>
 
         <div className="text-center space-y-6">
-          {(!isLogin && hasValidEntry) && (
-            <button 
-              type="button"
-              onClick={() => setIsLogin(true)}
-              className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-bold"
-            >
-              Já possui credenciais? Login
-            </button>
-          )}
+          <button 
+            type="button"
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-bold"
+          >
+            {isLogin ? 'Não tem conta? Cadastre-se' : 'Já possui credenciais? Login'}
+          </button>
           
           <button 
             type="button"
@@ -303,7 +294,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             }}
             className="flex items-center gap-2 mx-auto text-zinc-700 hover:text-zinc-500 transition-colors text-[9px] uppercase tracking-widest font-black"
           >
-            <ArrowLeft className="w-3 h-3" /> Voltar para Início
+            <ArrowLeft className="w-3 h-3" /> Início
           </button>
         </div>
       </div>
