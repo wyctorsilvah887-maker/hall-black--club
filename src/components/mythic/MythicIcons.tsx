@@ -69,16 +69,23 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   };
 
   const colors = getColors();
-  const labelText = isMythic ? 'MÍTICO' : isLegendary ? 'LENDÁRIO' : isAmber ? 'ÂMBAR' : isElite ? 'ELITE' : 'MESTRE';
+  
+  // Nomes atualizados conforme solicitação
+  const labelText = isMythic ? 'MÍTICO' : 
+                   isLegendary ? 'GOLD' : 
+                   isAmber ? 'ÂMBAR' : 
+                   isElite ? 'ELITE' : 'MESTRE';
+
+  const subText = isLegendary || isAmber ? 'LENDÁRIO' : '';
+  
   const starsCount = (isMythic || isLegendary || isAmber) ? 5 : 3;
   
   const labelFontSize = 
     labelText === 'MÍTICO' ? '22px' : 
-    labelText === 'LENDÁRIO' ? '18px' : 
     labelText === 'ÂMBAR' ? '22px' :
     '24px';
     
-  const labelYPosition = '58';
+  const labelYPosition = subText ? '52' : '58';
 
   return (
     <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>
@@ -124,20 +131,38 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
           </linearGradient>
 
           <mask id={`text-flash-mask-${uniqueId}`}>
-            <text 
-              x="130" 
-              y={labelYPosition}
-              textAnchor="middle" 
-              fill="white"
-              style={{ 
-                fontFamily: 'system-ui, sans-serif', 
-                fontWeight: '900', 
-                fontSize: labelFontSize, 
-                letterSpacing: '4px'
-              }}
-            >
-              {labelText}
-            </text>
+            <g>
+              <text 
+                x="130" 
+                y={labelYPosition}
+                textAnchor="middle" 
+                fill="white"
+                style={{ 
+                  fontFamily: 'system-ui, sans-serif', 
+                  fontWeight: '900', 
+                  fontSize: labelFontSize, 
+                  letterSpacing: '4px'
+                }}
+              >
+                {labelText}
+              </text>
+              {subText && (
+                <text 
+                  x="130" 
+                  y="65"
+                  textAnchor="middle" 
+                  fill="white"
+                  style={{ 
+                    fontFamily: 'system-ui, sans-serif', 
+                    fontWeight: '700', 
+                    fontSize: '10px', 
+                    letterSpacing: '6px'
+                  }}
+                >
+                  {subText}
+                </text>
+              )}
+            </g>
           </mask>
         </defs>
 
@@ -151,21 +176,40 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
 
         <path d="M100 65 L130 95 L160 65 Z" fill={`url(#dark-chrome-gradient-${uniqueId})`} stroke={`url(#metal-gradient-${uniqueId})`} strokeWidth="2" />
 
-        <text 
-          x="130" 
-          y={labelYPosition}
-          textAnchor="middle" 
-          fill={`url(#text-gradient-${uniqueId})`} 
-          style={{ 
-            fontFamily: 'system-ui, sans-serif', 
-            fontWeight: '900', 
-            fontSize: labelFontSize, 
-            letterSpacing: '4px',
-            filter: `drop-shadow(0 0 10px ${colors.aura})`
-          }}
-        >
-          {labelText}
-        </text>
+        <g>
+          <text 
+            x="130" 
+            y={labelYPosition}
+            textAnchor="middle" 
+            fill={`url(#text-gradient-${uniqueId})`} 
+            style={{ 
+              fontFamily: 'system-ui, sans-serif', 
+              fontWeight: '900', 
+              fontSize: labelFontSize, 
+              letterSpacing: '4px',
+              filter: `drop-shadow(0 0 10px ${colors.aura})`
+            }}
+          >
+            {labelText}
+          </text>
+          {subText && (
+            <text 
+              x="130" 
+              y="65"
+              textAnchor="middle" 
+              fill={colors.vibrant}
+              style={{ 
+                fontFamily: 'system-ui, sans-serif', 
+                fontWeight: '700', 
+                fontSize: '10px', 
+                letterSpacing: '6px',
+                opacity: 0.8
+              }}
+            >
+              {subText}
+            </text>
+          )}
+        </g>
 
         <g mask={`url(#text-flash-mask-${uniqueId})`}>
             <rect 

@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/image-utils';
 import { ImageEditor } from './ImageEditor';
 import { RankBadge } from './MythicIcons';
-import { ToastAction } from "@/components/ui/toast";
+import { calculateRankByTime, getRankLabel } from '@/lib/rank-utils';
 import { cn } from '@/lib/utils';
 
 interface MythicDashboardProps {
@@ -48,21 +48,15 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const { toast } = useToast();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const editPetFileInputRef = useRef<HTMLInputElement>(null);
   
   const [isAddPetOpen, setIsAddPetOpen] = useState(false);
-  const [isEditPetOpen, setIsEditPetOpen] = useState(false);
-  const [isHealthDialogOpen, setIsHealthDialogOpen] = useState(false);
-  const [editingPet, setEditingPet] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const globalUsersQuery = useMemoFirebase(() => {
-    if (!db) return null;
-    return query(collection(db, 'users'), where('status', '!=', 'REVOKED'));
-  }, [db]);
-  const { data: allUsersData } = useCollection(globalUsersQuery);
-  const memberCount = allUsersData?.length || 0;
-  
+  // Patente dinâmica baseada no tempo
+  const currentRank = useMemo(() => {
+    return calculateRankByTime(profile.registrationDateTime, profile.status);
+  }, [profile.registrationDateTime, profile.status]);
+
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
     image: string;
@@ -73,16 +67,12 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const [newPetSpecies, setNewPetSpecies] = useState('');
   const [newPetPhoto, setNewPetPhoto] = useState<string | null>(null);
 
-  const [editPetName, setEditPetName] = useState('');
-  const [editPetSpecies, setEditPetSpecies] = useState('');
-  const [editPetPhoto, setEditPetPhoto] = useState<string | null>(null);
-
   const petsQuery = useMemoFirebase(() => {
     if (!profile?.id) return null;
     return collection(db, 'users', profile.id, 'pets');
   }, [db, profile?.id]);
 
-  const { data: petsData, isLoading: isPetsLoading } = useCollection(petsQuery);
+  const { data: petsData } = useCollection(petsQuery);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'newPet' | 'editPet') => {
     const file = e.target.files?.[0];
@@ -98,7 +88,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     try {
       const compressed = await compressImage(croppedImage);
       if (editorState.target === 'newPet') setNewPetPhoto(compressed);
-      else setEditPetPhoto(compressed);
       setEditorState(null);
     } catch (error) {
       toast({ variant: "destructive", title: "ERRO", description: "Falha ao processar imagem." });
@@ -133,14 +122,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     toast({ variant: newState ? "destructive" : "default", title: newState ? "SOS ATIVADO" : "SOS DESATIVADO" });
   };
 
-  const isLegendary = profile.status === 'LEGENDARY';
-  const isAmber = profile.status === 'AMBER';
-  const isMythic = profile.status === 'MYTHIC';
-  const isElite = profile.status === 'ELITE';
-  const isMaster = profile.status === 'MASTER';
+  const isLegendary = currentRank === 'LEGENDARY';
+  const isAmber = currentRank === 'AMBER';
+  const isMythic = currentRank === 'MYTHIC';
   
-  const themeColorClass = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : isMythic ? 'text-primary' : isElite ? 'text-zinc-300' : 'text-orange-900';
-  const badgeText = isLegendary ? 'ACREDITAÇÃO LENDÁRIA' : isAmber ? 'STATUS LEGENDÁRIO' : isMythic ? 'MEMBRO MÍTICO' : isElite ? 'MEMBRO ELITE' : 'MESTRE DO CLUB';
+  const themeColorClass = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : isMythic ? 'text-primary' : 'text-zinc-400';
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary/30">
@@ -176,11 +162,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             <p className="text-zinc-600 text-[10px] uppercase tracking-[0.4em] font-bold">Identidade de Elite</p>
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight">{profile.name}</h1>
             <Badge variant="outline" className={cn("py-1 px-4 rounded-full font-black text-[9px] tracking-widest", themeColorClass)}>
-              {badgeText}
+              {getRankLabel(currentRank)}
             </Badge>
           </div>
           <div className="scale-75 md:scale-100 origin-left md:origin-right">
-             <RankBadge status={profile.status} id={profile.id} regNumber={profile.memberNumber} />
+             <RankBadge status={currentRank} id={profile.id} />
           </div>
         </section>
 
@@ -191,7 +177,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
                <h3 className="text-xl font-black uppercase">Pedigree Score</h3>
                <p className="text-4xl font-black tracking-tighter">{profile.pedigreeScore || '100'}</p>
              </div>
-             <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">Baseado em Tempo e Atividade</p>
+             <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">Tempo de Casa Verificado</p>
           </Card>
 
           <Card className="bg-zinc-950/40 border-zinc-900 p-6 rounded-3xl col-span-1 lg:col-span-2">

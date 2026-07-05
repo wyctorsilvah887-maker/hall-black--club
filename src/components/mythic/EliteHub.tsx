@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
@@ -14,6 +14,7 @@ import { BlackAdvisor } from './BlackAdvisor';
 import { HighCouncil } from './HighCouncil';
 import { TheVault } from './TheVault';
 import { RankBadge } from './MythicIcons';
+import { calculateRankByTime, getRankLabel } from '@/lib/rank-utils';
 
 interface EliteHubProps {
   profile: any;
@@ -23,9 +24,14 @@ export function EliteHub({ profile }: EliteHubProps) {
   const [activeTab, setActiveTab] = useState<'vault' | 'council' | 'advisor'>('vault');
   const auth = useAuth();
   
-  const isMythic = profile.status === 'MYTHIC';
-  const isLegendary = profile.status === 'LEGENDARY';
-  const isAmber = profile.status === 'AMBER';
+  // Patente dinâmica baseada no tempo
+  const currentRank = useMemo(() => {
+    return calculateRankByTime(profile.registrationDateTime, profile.status);
+  }, [profile.registrationDateTime, profile.status]);
+
+  const isMythic = currentRank === 'MYTHIC';
+  const isLegendary = currentRank === 'LEGENDARY';
+  const isAmber = currentRank === 'AMBER';
   
   const themeColor = isMythic ? 'text-primary' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-zinc-400';
 
@@ -80,8 +86,8 @@ export function EliteHub({ profile }: EliteHubProps) {
                {profile.name}
              </h2>
              <div className="flex items-center gap-4">
-                <Badge variant="outline" className="border-zinc-800 bg-zinc-950/50 text-zinc-500 py-1 px-4 text-[9px] font-black tracking-widest rounded-full">
-                  # {profile.memberNumber?.toString().padStart(2, '0') || 'XX'}
+                <Badge variant="outline" className={`py-1 px-4 text-[9px] font-black tracking-widest rounded-full bg-zinc-950/50 border-zinc-800 ${themeColor}`}>
+                  {getRankLabel(currentRank)}
                 </Badge>
                 <div className="h-px w-8 bg-zinc-900" />
                 <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
@@ -90,15 +96,15 @@ export function EliteHub({ profile }: EliteHubProps) {
              </div>
           </div>
           <div className="scale-75 md:scale-100 origin-left md:origin-right">
-             <RankBadge status={profile.status} id={profile.id} size="md" />
+             <RankBadge status={currentRank} id={profile.id} size="md" />
           </div>
         </section>
 
         {/* ÁREA DE CONTEÚDO DINÂMICO */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          {activeTab === 'vault' && <TheVault profile={profile} />}
+          {activeTab === 'vault' && <TheVault profile={{ ...profile, status: currentRank }} />}
           {activeTab === 'council' && <HighCouncil profile={profile} />}
-          {activeTab === 'advisor' && <BlackAdvisor profile={profile} />}
+          {activeTab === 'advisor' && <BlackAdvisor profile={{ ...profile, status: currentRank }} />}
         </div>
       </main>
 
