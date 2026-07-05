@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollarIcon, RubyShield } from "./MythicIcons";
-import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, Activity, Users, Trophy } from "lucide-react";
+import { User, ShieldCheck, Heart, PlusCircle, Crown, Gem, Phone, LogOut, Settings, ExternalLink, Loader2, PawPrint, Trash2, Camera, MapPin, Pencil, Stethoscope, Siren, Activity, Users, Trophy, Medal } from "lucide-react";
 import NextImage from "next/image";
 import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { collection, doc, query, where } from 'firebase/firestore';
@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@/Dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -125,8 +125,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const isLegendary = currentRank === 'LEGENDARY';
   const isAmber = currentRank === 'AMBER';
   const isMythic = currentRank === 'MYTHIC';
+  const isHallBlack = currentRank === 'HALL_BLACK';
   
-  const themeColorClass = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : isMythic ? 'text-primary' : 'text-zinc-400';
+  const themeColorClass = isHallBlack ? 'text-white' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : isMythic ? 'text-primary' : 'text-zinc-400';
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary/30">
@@ -150,6 +151,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
             <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border-zinc-800 text-zinc-300">
               <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
               <DropdownMenuItem asChild><Link href="/settings">Configurações</Link></DropdownMenuItem>
+              <DropdownMenuItem asChild><Link href="/debug/badges">Protocolo de Patentes</Link></DropdownMenuItem>
               <DropdownMenuItem onClick={() => signOut(auth)}>Sair</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -161,9 +163,16 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <div className="space-y-2">
             <p className="text-zinc-600 text-[10px] uppercase tracking-[0.4em] font-bold">Identidade de Elite</p>
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight">{profile.name}</h1>
-            <Badge variant="outline" className={cn("py-1 px-4 rounded-full font-black text-[9px] tracking-widest", themeColorClass)}>
-              {getRankLabel(currentRank)}
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className={cn("py-1 px-4 rounded-full font-black text-[9px] tracking-widest", themeColorClass)}>
+                {getRankLabel(currentRank)}
+              </Badge>
+              <Button asChild variant="ghost" size="sm" className="h-6 px-2 text-[8px] font-black uppercase tracking-widest text-zinc-600 hover:text-white">
+                <Link href="/debug/badges" className="flex items-center gap-1">
+                  <Medal className="w-3 h-3" /> Ver Hierarquia
+                </Link>
+              </Button>
+            </div>
           </div>
           <div className="scale-75 md:scale-100 origin-left md:origin-right">
              <RankBadge status={currentRank} id={profile.id} />

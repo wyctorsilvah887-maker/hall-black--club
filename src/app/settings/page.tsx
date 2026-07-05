@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Phone, UserCircle } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Phone, UserCircle, Medal } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -241,6 +241,22 @@ export default function SettingsPage() {
                 </div>
                 <ChevronRight className="w-4 h-4 text-zinc-800" />
               </button>
+
+              <Link 
+                href="/debug/badges"
+                className="w-full flex items-center justify-between px-5 py-5 group active:bg-zinc-900/60 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={cn("p-2 rounded-xl bg-black border", themeBorder)}>
+                    <Medal className={cn("w-4 h-4", themeColor)} />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[11px] font-black uppercase tracking-widest">Protocolo de Patentes</p>
+                    <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">Ver hierarquia de elite</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-800" />
+              </Link>
             </div>
           </section>
 

@@ -5,7 +5,7 @@ import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
-  Settings, LogOut, Cpu
+  Settings, LogOut, Cpu, ExternalLink
 } from "lucide-react";
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
@@ -15,6 +15,7 @@ import { HighCouncil } from './HighCouncil';
 import { TheVault } from './TheVault';
 import { RankBadge } from './MythicIcons';
 import { calculateRankByTime, getRankLabel } from '@/lib/rank-utils';
+import { Button } from "@/components/ui/button";
 
 interface EliteHubProps {
   profile: any;
@@ -32,8 +33,9 @@ export function EliteHub({ profile }: EliteHubProps) {
   const isMythic = currentRank === 'MYTHIC';
   const isLegendary = currentRank === 'LEGENDARY';
   const isAmber = currentRank === 'AMBER';
+  const isHallBlack = currentRank === 'HALL_BLACK';
   
-  const themeColor = isMythic ? 'text-primary' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-zinc-400';
+  const themeColor = isHallBlack ? 'text-white' : isMythic ? 'text-primary' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-zinc-400';
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden">
@@ -85,11 +87,18 @@ export function EliteHub({ profile }: EliteHubProps) {
              <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tight leading-none">
                {profile.name}
              </h2>
-             <div className="flex items-center gap-4">
-                <Badge variant="outline" className={`py-1 px-4 text-[9px] font-black tracking-widest rounded-full bg-zinc-950/50 border-zinc-800 ${themeColor}`}>
-                  {getRankLabel(currentRank)}
-                </Badge>
-                <div className="h-px w-8 bg-zinc-900" />
+             <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={`py-1 px-4 text-[9px] font-black tracking-widest rounded-full bg-zinc-950/50 border-zinc-800 ${themeColor}`}>
+                    {getRankLabel(currentRank)}
+                  </Badge>
+                  <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[8px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">
+                    <Link href="/debug/badges" className="flex items-center gap-1">
+                      <ExternalLink className="w-3 h-3" /> Ver Hierarquia
+                    </Link>
+                  </Button>
+                </div>
+                <div className="hidden sm:block h-px w-8 bg-zinc-900" />
                 <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
                   Pedigree Score: {profile.pedigreeScore || '100'}
                 </span>
