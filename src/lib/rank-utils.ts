@@ -6,8 +6,8 @@ export type RankStatus = 'MASTER' | 'ELITE' | 'LEGENDARY' | 'AMBER' | 'MYTHIC' |
 
 /**
  * Calcula a patente atual baseada na data de registro.
- * - MASTER: 0-4 meses
- * - ELITE: 4-9 meses
+ * - MASTER (Mestre): 0-4 meses
+ * - ELITE (Elite): 4-9 meses
  * - LEGENDARY (Lendário Gold): 9-12 meses
  * - AMBER (Legendário Âmbar): 12-18 meses
  * - MYTHIC (Mítico Rubi): 18-24 meses
@@ -21,14 +21,13 @@ export function calculateRankByTime(registrationDate: string | undefined, curren
     return 'HALL_BLACK';
   }
 
-  // Se já for Mítico, mantém a menos que atinja o tempo do Hall Black
   const start = new Date(registrationDate);
   const now = new Date();
   const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
 
   if (diffMonths >= 24) {
     return 'HALL_BLACK';
-  } else if (diffMonths >= 18 || currentStatus === 'MYTHIC') {
+  } else if (diffMonths >= 18) {
     return 'MYTHIC';
   } else if (diffMonths >= 12) {
     return 'AMBER';

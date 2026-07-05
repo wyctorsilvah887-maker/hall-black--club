@@ -72,8 +72,8 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   const colors = getColors();
   
   const labelText = isHallBlack ? 'HALL BLACK' :
-                   isMythic ? 'MÍTICO' : 
-                   isAmber ? 'LEGENDÁRIO' :
+                   isMythic ? 'MÍTICO RUBI' : 
+                   isAmber ? 'LEGENDÁRIO ÂMBAR' :
                    isLegendary ? 'LENDÁRIO' : 
                    isElite ? 'ELITE' : 'MESTRE';
 
@@ -81,8 +81,8 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   
   const labelFontSize = 
     labelText === 'HALL BLACK' ? '18px' :
-    labelText === 'MÍTICO' ? '22px' : 
-    labelText === 'LEGENDÁRIO' ? '15px' :
+    labelText === 'MÍTICO RUBI' ? '18px' : 
+    labelText === 'LEGENDÁRIO ÂMBAR' ? '13px' :
     labelText === 'LENDÁRIO' ? '18px' :
     '24px';
     
@@ -123,13 +123,13 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
             <stop offset="100%" stopColor={isHallBlack ? "#4a0000" : colors.primary} />
           </linearGradient>
 
-          {/* Gradiente de Reflexo da Jornada (Somente para Hall Black) */}
+          {/* Gradiente de Reflexo da Jornada Hall Black: Mestre -> Elite -> Lendário -> Legendário Âmbar -> Mítico */}
           <linearGradient id={`journey-gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#CD7F32" /> {/* Master */}
-            <stop offset="25%" stopColor="#E5E4E2" /> {/* Elite */}
-            <stop offset="50%" stopColor="#FFD700" /> {/* Legendary */}
-            <stop offset="75%" stopColor="#F59E0B" /> {/* Amber */}
-            <stop offset="100%" stopColor="#ff1a1a" /> {/* Mythic */}
+            <stop offset="0%" stopColor="#CD7F32" /> {/* Mestre (Bronze) */}
+            <stop offset="25%" stopColor="#E5E4E2" /> {/* Elite (Prata) */}
+            <stop offset="50%" stopColor="#FFD700" /> {/* Lendário (Ouro) */}
+            <stop offset="75%" stopColor="#F59E0B" /> {/* Legendário Âmbar (Laranja) */}
+            <stop offset="100%" stopColor="#ff1a1a" /> {/* Mítico (Rubi) */}
           </linearGradient>
 
           <linearGradient id={`sweep-gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="0%">

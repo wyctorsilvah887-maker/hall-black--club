@@ -32,7 +32,7 @@ export default function BadgeGalleryPage() {
             </Link>
             <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">Protocolo de Patentes</h1>
             <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold max-w-xl leading-relaxed">
-              Exposição técnica das credenciais de linhagem. A jornada evolui conforme o tempo de casa: Mestre {'>'} Elite (4m) {'>'} Lendário (9m) {'>'} Legendário Âmbar (12m) {'>'} Mítico (18m) {'>'} Hall Black (24m).
+              Exposição técnica das credenciais de linhagem. O sistema evolui conforme o tempo de casa: Mestre {'>'} Elite (4m) {'>'} Lendário (9m) {'>'} Legendário Âmbar (12m) {'>'} Mítico (18m) {'>'} Hall Black (24m).
             </p>
           </div>
           <div className="flex items-center gap-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-900">
