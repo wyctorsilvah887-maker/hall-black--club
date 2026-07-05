@@ -70,22 +70,21 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
 
   const colors = getColors();
   
-  // Nomes atualizados conforme solicitação
+  // Nomes atualizados: Ambos os níveis superiores agora são "LENDÁRIO"
   const labelText = isMythic ? 'MÍTICO' : 
-                   isLegendary ? 'GOLD' : 
-                   isAmber ? 'ÂMBAR' : 
+                   (isLegendary || isAmber) ? 'LENDÁRIO' : 
                    isElite ? 'ELITE' : 'MESTRE';
 
-  const subText = isLegendary || isAmber ? 'LENDÁRIO' : '';
+  const subText = '';
   
   const starsCount = (isMythic || isLegendary || isAmber) ? 5 : 3;
   
   const labelFontSize = 
     labelText === 'MÍTICO' ? '22px' : 
-    labelText === 'ÂMBAR' ? '22px' :
+    labelText === 'LENDÁRIO' ? '18px' :
     '24px';
     
-  const labelYPosition = subText ? '52' : '58';
+  const labelYPosition = '58';
 
   return (
     <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>
@@ -146,22 +145,6 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
               >
                 {labelText}
               </text>
-              {subText && (
-                <text 
-                  x="130" 
-                  y="65"
-                  textAnchor="middle" 
-                  fill="white"
-                  style={{ 
-                    fontFamily: 'system-ui, sans-serif', 
-                    fontWeight: '700', 
-                    fontSize: '10px', 
-                    letterSpacing: '6px'
-                  }}
-                >
-                  {subText}
-                </text>
-              )}
             </g>
           </mask>
         </defs>
@@ -192,23 +175,6 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
           >
             {labelText}
           </text>
-          {subText && (
-            <text 
-              x="130" 
-              y="65"
-              textAnchor="middle" 
-              fill={colors.vibrant}
-              style={{ 
-                fontFamily: 'system-ui, sans-serif', 
-                fontWeight: '700', 
-                fontSize: '10px', 
-                letterSpacing: '6px',
-                opacity: 0.8
-              }}
-            >
-              {subText}
-            </text>
-          )}
         </g>
 
         <g mask={`url(#text-flash-mask-${uniqueId})`}>
