@@ -20,7 +20,7 @@ import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Centro de Comando Staff - Hall Black Club.
+ * @fileOverview Centro de Comando Staff - Alto Conselho Hall Black.
  * Dashboard modular para gestão de audiências e membros.
  */
 
@@ -161,7 +161,7 @@ export default function StaffPanelPage() {
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black uppercase tracking-tighter">Protocolo de Audiência</h3>
                   <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
-                    Responda aos comunicados oficiais e emita vereditos da linhagem.
+                    Responda aos comunicados oficiais e emita vereditos do Alto Conselho.
                   </p>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function StaffPanelPage() {
                     <p className="text-zinc-400 text-sm italic font-medium leading-relaxed">"{selectedMessage.message}"</p>
                   </div>
                   <div className="space-y-4 pt-6 border-t border-zinc-900">
-                    <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Parecer do Conselho</Label>
+                    <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Parecer do Alto Conselho</Label>
                     <Textarea 
                       value={replyText} 
                       onChange={(e) => setReplyText(e.target.value)}

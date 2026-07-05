@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Galeria do Alto Conselho e Canal de Audiência.
+ * @fileOverview Galeria do Conselho e Canal de Audiência.
  * Exibe os 60 detentores e provê canal de comunicação oficial.
  */
 
@@ -72,7 +72,7 @@ export function HighCouncil({ profile }: { profile: any }) {
 
       toast({
         title: "PROTOCOLO DE AUDIÊNCIA",
-        description: "Sua mensagem foi criptografada e enviada ao Alto Conselho.",
+        description: "Sua mensagem foi criptografada e enviada ao Conselho.",
       });
       setSubject('');
       setMessage('');
@@ -89,10 +89,10 @@ export function HighCouncil({ profile }: { profile: any }) {
 
   return (
     <div className="space-y-20">
-      {/* SEÇÃO DO ALTO CONSELHO */}
+      {/* SEÇÃO DO CONSELHO */}
       <section className="space-y-12">
         <div className="max-w-xl space-y-4">
-          <h3 className="text-3xl font-black uppercase tracking-tighter">Alto Conselho</h3>
+          <h3 className="text-3xl font-black uppercase tracking-tighter">Conselho</h3>
           <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold leading-relaxed">
             Os 60 detentores das chaves Hall Black originais. Uma linhagem de prestígio que governa o ecossistema.
           </p>
@@ -157,7 +157,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                 <h3 className="text-2xl font-black uppercase tracking-tighter">Protocolo de Audiência</h3>
              </div>
              <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold max-w-sm">
-               Canal direto e seguro para comunicações estratégicas com o Alto Conselho.
+               Canal direto e seguro para comunicações estratégicas com o Conselho.
              </p>
           </div>
           <Button 
