@@ -15,39 +15,38 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function isAdmin() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     match /users/{userId} {
       allow read, list: if true;
       allow create: if isOwner(userId);
       allow delete: if isOwner(userId);
-      allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
+      allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED') || isAdmin();
 
       match /pets/{petId} {
         allow read: if true; 
-        allow write: if isOwner(userId);
+        allow write: if isOwner(userId) || isAdmin();
       }
     }
 
     match /vault/{articleId} {
       allow read, list, create: if isSignedIn();
+      allow update, delete: if isAdmin();
     }
 
     match /mythicCodes/{mythicCodeId} {
       allow get: if true;
       allow update: if true;
-      allow list, create, delete: if false;
-    }
-
-    match /transferRequests/{requestId} {
-      allow create: if isSignedIn();
-      allow read: if isSignedIn();
-      allow update: if true;
-      allow delete: if false;
+      allow list, create, delete: if isAdmin();
     }
 
     match /councilMessages/{messageId} {
       allow create: if isSignedIn();
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid);
-      allow list: if isSignedIn() && (request.query.limit <= 100);
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100);
+      allow update: if isAdmin();
     }
   }
 }

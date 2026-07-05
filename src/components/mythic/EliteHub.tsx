@@ -1,10 +1,11 @@
+
 "use client"
 
 import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
-  Settings, LogOut, Cpu, ExternalLink
+  Settings, LogOut, Cpu, ExternalLink, ShieldAlert
 } from "lucide-react";
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
@@ -33,6 +34,8 @@ export function EliteHub({ profile }: EliteHubProps) {
   const themeClass = getThemeClass(currentRank);
   // text-primary herda a cor do tema aplicado no pai
   const themeColor = 'text-primary';
+
+  const isAdmin = profile.role === 'admin';
 
   return (
     <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden transition-colors duration-700", themeClass)}>
@@ -65,6 +68,11 @@ export function EliteHub({ profile }: EliteHubProps) {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
+             {isAdmin && (
+               <Link href="/staff" title="Painel Staff" className="p-2 text-primary hover:text-white transition-colors animate-pulse">
+                 <ShieldAlert className="w-5 h-5" />
+               </Link>
+             )}
              <Link href="/settings" className="p-2 text-zinc-600 hover:text-white transition-colors">
                <Settings className="w-5 h-5" />
              </Link>

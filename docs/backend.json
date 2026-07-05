@@ -23,6 +23,7 @@
         "name": { "type": "string" },
         "email": { "type": "string" },
         "status": { "type": "string" },
+        "role": { "type": "string", "enum": ["member", "admin"] },
         "theme": { "type": "string" },
         "memberNumber": { "type": "number" },
         "registrationDateTime": { "type": "string", "format": "date-time" },
