@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useId } from 'react';
 import { cn } from '@/lib/utils';
 
 export const CollarIcon = ({ className }: { className?: string }) => (
@@ -48,6 +48,7 @@ interface RankBadgeProps {
 }
 
 export const RankBadge = ({ status, className, size = 'md', id, regNumber }: RankBadgeProps) => {
+  const reactId = useId();
   const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
   const isMythic = status === 'MYTHIC';
@@ -55,7 +56,9 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
   const isMaster = status === 'MASTER' || !status;
   
   const scale = size === 'sm' ? 'scale-[0.6]' : size === 'lg' ? 'scale-125' : 'scale-100';
-  const uniqueId = id ? id.replace(/\W/g, '') : Math.random().toString(36).substring(7);
+  
+  // Use id provided or fallback to stable reactId (stripping colons for SVG compatibility)
+  const uniqueId = id ? id.replace(/\W/g, '') : reactId.replace(/:/g, '');
 
   const getColors = () => {
     if (isLegendary) return { primary: '#FFD700', secondary: '#B8860B', vibrant: '#FFF2AC', deep: '#bf953f', aura: 'rgba(255,215,0,0.2)' };
