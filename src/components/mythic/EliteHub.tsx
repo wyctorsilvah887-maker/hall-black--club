@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useMemo } from 'react';
@@ -15,6 +16,7 @@ import { TheVault } from './TheVault';
 import { RankBadge } from './MythicIcons';
 import { calculateRankByTime, getRankLabel, getThemeClass } from '@/lib/rank-utils';
 import { Button } from "@/components/ui/button";
+import { cn } from '@/lib/utils';
 
 interface EliteHubProps {
   profile: any;
@@ -29,13 +31,9 @@ export function EliteHub({ profile }: EliteHubProps) {
     return calculateRankByTime(profile.registrationDateTime, profile.status);
   }, [profile.registrationDateTime, profile.status]);
 
-  const isMythic = currentRank === 'MYTHIC';
-  const isLegendary = currentRank === 'LEGENDARY';
-  const isAmber = currentRank === 'AMBER';
-  const isHallBlack = currentRank === 'HALL_BLACK';
-  
-  const themeColor = isHallBlack ? 'text-white' : isMythic ? 'text-primary' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-zinc-400';
   const themeClass = getThemeClass(currentRank);
+  // Agora usamos text-primary para que o CSS do tema controle a cor dinamicamente
+  const themeColor = 'text-primary';
 
   return (
     <div className={`min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden ${themeClass}`}>
@@ -44,7 +42,7 @@ export function EliteHub({ profile }: EliteHubProps) {
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
           <div className="hidden md:flex items-center gap-4">
             <Cpu className={themeColor} />
-            <h1 className="text-xl font-black uppercase tracking-tighter">Hall Black Hub</h1>
+            <h1 className={cn("text-xl font-black uppercase tracking-tighter", themeColor)}>Hall Black Hub</h1>
           </div>
           
           <div className="flex-1 flex justify-center gap-8 md:gap-12">
@@ -56,8 +54,10 @@ export function EliteHub({ profile }: EliteHubProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex flex-col md:flex-row items-center gap-2 py-4 md:py-0 transition-all group
-                  ${activeTab === tab.id ? themeColor : 'text-zinc-600 hover:text-zinc-400'}`}
+                className={cn(
+                  "flex flex-col md:flex-row items-center gap-2 py-4 md:py-0 transition-all group",
+                  activeTab === tab.id ? themeColor : 'text-zinc-600 hover:text-zinc-400'
+                )}
               >
                 <tab.icon className="w-5 h-5 group-active:scale-90 transition-transform" />
                 <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
@@ -89,7 +89,7 @@ export function EliteHub({ profile }: EliteHubProps) {
              </h2>
              <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className={`py-1 px-4 text-[9px] font-black tracking-widest rounded-full bg-zinc-950/50 border-zinc-800 ${themeColor}`}>
+                  <Badge variant="outline" className={cn("py-1 px-4 text-[9px] font-black tracking-widest rounded-full bg-zinc-950/50 border-zinc-800", themeColor)}>
                     {getRankLabel(currentRank)}
                   </Badge>
                   <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[8px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">

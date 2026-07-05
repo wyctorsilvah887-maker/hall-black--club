@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
+import { cn } from '@/lib/utils';
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
@@ -57,9 +59,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
     }
   };
 
-  const isLegendary = profile.status === 'LEGENDARY';
-  const isAmber = profile.status === 'AMBER';
-  const themeColor = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
+  const themeColor = 'text-primary';
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 h-[70vh] flex flex-col">
@@ -103,7 +103,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
               <div className="space-y-6 max-w-2xl">
                 <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-[2.5rem] shadow-2xl relative">
                   <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg">
-                    <ShieldCheck className={`w-4 h-4 ${themeColor}`} />
+                    <ShieldCheck className={cn("w-4 h-4", themeColor)} />
                   </div>
                   <p className="text-sm font-medium leading-relaxed text-zinc-300 italic">
                     {log.content}
@@ -111,7 +111,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                   
                   {log.insights && log.insights.length > 0 && (
                     <div className="mt-8 pt-8 border-t border-zinc-900 space-y-4">
-                       <p className={`text-[9px] font-black uppercase tracking-widest ${themeColor}`}>Insights Acionáveis</p>
+                       <p className={cn("text-[9px] font-black uppercase tracking-widest", themeColor)}>Insights Acionáveis</p>
                        <ul className="space-y-3">
                          {log.insights.map((insight: string, idx: number) => (
                            <li key={idx} className="flex items-start gap-3 text-[11px] text-zinc-500 font-bold uppercase">
@@ -137,7 +137,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         ))}
         {isLoading && (
           <div className="flex items-center gap-3 ml-4">
-            <Loader2 className={`w-4 h-4 animate-spin ${themeColor}`} />
+            <Loader2 className={cn("w-4 h-4 animate-spin", themeColor)} />
             <span className="text-[9px] font-black uppercase tracking-widest text-zinc-700">Processando Linhagem...</span>
           </div>
         )}
@@ -154,7 +154,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         <Button 
           type="submit" 
           disabled={isLoading || !query.trim()}
-          className={`absolute right-4 top-[3.1rem] h-12 w-12 rounded-2xl ${isLegendary ? 'bg-yellow-500 text-black' : isAmber ? 'bg-orange-500 text-black' : 'bg-primary text-white'}`}
+          className={cn("absolute right-4 top-[3.1rem] h-12 w-12 rounded-2xl bg-primary text-primary-foreground")}
         >
           <ChevronRight className="w-6 h-6" />
         </Button>

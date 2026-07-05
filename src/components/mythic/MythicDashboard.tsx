@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/Dialog";
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -35,7 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/image-utils';
 import { ImageEditor } from './ImageEditor';
 import { RankBadge } from './MythicIcons';
-import { calculateRankByTime, getRankLabel } from '@/lib/rank-utils';
+import { calculateRankByTime, getRankLabel, getThemeClass } from '@/lib/rank-utils';
 import { cn } from '@/lib/utils';
 
 interface MythicDashboardProps {
@@ -56,6 +56,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
   const currentRank = useMemo(() => {
     return calculateRankByTime(profile.registrationDateTime, profile.status);
   }, [profile.registrationDateTime, profile.status]);
+
+  const themeClass = getThemeClass(currentRank);
+  const themeColorClass = 'text-primary';
 
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
@@ -122,19 +125,12 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     toast({ variant: newState ? "destructive" : "default", title: newState ? "SOS ATIVADO" : "SOS DESATIVADO" });
   };
 
-  const isLegendary = currentRank === 'LEGENDARY';
-  const isAmber = currentRank === 'AMBER';
-  const isMythic = currentRank === 'MYTHIC';
-  const isHallBlack = currentRank === 'HALL_BLACK';
-  
-  const themeColorClass = isHallBlack ? 'text-white' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : isMythic ? 'text-primary' : 'text-zinc-400';
-
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary/30">
+    <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30", themeClass)}>
       <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-900/50 h-16 md:h-20 flex items-center justify-between px-6">
         <div className="flex items-center gap-3">
            <Crown className={cn("w-5 h-5", themeColorClass)} />
-           <h2 className="text-sm md:text-xl font-black uppercase tracking-tighter">Hall Black Hub</h2>
+           <h2 className={cn("text-sm md:text-xl font-black uppercase tracking-tighter", themeColorClass)}>Hall Black Hub</h2>
         </div>
 
         <div className="flex items-center gap-4">
@@ -144,7 +140,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className={cn("w-10 h-10 rounded-full border-2 overflow-hidden bg-zinc-900", isLegendary ? 'border-yellow-500' : 'border-zinc-800')}>
+              <button className={cn("w-10 h-10 rounded-full border-2 overflow-hidden bg-zinc-900", themeColorClass.replace('text-', 'border-'))}>
                 {profile.photo ? <NextImage src={profile.photo} alt={profile.name} width={40} height={40} className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-700" />}
               </button>
             </DropdownMenuTrigger>

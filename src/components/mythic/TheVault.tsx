@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, FileText, ChevronRight, Zap } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
+import { cn } from '@/lib/utils';
 
 export function TheVault({ profile }: { profile: any }) {
   const db = useFirestore();
@@ -19,9 +20,7 @@ export function TheVault({ profile }: { profile: any }) {
   
   const { data: articles, isLoading } = useCollection(vaultQuery as any);
 
-  const isLegendary = profile.status === 'LEGENDARY';
-  const isAmber = profile.status === 'AMBER';
-  const themeColor = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
+  const themeColor = 'text-primary';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -42,7 +41,7 @@ export function TheVault({ profile }: { profile: any }) {
              {['Genética Avançada', 'Biohacking Pet', 'Patrimônio Elite'].map((cat) => (
                <div key={cat} className="flex items-center justify-between text-[11px] font-black uppercase tracking-widest text-zinc-300">
                  {cat}
-                 <Zap className="w-3 h-3 opacity-20" />
+                 <Zap className={cn("w-3 h-3 opacity-20", themeColor)} />
                </div>
              ))}
           </div>
@@ -64,7 +63,7 @@ export function TheVault({ profile }: { profile: any }) {
             <Card key={article.id} className="bg-zinc-950/40 border-zinc-900 rounded-[2.5rem] overflow-hidden group hover:border-zinc-800 transition-all">
               <CardHeader className="p-8 pb-4">
                 <div className="flex items-center justify-between mb-4">
-                  <Badge variant="outline" className={`border-zinc-800 text-[8px] font-black tracking-widest ${themeColor}`}>
+                  <Badge variant="outline" className={cn("border-zinc-800 text-[8px] font-black tracking-widest", themeColor)}>
                     {article.category}
                   </Badge>
                   <FileText className="w-4 h-4 text-zinc-800 group-hover:text-zinc-500 transition-colors" />
@@ -77,7 +76,7 @@ export function TheVault({ profile }: { profile: any }) {
                 <p className="text-zinc-600 text-[10px] uppercase font-bold tracking-wider line-clamp-2">
                   {article.content.substring(0, 100)}...
                 </p>
-                <Button variant="link" className={`p-0 h-auto text-[9px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${themeColor}`}>
+                <Button variant="link" className={cn("p-0 h-auto text-[9px] font-black uppercase tracking-[0.3em] flex items-center gap-2", themeColor)}>
                   Acessar Documento <ChevronRight className="w-3 h-3" />
                 </Button>
               </CardContent>
