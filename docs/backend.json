@@ -38,12 +38,28 @@
       "properties": {
         "id": { "type": "string" },
         "title": { "type": "string" },
-        "category": { "type": "string", "enum": ["GENETICS", "HEALTH", "LIFESTYLE"] },
+        "category": { "type": "string" },
         "content": { "type": "string" },
-        "restrictedTo": { "type": "string", "enum": ["MYTHIC", "AMBER", "LEGENDARY"] },
+        "restrictedTo": { "type": "string" },
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["id", "title", "content", "category"]
+    },
+    "CouncilMessage": {
+      "title": "CouncilMessage",
+      "type": "object",
+      "description": "Comunicações oficiais entre membros e o Alto Conselho.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "replied"] },
+        "reply": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "message", "timestamp"]
     }
   },
   "auth": {
@@ -61,6 +77,10 @@
     "/vault/{articleId}": {
       "schema": "VaultArticle",
       "description": "Cofre de conhecimento restrito."
+    },
+    "/councilMessages/{messageId}": {
+      "schema": "CouncilMessage",
+      "description": "Canal de audiência do Alto Conselho."
     }
   }
 }

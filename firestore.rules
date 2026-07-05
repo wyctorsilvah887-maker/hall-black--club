@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -15,7 +16,7 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read, list: if true; // Vitrine pública de prestígio
+      allow read, list: if true;
       allow create: if isOwner(userId);
       allow delete: if isOwner(userId);
       allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED');
@@ -27,8 +28,7 @@ service cloud.firestore {
     }
 
     match /vault/{articleId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn(); // Permite que membros inicializem o conteúdo do cofre
+      allow read, list, create: if isSignedIn();
     }
 
     match /mythicCodes/{mythicCodeId} {
@@ -42,6 +42,12 @@ service cloud.firestore {
       allow read: if isSignedIn();
       allow update: if true;
       allow delete: if false;
+    }
+
+    match /councilMessages/{messageId} {
+      allow create: if isSignedIn();
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid);
+      allow list: if isSignedIn() && (request.query.limit <= 100);
     }
   }
 }
