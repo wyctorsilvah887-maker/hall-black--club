@@ -1,7 +1,7 @@
+
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { AccessGate } from '@/components/mythic/AccessGate';
 import { AuthGate } from '@/components/mythic/AuthGate';
 import { EliteHub } from '@/components/mythic/EliteHub';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
@@ -11,13 +11,13 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 /**
  * @fileOverview Página principal do Hall Black Club.
  * Gerencia o fluxo de acesso e renderiza o Elite Hub para membros autenticados.
+ * Removido o AccessGate para acesso direto à autenticação.
  */
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
   
-  const [isCodeValidated, setIsCodeValidated] = useState(false);
   const [tempProfile, setTempProfile] = useState<any>(null);
 
   useEffect(() => {
@@ -25,7 +25,6 @@ export default function Home() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setIsCodeValidated(true);
         setTempProfile(parsed);
       } catch (e) {
         localStorage.removeItem('mythic_access_granted');
@@ -40,12 +39,6 @@ export default function Home() {
 
   const { data: userProfileData, isLoading: isProfileLoading } = useDoc(userRef);
 
-  const handleCodeSuccess = (profile: any) => {
-    localStorage.setItem('mythic_access_granted', JSON.stringify(profile));
-    setTempProfile(profile);
-    setIsCodeValidated(true);
-  };
-
   if (isUserLoading || (user && isProfileLoading)) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -54,6 +47,7 @@ export default function Home() {
     );
   }
 
+  // Se o usuário está logado, mostra o Hub
   if (user) {
     const activeProfile = userProfileData || {
       ...tempProfile,
@@ -72,20 +66,13 @@ export default function Home() {
     );
   }
 
-  if (isCodeValidated) {
-    const currentRank = calculateRankByTime(tempProfile?.registrationDateTime, tempProfile?.status);
-    const themeClass = getThemeClass(currentRank);
-
-    return (
-      <main className={`min-h-screen bg-black ${themeClass}`}>
-        <AuthGate theme={tempProfile?.theme} tempProfile={tempProfile} />
-      </main>
-    );
-  }
+  // Se não está logado, mostra diretamente a tela de Auth (Login/Cadastro)
+  const currentRank = calculateRankByTime(tempProfile?.registrationDateTime, tempProfile?.status);
+  const themeClass = getThemeClass(currentRank);
 
   return (
-    <main className="min-h-screen bg-black">
-      <AccessGate onSuccess={handleCodeSuccess} />
+    <main className={`min-h-screen bg-black ${themeClass}`}>
+      <AuthGate theme={tempProfile?.theme} tempProfile={tempProfile} />
     </main>
   );
 }

@@ -13,7 +13,7 @@ import {
   updateProfile 
 } from "firebase/auth";
 import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs, query, where } from "firebase/firestore";
-import { Loader2, UserPlus, LogIn, ArrowLeft, Shield, Phone } from "lucide-react";
+import { Loader2, UserPlus, LogIn, Shield, Phone } from "lucide-react";
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -21,6 +21,11 @@ interface AuthGateProps {
   theme?: string;
   tempProfile?: any;
 }
+
+/**
+ * @fileOverview Gateway de Autenticação Central.
+ * Porta de entrada direta para membros do Hall Black Club.
+ */
 
 export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const [isLogin, setIsLogin] = useState(true);
@@ -34,18 +39,11 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const db = useFirestore();
   const { toast } = useToast();
 
-  const hasValidEntry = !!(tempProfile?.codeId || tempProfile?.transferRequestId);
-
   useEffect(() => {
     if (tempProfile?.email) {
       setEmail(tempProfile.email);
     }
-    if (hasValidEntry) {
-      setIsLogin(false);
-    } else {
-      setIsLogin(true);
-    }
-  }, [tempProfile, hasValidEntry]);
+  }, [tempProfile]);
 
   const formatPhoneMask = (value: string) => {
     const digits = value.replace(/\D/g, '');
@@ -76,7 +74,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         await updateProfile(userCredential.user, { displayName: name });
         
         let memberNumber = 0;
-        // Todos novos usuários sem código específico entram como MASTER
         let inheritedData = {
           city: '',
           state: '',
@@ -103,7 +100,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               theme: data.theme || 'master'
             };
 
-            // Migrar Pets
             const petsRef = collection(db, 'users', tempProfile.fromUserId, 'pets');
             const petsSnap = await getDocs(petsRef).catch(err => {
               errorEmitter.emit('permission-error', new FirestorePermissionError({ path: petsRef.path, operation: 'list' }));
@@ -123,7 +119,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               });
             }
 
-            // Marcar perfil antigo como revogado
             await updateDoc(originalProfileRef, { 
               status: 'REVOKED', 
               revokedAt: new Date().toISOString()
@@ -145,7 +140,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           email: email,
           emergencyContact: emergencyPhone,
           registrationDateTime: new Date().toISOString(),
-          pedigreeScore: 100, // Score inicial
+          pedigreeScore: 100,
           ...inheritedData,
           memberNumber: memberNumber
         };
@@ -197,21 +192,23 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const themeBtnClass = theme === 'legendary' ? 'bg-yellow-500 text-black' : theme === 'amber' ? 'bg-orange-500 text-black' : 'bg-primary text-white';
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black relative">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-black relative overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       
       <div className="w-full max-w-md space-y-8 relative z-10">
-        <div className="text-center space-y-2">
-          <Shield className="w-12 h-12 mx-auto mb-4 text-zinc-500" />
-          <h2 className={`text-3xl md:text-4xl font-black uppercase tracking-tighter ${themeTextClass}`}>
-            {isLogin ? 'Confirmar Identidade' : 'Entrar para a Elite'}
-          </h2>
+        <div className="text-center space-y-4">
+          <div className="flex flex-col items-center gap-2">
+            <Shield className="w-12 h-12 text-primary animate-pulse" />
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white">
+              HALL <span className="text-primary">BLACK</span>
+            </h1>
+          </div>
           <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em] font-bold">
-            Protocolo de Entrada Hall Black
+            Protocolo de Entrada v2026.12
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="space-y-4 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl">
+        <form onSubmit={handleAuth} className="space-y-4 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl shadow-2xl">
           {!isLogin && (
             <>
               <div className="space-y-2">
@@ -219,7 +216,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
                 <Input
                   placeholder="NOME"
                   required
-                  className="bg-black/50 border-zinc-800 h-12"
+                  className="bg-black/50 border-zinc-800 h-12 font-bold uppercase"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -231,7 +228,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
                 <Input
                   placeholder="(00) 00000-0000"
                   required
-                  className="bg-black/50 border-zinc-800 h-12"
+                  className="bg-black/50 border-zinc-800 h-12 font-mono"
                   value={emergencyPhone}
                   onChange={handlePhoneChange}
                 />
@@ -245,7 +242,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               type="email"
               placeholder="email@exemplo.com"
               required
-              className="bg-black/50 border-zinc-800 h-12"
+              className="bg-black/50 border-zinc-800 h-12 font-bold"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -277,27 +274,22 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           </Button>
         </form>
 
-        <div className="text-center space-y-6">
+        <div className="text-center space-y-4">
           <button 
             type="button"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-bold"
+            className="text-zinc-500 hover:text-white transition-colors text-[9px] uppercase tracking-widest font-black"
           >
-            {isLogin ? 'Não tem conta? Cadastre-se' : 'Já possui credenciais? Login'}
-          </button>
-          
-          <button 
-            type="button"
-            onClick={() => {
-              localStorage.removeItem('mythic_access_granted');
-              window.location.reload();
-            }}
-            className="flex items-center gap-2 mx-auto text-zinc-700 hover:text-zinc-500 transition-colors text-[9px] uppercase tracking-widest font-black"
-          >
-            <ArrowLeft className="w-3 h-3" /> Início
+            {isLogin ? 'Ainda não possui credencial? Cadastre-se' : 'Já possui uma identidade? Autenticar'}
           </button>
         </div>
       </div>
+
+      <footer className="absolute bottom-8 text-center opacity-20">
+        <p className="text-[8px] font-black uppercase tracking-[0.5em] text-zinc-600">
+          Hall Black Club Identity System • 2026
+        </p>
+      </footer>
     </div>
   );
 }
