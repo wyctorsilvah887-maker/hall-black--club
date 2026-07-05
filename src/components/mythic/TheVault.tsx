@@ -81,7 +81,7 @@ export function TheVault({ profile }: { profile: any }) {
       {
         title: "PATRIMÔNIO: O VALOR DA REDE",
         category: "LIFESTYLE",
-        content: "Uma análise estratégica sobre a escassez das 60 chaves originais do Hall Black Club. Este protocolo discute o valor intrínseco de pertencer a um ecossistema fechado de influência, as regras de sucessão patrimonial para as credenciais e como o prestígio acumulado do tutor se traduz em ativos reais dentro da rede de elite.",
+        content: "Uma análise estratégica sobre a escassez das chaves originais do Hall Black Club. Este protocolo discute o valor intrínseco de pertencer a um ecossistema fechado de influência, as regras de sucessão patrimonial para as credenciais e como o prestígio acumulado do tutor se traduz em ativos reais dentro da rede de elite.",
         timestamp: new Date(Date.now() - 172800000).toISOString(),
         restrictedTo: "MASTER"
       }
@@ -114,7 +114,7 @@ export function TheVault({ profile }: { profile: any }) {
         <div className="space-y-2">
           <h3 className="text-2xl font-black uppercase tracking-tighter text-white">O Cofre</h3>
           <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold leading-relaxed">
-            Conhecimento técnico avançado, genética e estratégias de elite reservadas aos 60 detentores.
+            Conhecimento técnico avançado, genética e estratégias de elite reservadas aos detentores Hall Black Club.
           </p>
         </div>
         
