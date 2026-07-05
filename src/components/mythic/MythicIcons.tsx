@@ -61,7 +61,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   const uniqueId = id ? id.replace(/\W/g, '') : reactId.replace(/:/g, '');
 
   const getColors = () => {
-    if (isHallBlack) return { primary: '#0a0a0a', secondary: '#000000', vibrant: '#262626', deep: '#171717', aura: 'rgba(255,0,0,0.6)' };
+    if (isHallBlack) return { primary: '#0a0a0a', secondary: '#000000', vibrant: '#262626', deep: '#171717', aura: 'rgba(255,0,0,0.8)' };
     if (isMythic) return { primary: '#ff1a1a', secondary: '#660000', vibrant: '#ff4d4d', deep: '#b30000', aura: 'rgba(255,0,0,0.4)' };
     if (isAmber) return { primary: '#F59E0B', secondary: '#D97706', vibrant: '#fbbf24', deep: '#d97706', aura: 'rgba(245,158,11,0.2)' };
     if (isLegendary) return { primary: '#FFD700', secondary: '#B8860B', vibrant: '#FFF2AC', deep: '#bf953f', aura: 'rgba(255,215,0,0.2)' };
@@ -91,7 +91,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   return (
     <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>
       <div 
-        className={cn("absolute inset-0 blur-[50px] rounded-full animate-pulse", isHallBlack ? "animate-hallblack-ruby-glow" : "")} 
+        className={cn("absolute inset-0 blur-[60px] rounded-full", isHallBlack ? "animate-hallblack-ruby-glow" : "animate-pulse")} 
         style={{ backgroundColor: colors.aura }}
       />
       
@@ -101,7 +101,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
         viewBox="0 0 260 100" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
-        className={cn("relative drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]", isHallBlack ? "animate-hallblack-reflection" : "")}
+        className={cn("relative drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]")}
       >
         <defs>
           <linearGradient id={`metal-gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -124,18 +124,19 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
           </linearGradient>
 
           {/* Gradiente de Reflexo da Jornada Hall Black: Mestre -> Elite -> Lendário -> Legendário Âmbar -> Mítico */}
-          <linearGradient id={`journey-gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#CD7F32" /> {/* Mestre (Bronze) */}
-            <stop offset="25%" stopColor="#E5E4E2" /> {/* Elite (Prata) */}
-            <stop offset="50%" stopColor="#FFD700" /> {/* Lendário (Ouro) */}
-            <stop offset="75%" stopColor="#F59E0B" /> {/* Legendário Âmbar (Laranja) */}
-            <stop offset="100%" stopColor="#ff1a1a" /> {/* Mítico (Rubi) */}
+          <linearGradient id={`journey-gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="0%" spreadMethod="repeat">
+            <stop offset="0%" stopColor="#CD7F32" /> {/* Mestre */}
+            <stop offset="20%" stopColor="#E5E4E2" /> {/* Elite */}
+            <stop offset="40%" stopColor="#FFD700" /> {/* Lendário */}
+            <stop offset="60%" stopColor="#F59E0B" /> {/* Legendário Âmbar */}
+            <stop offset="80%" stopColor="#ff1a1a" /> {/* Mítico */}
+            <stop offset="100%" stopColor="#CD7F32" /> {/* Retorno ao Bronze */}
           </linearGradient>
 
           <linearGradient id={`sweep-gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="white" stopOpacity="0" />
             <stop offset="40%" stopColor="white" stopOpacity="0" />
-            <stop offset="50%" stopColor="white" stopOpacity={isHallBlack ? "0.4" : "0.9"} />
+            <stop offset="50%" stopColor="white" stopOpacity={isHallBlack ? "0.3" : "0.9"} />
             <stop offset="60%" stopColor="white" stopOpacity="0" />
             <stop offset="100%" stopColor="white" stopOpacity="0" />
           </linearGradient>
@@ -161,14 +162,14 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
         </defs>
 
         <g opacity="1">
-          <path d="M70 45 L20 25 L45 50 L15 40 L40 55 L10 60 L70 65 Z" fill={`url(#metal-gradient-${uniqueId})`} stroke={isHallBlack ? "#ff0000" : colors.secondary} strokeWidth={isHallBlack ? "2" : "1"} strokeOpacity={isHallBlack ? "0.3" : "1"} />
-          <path d="M190 45 L240 25 L215 50 L245 40 L220 55 L250 60 L190 65 Z" fill={`url(#metal-gradient-${uniqueId})`} stroke={isHallBlack ? "#ff0000" : colors.secondary} strokeWidth={isHallBlack ? "2" : "1"} strokeOpacity={isHallBlack ? "0.3" : "1"} />
+          <path d="M70 45 L20 25 L45 50 L15 40 L40 55 L10 60 L70 65 Z" fill={`url(#metal-gradient-${uniqueId})`} stroke={isHallBlack ? "#ff0000" : colors.secondary} strokeWidth={isHallBlack ? "2" : "1"} strokeOpacity={isHallBlack ? "0.4" : "1"} />
+          <path d="M190 45 L240 25 L215 50 L245 40 L220 55 L250 60 L190 65 Z" fill={`url(#metal-gradient-${uniqueId})`} stroke={isHallBlack ? "#ff0000" : colors.secondary} strokeWidth={isHallBlack ? "2" : "1"} strokeOpacity={isHallBlack ? "0.4" : "1"} />
         </g>
 
-        <path d="M60 35 L200 35 L215 70 L45 70 Z" fill={`url(#dark-chrome-gradient-${uniqueId})`} stroke={isHallBlack ? "#330000" : "#000"} strokeWidth="2" />
-        <path d="M65 38 L195 38 L208 67 L52 67 Z" fill="none" stroke={isHallBlack ? `url(#journey-gradient-${uniqueId})` : `url(#metal-gradient-${uniqueId})`} strokeWidth={isHallBlack ? "1" : "1.5"} strokeOpacity={isHallBlack ? "0.2" : "0.6"} />
+        <path d="M60 35 L200 35 L215 70 L45 70 Z" fill={`url(#dark-chrome-gradient-${uniqueId})`} stroke={isHallBlack ? "#ff0000" : "#000"} strokeWidth={isHallBlack ? "2" : "2"} strokeOpacity={isHallBlack ? "0.3" : "1"} />
+        <path d="M65 38 L195 38 L208 67 L52 67 Z" fill="none" stroke={isHallBlack ? `url(#journey-gradient-${uniqueId})` : `url(#metal-gradient-${uniqueId})`} strokeWidth={isHallBlack ? "1" : "1.5"} strokeOpacity={isHallBlack ? "0.3" : "0.6"} />
 
-        <path d="M100 65 L130 95 L160 65 Z" fill={`url(#dark-chrome-gradient-${uniqueId})`} stroke={isHallBlack ? "#ff0000" : `url(#metal-gradient-${uniqueId})`} strokeWidth="2" strokeOpacity={isHallBlack ? "0.4" : "1"} />
+        <path d="M100 65 L130 95 L160 65 Z" fill={`url(#dark-chrome-gradient-${uniqueId})`} stroke={isHallBlack ? "#ff0000" : `url(#metal-gradient-${uniqueId})`} strokeWidth="2" strokeOpacity={isHallBlack ? "0.5" : "1"} />
 
         <g>
           <text 
@@ -181,7 +182,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
               fontWeight: '900', 
               fontSize: labelFontSize, 
               letterSpacing: '4px',
-              filter: `drop-shadow(0 0 10px ${colors.aura})`
+              filter: isHallBlack ? `drop-shadow(0 0 15px rgba(255,0,0,0.5))` : `drop-shadow(0 0 10px ${colors.aura})`
             }}
           >
             {labelText}
@@ -195,8 +196,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
               width="260" 
               height="35" 
               fill={isHallBlack ? `url(#journey-gradient-${uniqueId})` : `url(#sweep-gradient-${uniqueId})`} 
-              className={cn("mythic-shine-sweep", isHallBlack ? "animate-hallblack-cycle" : "")}
-              opacity={isHallBlack ? "0.2" : "1"}
+              className={isHallBlack ? "animate-hallblack-journey" : "mythic-shine-sweep"}
             />
         </g>
 

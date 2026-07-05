@@ -91,28 +91,22 @@
 }
 
 @keyframes hb-ruby-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); }
+  0%, 100% { box-shadow: 0 0 25px rgba(255, 0, 0, 0.3), inset 0 0 15px rgba(255, 0, 0, 0.2); }
+  50% { box-shadow: 0 0 50px rgba(255, 0, 0, 0.7), inset 0 0 25px rgba(255, 0, 0, 0.4); }
 }
 
-@keyframes hb-cycle {
-  0% { filter: hue-rotate(0deg) brightness(1); }
-  25% { filter: hue-rotate(90deg) brightness(1.2); }
-  50% { filter: hue-rotate(180deg) brightness(1); }
-  75% { filter: hue-rotate(270deg) brightness(1.2); }
-  100% { filter: hue-rotate(360deg) brightness(1); }
+@keyframes hb-journey-scroll {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
 }
 
 .animate-hallblack-ruby-glow {
-  animation: hb-ruby-glow 4s infinite ease-in-out;
+  animation: hb-ruby-glow 3s infinite ease-in-out;
 }
 
-.animate-hallblack-cycle {
-  animation: shine-sweep 6s infinite linear;
-}
-
-.animate-hallblack-reflection {
-  animation: hb-cycle 10s infinite linear;
+.animate-hallblack-journey {
+  animation: hb-journey-scroll 12s infinite linear;
+  background-size: 400% 100%;
 }
 
 .animate-bronze-glow {
