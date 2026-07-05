@@ -5,7 +5,8 @@ import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
-  Settings, LogOut, Cpu, ExternalLink, ShieldAlert
+  Settings, LogOut, Cpu, ExternalLink, ShieldAlert,
+  ChevronRight
 } from "lucide-react";
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
@@ -41,13 +42,13 @@ export function EliteHub({ profile }: EliteHubProps) {
     <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden transition-colors duration-700", themeClass)}>
       {/* NAVEGAÇÃO LATERAL MINIMALISTA (DESKTOP) / INFERIOR (MOBILE) */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-zinc-900 md:top-0 md:bottom-auto md:h-20 md:border-t-0 md:border-b border-zinc-900/50">
-        <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center justify-between">
           <div className="hidden md:flex items-center gap-4">
             <Cpu className={cn("w-6 h-6", themeColor)} />
             <h1 className={cn("text-xl font-black uppercase tracking-tighter", themeColor)}>Hall Black Hub</h1>
           </div>
           
-          <div className="flex-1 flex justify-center gap-8 md:gap-12">
+          <div className="flex-1 flex justify-center gap-6 md:gap-12">
             {[
               { id: 'vault', icon: BookOpen, label: 'O Cofre' },
               { id: 'council', icon: Users, label: 'Conselho' },
@@ -67,7 +68,7 @@ export function EliteHub({ profile }: EliteHubProps) {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
              {isAdmin && (
                <Link href="/staff" title="Painel Staff" className="p-2 text-primary hover:text-white transition-colors animate-pulse">
                  <ShieldAlert className="w-5 h-5" />
@@ -115,6 +116,19 @@ export function EliteHub({ profile }: EliteHubProps) {
              <RankBadge status={currentRank} id={profile.id} size="md" />
           </div>
         </section>
+
+        {/* ATALHO STAFF (CONDICIONAL) */}
+        {isAdmin && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
+            <Button asChild variant="outline" className="w-full h-14 md:h-16 rounded-2xl border-primary/30 bg-primary/5 text-primary font-black uppercase tracking-widest hover:bg-primary/10 group transition-all">
+              <Link href="/staff" className="flex items-center justify-center gap-3">
+                <ShieldAlert className="w-5 h-5 animate-pulse" />
+                Acessar Terminal Staff
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+          </div>
+        )}
 
         {/* ÁREA DE CONTEÚDO DINÂMICO */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
