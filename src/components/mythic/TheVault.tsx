@@ -1,11 +1,10 @@
-
 "use client"
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Lock, FileText, ChevronRight, Zap, ArrowLeft, BookOpen, Share2, DatabaseZap, Loader2 } from "lucide-react";
+import { Lock, FileText, ChevronRight, Zap, ArrowLeft, BookOpen, DatabaseZap, Loader2 } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -234,9 +233,6 @@ export function TheVault({ profile }: { profile: any }) {
                   <Badge variant="outline" className={cn("border-zinc-800 text-[9px] font-black tracking-widest uppercase", themeColor)}>
                     {categories.find(c => c.id === readingArticle.category)?.label}
                   </Badge>
-                  <div className="flex items-center gap-2">
-                    <Share2 className="w-4 h-4 text-zinc-700 hover:text-white cursor-pointer transition-colors" />
-                  </div>
                 </div>
                 <DialogHeader className="text-left">
                   <DialogTitle className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-tight text-white">
