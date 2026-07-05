@@ -37,11 +37,11 @@ export default function StaffPanelPage() {
 
   const { data: userProfile, isLoading: isProfileLoading } = useDoc(userRef);
 
-  // Consulta todas as mensagens
+  // Consulta todas as mensagens - APENAS se for confirmado admin
   const messagesQuery = useMemoFirebase(() => {
-    if (!db) return null;
+    if (!db || !userProfile || userProfile.role !== 'admin') return null;
     return query(collection(db, 'councilMessages'), orderBy('timestamp', 'desc'));
-  }, [db]);
+  }, [db, userProfile]);
 
   const { data: messages, isLoading: isMessagesLoading } = useCollection(messagesQuery);
 

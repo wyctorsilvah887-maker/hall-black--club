@@ -4,7 +4,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * HALL BLACK CLUB - PROTOCOLO DE ELITE v2026.10
+     * HALL BLACK CLUB - PROTOCOLO DE ELITE v2026.12
      */
 
     function isSignedIn() {
@@ -16,7 +16,8 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     match /users/{userId} {
@@ -43,9 +44,11 @@ service cloud.firestore {
     }
 
     match /councilMessages/{messageId} {
-      allow create: if isSignedIn();
+      // Membro cria sua própria mensagem
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      // Membro lê suas mensagens ou Admin lê todas
       allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
-      allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100);
+      // Apenas Admin responde
       allow update: if isAdmin();
     }
   }
