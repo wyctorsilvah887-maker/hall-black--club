@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -8,12 +7,13 @@ import Link from 'next/link';
 
 /**
  * @fileOverview Galeria de Exposição de Patentes - Protocolo de Elite.
- * Exposição técnica das credenciais atualizadas com a nova hierarquia (Âmbar superior ao Gold).
+ * Exposição técnica das credenciais atualizadas com o novo ápice supremo: HALL BLACK.
  */
 
 export default function BadgeGalleryPage() {
   const ranks = [
-    { status: 'MYTHIC', label: 'Mítico Rubi', description: 'O Ápice da Linhagem Hall Black. Autoridade suprema e acesso ao conselho secreto.' },
+    { status: 'HALL_BLACK', label: 'Hall Black', description: 'O Ápice Supremo. O tutor que transcendeu a linhagem, unificando todos os graus de prestígio.' },
+    { status: 'MYTHIC', label: 'Mítico Rubi', description: 'Autoridade suprema e acesso ao conselho secreto. A guardiã da linhagem mística.' },
     { status: 'AMBER', label: 'Legendário Âmbar', description: 'Nível de prestígio superior alcançado após 12 meses de linhagem ativa.' },
     { status: 'LEGENDARY', label: 'Lendário', description: 'Título de alta nobreza alcançado após 9 meses de permanência no clube.' },
     { status: 'ELITE', label: 'Membro Elite', description: 'Patente intermediária alcançada após 4 meses como Mestre.' },
@@ -32,12 +32,12 @@ export default function BadgeGalleryPage() {
             </Link>
             <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">Protocolo de Patentes</h1>
             <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold max-w-xl leading-relaxed">
-              Exposição técnica das credenciais de linhagem. A jornada: Mestre {'>'} Elite (4m) {'>'} Lendário (9m) {'>'} Legendário Âmbar (12m) {'>'} Mítico.
+              Exposição técnica das credenciais de linhagem. A jornada evolui conforme o tempo de casa: Mestre {'>'} Elite (4m) {'>'} Lendário (9m) {'>'} Legendário Âmbar (12m) {'>'} Mítico (18m) {'>'} Hall Black (24m).
             </p>
           </div>
           <div className="flex items-center gap-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-900">
              <ShieldCheck className="w-6 h-6 text-primary animate-pulse" />
-             <div className="text-[9px] font-black uppercase tracking-widest">Protocolo Visual v2026.11</div>
+             <div className="text-[9px] font-black uppercase tracking-widest">Protocolo Visual v2026.12</div>
           </div>
         </div>
 
@@ -65,6 +65,7 @@ export default function BadgeGalleryPage() {
                  <div className="flex flex-col items-center gap-2">
                     <div className="w-10 h-10 rounded-full border border-zinc-900 bg-zinc-950 flex items-center justify-center">
                        <Zap className={`w-4 h-4 ${
+                         rank.status === 'HALL_BLACK' ? 'text-red-600' :
                          rank.status === 'MYTHIC' ? 'text-primary' : 
                          rank.status === 'LEGENDARY' ? 'text-yellow-500' : 
                          rank.status === 'AMBER' ? 'text-orange-500' : 
@@ -80,7 +81,7 @@ export default function BadgeGalleryPage() {
 
         <footer className="pt-20 pb-12 text-center opacity-20">
           <p className="text-[8px] font-black uppercase tracking-[1em] text-zinc-500">
-            Hall Black Identity System • Rank Progression v4.0
+            Hall Black Identity System • Apex Protocol v5.0
           </p>
         </footer>
       </div>
