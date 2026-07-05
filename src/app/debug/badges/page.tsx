@@ -13,11 +13,11 @@ import Link from 'next/link';
 
 export default function BadgeGalleryPage() {
   const ranks = [
-    { status: 'MYTHIC', label: 'Mítico (Rubi)', description: 'O Ápice da Linhagem Hall Black. Autoridade suprema e acesso ao conselho secreto.' },
-    { status: 'AMBER', label: 'Legendário Âmbar (Laranja)', description: 'Nível de prestígio superior alcançado após 12 meses de linhagem ativa.' },
-    { status: 'LEGENDARY', label: 'Lendário (Gold)', description: 'Título de alta nobreza alcançado após 9 meses de permanência no clube.' },
-    { status: 'ELITE', label: 'Membro Elite (Prata)', description: 'Patente intermediária alcançada após 4 meses como Mestre.' },
-    { status: 'MASTER', label: 'Mestre do Clube (Bronze)', description: 'Nível de Entrada. O início da jornada na elite Hall Black.' }
+    { status: 'MYTHIC', label: 'Mítico Rubi', description: 'O Ápice da Linhagem Hall Black. Autoridade suprema e acesso ao conselho secreto.' },
+    { status: 'AMBER', label: 'Legendário Âmbar', description: 'Nível de prestígio superior alcançado após 12 meses de linhagem ativa.' },
+    { status: 'LEGENDARY', label: 'Lendário', description: 'Título de alta nobreza alcançado após 9 meses de permanência no clube.' },
+    { status: 'ELITE', label: 'Membro Elite', description: 'Patente intermediária alcançada após 4 meses como Mestre.' },
+    { status: 'MASTER', label: 'Mestre do Clube', description: 'Nível de Entrada. O início da jornada na elite Hall Black.' }
   ];
 
   return (
