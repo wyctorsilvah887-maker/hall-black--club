@@ -1,4 +1,6 @@
 
+"use client"
+
 import React, { useId } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -44,58 +46,39 @@ interface RankBadgeProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   id?: string;
-  regNumber?: number;
 }
 
-export const RankBadge = ({ status, className, size = 'md', id, regNumber }: RankBadgeProps) => {
+export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps) => {
   const reactId = useId();
+  const isMythic = status === 'MYTHIC';
   const isLegendary = status === 'LEGENDARY';
   const isAmber = status === 'AMBER';
-  const isMythic = status === 'MYTHIC';
   const isElite = status === 'ELITE';
   const isMaster = status === 'MASTER' || !status;
   
   const scale = size === 'sm' ? 'scale-[0.6]' : size === 'lg' ? 'scale-125' : 'scale-100';
   
-  // Use id provided or fallback to stable reactId (stripping colons for SVG compatibility)
   const uniqueId = id ? id.replace(/\W/g, '') : reactId.replace(/:/g, '');
 
   const getColors = () => {
+    if (isMythic) return { primary: '#ff1a1a', secondary: '#660000', vibrant: '#ff4d4d', deep: '#b30000', aura: 'rgba(255,0,0,0.4)' };
     if (isLegendary) return { primary: '#FFD700', secondary: '#B8860B', vibrant: '#FFF2AC', deep: '#bf953f', aura: 'rgba(255,215,0,0.2)' };
     if (isAmber) return { primary: '#F59E0B', secondary: '#D97706', vibrant: '#fbbf24', deep: '#d97706', aura: 'rgba(245,158,11,0.2)' };
-    if (isMythic) return { primary: '#ff1a1a', secondary: '#660000', vibrant: '#ff4d4d', deep: '#b30000', aura: 'rgba(255,0,0,0.3)' };
     if (isElite) return { primary: '#E5E4E2', secondary: '#71706E', vibrant: '#FFFFFF', deep: '#A9A9A9', aura: 'rgba(229, 228, 226, 0.2)' };
-    // Default MASTER (Bronze)
     return { primary: '#CD7F32', secondary: '#8B4513', vibrant: '#E3A857', deep: '#A0522D', aura: 'rgba(205, 127, 50, 0.2)' };
   };
 
   const colors = getColors();
-  const labelText = isLegendary ? 'LENDÁRIO' : isAmber ? 'LEGENDÁRIO' : isMythic ? 'MÍTICO' : isElite ? 'ELITE' : 'MESTRE';
-  const starsCount = (isLegendary || isAmber || isMythic) ? 5 : 3;
+  const labelText = isMythic ? 'MÍTICO' : isLegendary ? 'LENDÁRIO' : isAmber ? 'ÂMBAR' : isElite ? 'ELITE' : 'MESTRE';
+  const starsCount = (isMythic || isLegendary || isAmber) ? 5 : 3;
   
   const labelFontSize = 
-    labelText === 'LEGENDÁRIO' ? '12px' : 
+    labelText === 'MÍTICO' ? '22px' : 
     labelText === 'LENDÁRIO' ? '18px' : 
-    labelText === 'MÍTICO' ? '22px' :
+    labelText === 'ÂMBAR' ? '22px' :
     '24px';
     
   const labelYPosition = '58';
-  
-  const getFallbackRegNumber = (uid?: string) => {
-    if (!uid) return '00';
-    let hash = 0;
-    for (let i = 0; i < uid.length; i++) {
-      hash = uid.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const num = (Math.abs(hash) % 60) + 1;
-    return num.toString().padStart(2, '0');
-  };
-
-  const displayNum = regNumber 
-    ? regNumber.toString().padStart(2, '0') 
-    : getFallbackRegNumber(id);
-
-  const regDisplay = `#${displayNum} / 60`;
 
   return (
     <div className={cn("relative flex items-center justify-center select-none pointer-events-none transition-transform duration-700", scale, className)}>
@@ -184,23 +167,6 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
           {labelText}
         </text>
 
-        <text 
-          x="130" 
-          y="74" 
-          textAnchor="middle" 
-          fill={colors.primary} 
-          style={{ 
-            fontFamily: 'monospace', 
-            fontWeight: 'bold', 
-            fontSize: '9px', 
-            letterSpacing: '-0.4px',
-            opacity: 0.9,
-            filter: 'brightness(1.5)'
-          }}
-        >
-          {regDisplay}
-        </text>
-
         <g mask={`url(#text-flash-mask-${uniqueId})`}>
             <rect 
               x="0" 
@@ -212,7 +178,7 @@ export const RankBadge = ({ status, className, size = 'md', id, regNumber }: Ran
             />
         </g>
 
-        <g transform={`translate(${130 - ((starsCount - 1) * 6)}, 86)`}>
+        <g transform={`translate(${130 - ((starsCount - 1) * 6)}, 80)`}>
             {Array.from({ length: starsCount }).map((_, i) => (
                 <path 
                   key={i} 

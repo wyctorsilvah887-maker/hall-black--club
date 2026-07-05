@@ -1,16 +1,13 @@
+
 "use client"
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { 
-  ShieldCheck, Crown, Gem, BookOpen, Users, Terminal, 
-  Settings, LogOut, ExternalLink, ChevronRight, 
-  Cpu, Lock, Search, History
+  ShieldCheck, BookOpen, Users, Terminal, 
+  Settings, LogOut, Cpu
 } from "lucide-react";
-import { useUser, useFirestore, useCollection, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, doc, query, where, orderBy } from 'firebase/firestore';
+import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { BlackAdvisor } from './BlackAdvisor';
@@ -26,9 +23,11 @@ export function EliteHub({ profile }: EliteHubProps) {
   const [activeTab, setActiveTab] = useState<'vault' | 'council' | 'advisor'>('vault');
   const auth = useAuth();
   
+  const isMythic = profile.status === 'MYTHIC';
   const isLegendary = profile.status === 'LEGENDARY';
   const isAmber = profile.status === 'AMBER';
-  const themeColor = isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-primary';
+  
+  const themeColor = isMythic ? 'text-primary' : isLegendary ? 'text-yellow-500' : isAmber ? 'text-orange-500' : 'text-zinc-400';
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden">
@@ -82,11 +81,11 @@ export function EliteHub({ profile }: EliteHubProps) {
              </h2>
              <div className="flex items-center gap-4">
                 <Badge variant="outline" className="border-zinc-800 bg-zinc-950/50 text-zinc-500 py-1 px-4 text-[9px] font-black tracking-widest rounded-full">
-                  # {profile.memberNumber?.toString().padStart(2, '0') || 'XX'} / 60
+                  # {profile.memberNumber?.toString().padStart(2, '0') || 'XX'}
                 </Badge>
                 <div className="h-px w-8 bg-zinc-900" />
                 <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
-                  Pedigree Score: {profile.pedigreeScore || '1.0'}
+                  Pedigree Score: {profile.pedigreeScore || '100'}
                 </span>
              </div>
           </div>
