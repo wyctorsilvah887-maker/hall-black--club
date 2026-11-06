@@ -33,11 +33,19 @@ export function BlackAdvisor({ profile }: { profile: any }) {
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Efeito de rolagem suave para o final do chat a cada atualização de logs ou carregamento
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      const scrollContainer = scrollRef.current;
+      // Pequeno timeout para garantir que o DOM renderizou o novo conteúdo
+      setTimeout(() => {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 100);
     }
-  }, [logs]);
+  }, [logs, isLoading]);
 
   const handleConsult = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,12 +92,12 @@ export function BlackAdvisor({ profile }: { profile: any }) {
       {/* HISTÓRICO COM SCROLL INDEPENDENTE */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-8 pr-2 md:pr-4 custom-scrollbar pb-10"
+        className="flex-1 overflow-y-auto space-y-12 pr-2 md:pr-4 custom-scrollbar pb-20 pt-6"
       >
         {logs.map((log, i) => (
           <div 
             key={i} 
-            className={`flex flex-col ${log.type === 'user' ? 'items-end' : 'items-start'} animate-in fade-in duration-500`}
+            className={`flex flex-col ${log.type === 'user' ? 'items-end' : 'items-start'} animate-in fade-in duration-700 slide-in-from-bottom-2`}
           >
             {log.type === 'user' ? (
               <div className="bg-zinc-900 border border-zinc-800 p-5 md:p-6 rounded-2xl md:rounded-[2rem] max-w-[85%] md:max-w-md shadow-lg">
@@ -97,8 +105,9 @@ export function BlackAdvisor({ profile }: { profile: any }) {
               </div>
             ) : log.type === 'advisor' ? (
               <div className="space-y-6 max-w-[95%] md:max-w-2xl w-full">
-                <div className="bg-zinc-950 border border-zinc-900 p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-                  <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg z-10">
+                {/* Removido overflow-hidden para permitir que o ícone -top-3 -left-3 apareça */}
+                <div className="bg-zinc-950 border border-zinc-900 p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] shadow-2xl relative">
+                  <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg z-20 shadow-xl">
                     <ShieldCheck className={cn("w-4 h-4", themeColor)} />
                   </div>
                   
@@ -109,7 +118,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
 
                     {/* SLOT DE INSÍGNIA APENAS NA PRIMEIRA MENSAGEM DO SISTEMA */}
                     {log.isInitial && (
-                      <div className="mt-4 flex flex-col items-center gap-1">
+                      <div className="mt-4 flex flex-col items-center gap-1 border-t border-zinc-900/50 pt-6">
                         <div className="scale-75 md:scale-90 origin-center py-2">
                           <RankBadge status={profile.status} id={profile.id} size="sm" />
                         </div>
@@ -145,7 +154,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           </div>
         ))}
         {isLoading && (
-          <div className="flex items-center gap-3 ml-4">
+          <div className="flex items-center gap-3 ml-4 animate-pulse">
             <Loader2 className={cn("w-4 h-4 animate-spin", themeColor)} />
             <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-zinc-700">Auditando Ecossistema Digital...</span>
           </div>
@@ -153,7 +162,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
       </div>
 
       {/* CAMPO DE INPUT FIXO NA BASE */}
-      <form onSubmit={handleConsult} className="mt-auto pt-6 md:pt-8 border-t border-zinc-900 relative bg-zinc-950 flex-shrink-0">
+      <form onSubmit={handleConsult} className="mt-auto pt-6 md:pt-8 border-t border-zinc-900 relative bg-zinc-950 flex-shrink-0 shadow-[0_-20px_40px_rgba(0,0,0,0.5)]">
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
