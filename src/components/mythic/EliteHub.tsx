@@ -26,77 +26,118 @@ export function EliteHub({ profile }: EliteHubProps) {
   const [activeTab, setActiveTab] = useState<'vault' | 'council'>('vault');
   const auth = useAuth();
   
-  // Patente dinâmica baseada no tempo
   const currentRank = useMemo(() => {
     return calculateRankByTime(profile.registrationDateTime, profile.status);
   }, [profile.registrationDateTime, profile.status]);
 
   const themeClass = getThemeClass(currentRank);
-  // text-primary herda a cor do tema aplicado no pai
   const themeColor = 'text-primary';
 
   const isAdmin = profile.role === 'admin';
 
   return (
-    <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden transition-colors duration-700", themeClass)}>
-      {/* NAVEGAÇÃO LATERAL MINIMALISTA (DESKTOP) / INFERIOR (MOBILE) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-zinc-900 md:top-0 md:bottom-auto md:h-20 md:border-t-0 md:border-b border-zinc-900/50">
-        <div className="max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center justify-between">
-          <div className="hidden md:flex items-center gap-4">
-            <Cpu className={cn("w-6 h-6", themeColor)} />
-            <h1 className={cn("text-xl font-black uppercase tracking-tighter", themeColor)}>Hall Black Hub</h1>
-          </div>
-          
-          <div className="flex-1 flex justify-center gap-6 md:gap-12">
+    <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden transition-colors duration-700 pb-24 md:pb-0", themeClass)}>
+      
+      {/* NAVEGAÇÃO CENTRALIZADA (DOCK DE ELITE) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 md:pb-0 md:top-0 md:bottom-auto md:h-20 md:px-0">
+        <div className="max-w-7xl mx-auto h-full">
+          {/* Layout Mobile: Dock Flutuante */}
+          <div className="md:hidden bg-zinc-950/80 backdrop-blur-2xl border border-zinc-900 rounded-[2.5rem] h-20 flex items-center justify-around px-4 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
             {[
-              { id: 'vault', icon: BookOpen, label: 'O Cofre', type: 'tab' },
+              { id: 'vault', icon: BookOpen, label: 'Cofre', type: 'tab' },
               { id: 'council', icon: Users, label: 'Conselho', type: 'tab' },
-              { id: 'advisor', icon: Terminal, label: 'Advisor', type: 'link', href: '/advisor' }
+              { id: 'advisor', icon: Terminal, label: 'IA', type: 'link', href: '/advisor' },
+              { id: 'settings', icon: Settings, label: 'Ajustes', type: 'link', href: '/settings' }
             ].map((item) => (
               item.type === 'tab' ? (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
                   className={cn(
-                    "flex flex-col md:flex-row items-center gap-2 py-4 md:py-0 transition-all group",
-                    activeTab === item.id ? themeColor : 'text-zinc-600 hover:text-zinc-400'
+                    "relative flex flex-col items-center gap-1 transition-all duration-300",
+                    activeTab === item.id ? themeColor : 'text-zinc-600'
                   )}
                 >
-                  <item.icon className={cn("w-5 h-5 group-active:scale-90 transition-transform", activeTab === item.id ? themeColor : '')} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                  <item.icon className={cn("w-6 h-6", activeTab === item.id ? "scale-110" : "scale-100")} />
+                  <span className="text-[8px] font-black uppercase tracking-widest">{item.label}</span>
+                  {activeTab === item.id && (
+                    <div className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
+                  )}
                 </button>
               ) : (
                 <Link
                   key={item.id}
                   href={item.href!}
-                  className={cn(
-                    "flex flex-col md:flex-row items-center gap-2 py-4 md:py-0 transition-all group text-zinc-600 hover:text-primary"
-                  )}
+                  className="flex flex-col items-center gap-1 text-zinc-600 hover:text-primary transition-colors"
                 >
-                  <item.icon className="w-5 h-5 group-active:scale-90 transition-transform" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                  <item.icon className="w-6 h-6" />
+                  <span className="text-[8px] font-black uppercase tracking-widest">{item.label}</span>
                 </Link>
               )
             ))}
+            
+            <button onClick={() => signOut(auth)} className="flex flex-col items-center gap-1 text-zinc-600 hover:text-red-500">
+              <LogOut className="w-6 h-6" />
+              <span className="text-[8px] font-black uppercase tracking-widest">Sair</span>
+            </button>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
-             {isAdmin && (
-               <Link href="/staff" title="Painel Staff" className="p-2 text-primary hover:text-white transition-colors animate-pulse">
-                 <ShieldAlert className="w-5 h-5" />
+          {/* Layout Desktop: Barra Superior Clássica */}
+          <div className="hidden md:flex h-full items-center justify-between px-6 bg-black/50 backdrop-blur-xl border-b border-zinc-900/50">
+            <div className="flex items-center gap-4">
+              <Cpu className={cn("w-6 h-6", themeColor)} />
+              <h1 className={cn("text-xl font-black uppercase tracking-tighter", themeColor)}>Hall Black Hub</h1>
+            </div>
+            
+            <div className="flex items-center gap-12">
+              {[
+                { id: 'vault', icon: BookOpen, label: 'O Cofre', type: 'tab' },
+                { id: 'council', icon: Users, label: 'Conselho', type: 'tab' },
+                { id: 'advisor', icon: Terminal, label: 'Advisor IA', type: 'link', href: '/advisor' }
+              ].map((item) => (
+                item.type === 'tab' ? (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id as any)}
+                    className={cn(
+                      "flex items-center gap-2 py-2 transition-all group border-b-2",
+                      activeTab === item.id ? cn("border-primary", themeColor) : 'border-transparent text-zinc-600 hover:text-zinc-400'
+                    )}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{item.label}</span>
+                  </button>
+                ) : (
+                  <Link
+                    key={item.id}
+                    href={item.href!}
+                    className="flex items-center gap-2 py-2 text-zinc-600 hover:text-primary transition-all"
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{item.label}</span>
+                  </Link>
+                )
+              ))}
+            </div>
+
+            <div className="flex items-center gap-4">
+               {isAdmin && (
+                 <Link href="/staff" className="p-2 text-primary hover:text-white transition-colors animate-pulse">
+                   <ShieldAlert className="w-5 h-5" />
+                 </Link>
+               )}
+               <Link href="/settings" className="p-2 text-zinc-600 hover:text-white transition-colors">
+                 <Settings className="w-5 h-5" />
                </Link>
-             )}
-             <Link href="/settings" className="p-2 text-zinc-600 hover:text-white transition-colors">
-               <Settings className="w-5 h-5" />
-             </Link>
-             <button onClick={() => signOut(auth)} className="p-2 text-zinc-600 hover:text-red-500 transition-colors">
-               <LogOut className="w-5 h-5" />
-             </button>
+               <button onClick={() => signOut(auth)} className="p-2 text-zinc-600 hover:text-red-500 transition-colors">
+                 <LogOut className="w-5 h-5" />
+               </button>
+            </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 pt-10 pb-32 md:pt-32 md:pb-12 space-y-12 relative z-10">
+      <main className="max-w-7xl mx-auto px-6 pt-10 pb-12 md:pt-32 space-y-12 relative z-10">
         {/* CABEÇALHO DE PRESTÍGIO */}
         <section className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 border-b border-zinc-900 pb-12">
           <div className="space-y-4">
@@ -129,7 +170,6 @@ export function EliteHub({ profile }: EliteHubProps) {
           </div>
         </section>
 
-        {/* ATALHO STAFF (CONDICIONAL) */}
         {isAdmin && (
           <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
             <Button asChild variant="outline" className="w-full h-14 md:h-16 rounded-2xl border-primary/30 bg-primary/5 text-primary font-black uppercase tracking-widest hover:bg-primary/10 group transition-all">
@@ -142,14 +182,12 @@ export function EliteHub({ profile }: EliteHubProps) {
           </div>
         )}
 
-        {/* ÁREA DE CONTEÚDO DINÂMICO */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
           {activeTab === 'vault' && <TheVault profile={{ ...profile, status: currentRank }} />}
           {activeTab === 'council' && <HighCouncil profile={profile} />}
         </div>
       </main>
 
-      {/* MARCA D'ÁGUA LATERAL DE PROTOCOLO */}
       <footer className="fixed top-1/2 -right-16 md:-right-20 -translate-y-1/2 hidden md:block opacity-10 pointer-events-none rotate-180 z-0">
         <p className="text-[7px] md:text-[8px] font-black uppercase tracking-[1.2em] vertical-text text-zinc-400">
           Hall Black Elite Protocol v2.0
