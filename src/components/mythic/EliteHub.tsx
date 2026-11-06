@@ -11,7 +11,6 @@ import {
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
-import { BlackAdvisor } from './BlackAdvisor';
 import { HighCouncil } from './HighCouncil';
 import { TheVault } from './TheVault';
 import { RankBadge } from './MythicIcons';
@@ -24,7 +23,7 @@ interface EliteHubProps {
 }
 
 export function EliteHub({ profile }: EliteHubProps) {
-  const [activeTab, setActiveTab] = useState<'vault' | 'council' | 'advisor'>('vault');
+  const [activeTab, setActiveTab] = useState<'vault' | 'council'>('vault');
   const auth = useAuth();
   
   // Patente dinâmica baseada no tempo
@@ -50,21 +49,34 @@ export function EliteHub({ profile }: EliteHubProps) {
           
           <div className="flex-1 flex justify-center gap-6 md:gap-12">
             {[
-              { id: 'vault', icon: BookOpen, label: 'O Cofre' },
-              { id: 'council', icon: Users, label: 'Conselho' },
-              { id: 'advisor', icon: Terminal, label: 'Advisor' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={cn(
-                  "flex flex-col md:flex-row items-center gap-2 py-4 md:py-0 transition-all group",
-                  activeTab === tab.id ? themeColor : 'text-zinc-600 hover:text-zinc-400'
-                )}
-              >
-                <tab.icon className={cn("w-5 h-5 group-active:scale-90 transition-transform", activeTab === tab.id ? themeColor : '')} />
-                <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
-              </button>
+              { id: 'vault', icon: BookOpen, label: 'O Cofre', type: 'tab' },
+              { id: 'council', icon: Users, label: 'Conselho', type: 'tab' },
+              { id: 'advisor', icon: Terminal, label: 'Advisor', type: 'link', href: '/advisor' }
+            ].map((item) => (
+              item.type === 'tab' ? (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={cn(
+                    "flex flex-col md:flex-row items-center gap-2 py-4 md:py-0 transition-all group",
+                    activeTab === item.id ? themeColor : 'text-zinc-600 hover:text-zinc-400'
+                  )}
+                >
+                  <item.icon className={cn("w-5 h-5 group-active:scale-90 transition-transform", activeTab === item.id ? themeColor : '')} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                </button>
+              ) : (
+                <Link
+                  key={item.id}
+                  href={item.href!}
+                  className={cn(
+                    "flex flex-col md:flex-row items-center gap-2 py-4 md:py-0 transition-all group text-zinc-600 hover:text-primary"
+                  )}
+                >
+                  <item.icon className="w-5 h-5 group-active:scale-90 transition-transform" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                </Link>
+              )
             ))}
           </div>
 
@@ -134,7 +146,6 @@ export function EliteHub({ profile }: EliteHubProps) {
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
           {activeTab === 'vault' && <TheVault profile={{ ...profile, status: currentRank }} />}
           {activeTab === 'council' && <HighCouncil profile={profile} />}
-          {activeTab === 'advisor' && <BlackAdvisor profile={{ ...profile, status: currentRank }} />}
         </div>
       </main>
 
