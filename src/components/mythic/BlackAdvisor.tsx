@@ -1,24 +1,34 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Sparkles } from "lucide-react";
+import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Camera } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Componente Black Advisor - Business Edition.
  * Interface de terminal imersiva para consultoria de negócios e SaaS.
- * Otimizado para exibição de imagens geradas por IA.
+ * Removida a exibição de imagens geradas; adicionado slot de foto na saudação inicial.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [logs, setLogs] = useState<any[]>([]);
+  
+  // Inicializamos com a primeira mensagem do Advisor contendo o slot de foto
+  const [logs, setLogs] = useState<any[]>([
+    { 
+      type: 'advisor', 
+      content: `Saudações, Membro. Link neural estabelecido. Sou seu Advisor estratégico para SaaS, vendas e arquitetura de negócios. Submeta seu projeto para análise sem filtros.`,
+      insights: ["Aguardando entrada estratégica"],
+      note: "CONEXÃO SEGURA NÍVEL " + profile.status,
+      isInitial: true
+    }
+  ]);
+  
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,8 +57,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           type: 'advisor', 
           content: result.data.response,
           insights: result.data.actionableInsights,
-          note: result.data.confidentialityNote,
-          image: result.data.generatedImage
+          note: result.data.confidentialityNote
         }]);
       } else {
         setLogs(prev => [...prev, { 
@@ -75,20 +84,6 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         ref={scrollRef}
         className="flex-1 overflow-y-auto space-y-8 pr-2 md:pr-4 custom-scrollbar pb-10"
       >
-        {logs.length === 0 && (
-          <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-20">
-            <Cpu className="w-12 h-12 md:w-16 md:h-16" />
-            <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.5em] max-w-xs leading-relaxed">
-                Terminal de Estratégia Ativo
-              </p>
-              <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-500">
-                Consultoria de Linhagem via IA
-              </p>
-            </div>
-          </div>
-        )}
-
         {logs.map((log, i) => (
           <div 
             key={i} 
@@ -106,26 +101,19 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                   </div>
                   
                   <div className="relative z-10 space-y-6">
+                    {/* SLOT DE FOTO APENAS NA PRIMEIRA MENSAGEM */}
+                    {log.isInitial && (
+                      <div className="relative w-full aspect-square md:aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-dashed border-zinc-800 bg-zinc-900/50 flex flex-col items-center justify-center gap-4 group transition-colors hover:border-primary/30">
+                         <div className="p-4 rounded-full bg-black/40 border border-zinc-800">
+                           <Camera className="w-6 h-6 text-zinc-700" />
+                         </div>
+                         <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.4em]">Campo de Foto Protocolar</p>
+                      </div>
+                    )}
+
                     <p className="text-sm font-medium leading-relaxed text-zinc-300 italic">
                       {log.content}
                     </p>
-
-                    {log.image && (
-                      <div className="relative w-full aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-zinc-900 shadow-inner group bg-zinc-900">
-                        <img 
-                          src={log.image} 
-                          alt="Elite Business Concept" 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-                        <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-none">
-                           <div className="p-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-zinc-800">
-                             <Sparkles className="w-3 h-3 text-primary" />
-                           </div>
-                           <span className="text-[8px] font-black text-white uppercase tracking-widest">Conceito de Estratégia</span>
-                        </div>
-                      </div>
-                    )}
                     
                     {log.insights && log.insights.length > 0 && (
                       <div className="pt-8 border-t border-zinc-900 space-y-4">
@@ -162,12 +150,12 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         )}
       </div>
 
-      {/* CAMPO DE INPUT FIXO NA BASE DO COMPONENTE */}
+      {/* CAMPO DE INPUT FIXO NA BASE */}
       <form onSubmit={handleConsult} className="mt-auto pt-6 md:pt-8 border-t border-zinc-900 relative bg-zinc-950 flex-shrink-0">
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="SUBMETER SITE, SAAS OU ESTRATÉGIA PARA ANÁLISE SEM FILTROS..."
+          placeholder="SUBMETER SITE, SAAS OU ESTRATÉGIA PARA ANÁLISE..."
           disabled={isLoading}
           className="bg-zinc-900/50 border-zinc-800 h-16 md:h-20 rounded-xl md:rounded-[2rem] px-6 md:px-8 text-xs md:text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-20 md:pr-32"
         />

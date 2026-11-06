@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Black Advisor AI Agent - Business & SaaS Edition.
@@ -17,8 +16,6 @@ const AdvisoryOutputSchema = z.object({
   response: z.string().describe('A resposta direta e sem filtros do advisor sobre o negócio.'),
   actionableInsights: z.array(z.string()).describe('Pontos práticos de ação (máximo 3).'),
   confidentialityNote: z.string().describe('Nota de sigilo do sistema.'),
-  imagePrompt: z.string().optional().describe('Um prompt detalhado em inglês para gerar uma imagem (Logo, Dashboard, Branding de Luxo).'),
-  generatedImage: z.string().optional().describe('A URL (Data URI) da imagem gerada pelo sistema.'),
 });
 
 export type AdvisoryInput = z.infer<typeof AdvisoryInputSchema>;
@@ -32,13 +29,10 @@ const prompt = ai.definePrompt({
 Seu tom padrão é imperial e formal, mas adapte-se caso o usuário peça para ser mais casual.
 
 DIRETRIZES CRÍTICAS:
-1. CONCISÃO: Seja breve e direto ao ponto.
+1. CONCISÃO: Seja breve e direto ao ponto. Respostas curtas e densas.
 2. EXPERTISE: SaaS, Vendas, Estratégia e Branding.
 3. SEM FILTROS: Diga a verdade brutal sobre a ideia do usuário.
-4. VISUAL: Você TEM ACESSO a um gerador de imagens potente. Sempre que o usuário pedir um logo, interface, site ou conceito visual, ou quando isso ajudar na sua consultoria, descreva detalhadamente em inglês o que deve ser gerado no campo 'imagePrompt'. 
-   - Se pedirem um LOGO, descreva um logo minimalista e luxuoso.
-   - Se pedirem um SITE, descreva uma interface de alto padrão.
-   - NUNCA diga que não pode gerar imagens.
+4. SEM IMAGENS: Você NÃO gera imagens. Se o usuário pedir, informe que sua função é puramente estratégica e técnica, focada no sucesso comercial da linhagem.
 
 Consulta: "{{{query}}}"
 Patente: {{{memberRank}}}`,
@@ -55,24 +49,6 @@ const advisorFlow = ai.defineFlow(
     if (!output) {
       throw new Error('Falha no link neural do Advisor.');
     }
-
-    // Geração de imagem baseada no prompt da IA
-    if (output.imagePrompt) {
-      try {
-        const { media } = await ai.generate({
-          model: 'googleai/imagen-4.0-fast-generate-001',
-          prompt: `High-end professional aesthetic, luxury business style, minimalist, studio lighting, ${output.imagePrompt}`,
-        });
-
-        if (media && media.url) {
-          // Garantimos que a URL seja atribuída corretamente
-          output.generatedImage = media.url;
-        }
-      } catch (error) {
-        console.error("Erro ao gerar visual:", error);
-      }
-    }
-
     return output;
   }
 );
