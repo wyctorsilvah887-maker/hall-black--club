@@ -82,7 +82,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                 Terminal de Estratégia Ativo
               </p>
               <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-500">
-                SaaS • Vendas • Sites • Serviços
+                Consultoria de Linhagem via IA
               </p>
             </div>
           </div>
