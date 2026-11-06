@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -8,6 +9,11 @@ import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, 
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import NextImage from 'next/image';
+
+/**
+ * @fileOverview Componente Black Advisor.
+ * Gerencia a interação de chat e exibição de imagens geradas em layout flexível.
+ */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
@@ -63,29 +69,15 @@ export function BlackAdvisor({ profile }: { profile: any }) {
   const themeColor = 'text-primary';
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 h-[70vh] flex flex-col">
-      <div className="flex items-center justify-between border-b border-zinc-900 pb-6">
-        <div className="flex items-center gap-4">
-          <Terminal className={themeColor} />
-          <div>
-            <h3 className="text-xl font-black uppercase tracking-tighter">Black Advisor</h3>
-            <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Consultoria de Linhagem via IA</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-           <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Sistema Operacional</span>
-        </div>
-      </div>
-
+    <div className="flex-1 flex flex-col h-full w-full">
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-8 pr-4 custom-scrollbar pb-10"
+        className="flex-1 overflow-y-auto space-y-8 pr-2 md:pr-4 custom-scrollbar pb-10"
       >
         {logs.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-20">
-            <Cpu className="w-16 h-16" />
-            <p className="text-[10px] font-black uppercase tracking-[0.5em] max-w-xs">
+            <Cpu className="w-12 h-12 md:w-16 md:h-16" />
+            <p className="text-[10px] font-black uppercase tracking-[0.5em] max-w-xs leading-relaxed">
               Aguardando entrada de dados para processamento de elite.
             </p>
           </div>
@@ -97,12 +89,12 @@ export function BlackAdvisor({ profile }: { profile: any }) {
             className={`flex flex-col ${log.type === 'user' ? 'items-end' : 'items-start'} animate-in fade-in duration-500`}
           >
             {log.type === 'user' ? (
-              <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] max-w-md shadow-lg">
-                <p className="text-xs font-bold uppercase tracking-tight text-white">{log.content}</p>
+              <div className="bg-zinc-900 border border-zinc-800 p-5 md:p-6 rounded-2xl md:rounded-[2rem] max-w-[85%] md:max-w-md shadow-lg">
+                <p className="text-xs font-bold uppercase tracking-tight text-white leading-relaxed">{log.content}</p>
               </div>
             ) : log.type === 'advisor' ? (
-              <div className="space-y-6 max-w-2xl w-full">
-                <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+              <div className="space-y-6 max-w-[95%] md:max-w-2xl w-full">
+                <div className="bg-zinc-950 border border-zinc-900 p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] shadow-2xl relative overflow-hidden">
                   <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg z-10">
                     <ShieldCheck className={cn("w-4 h-4", themeColor)} />
                   </div>
@@ -113,7 +105,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                     </p>
 
                     {log.image && (
-                      <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-zinc-900 shadow-inner group">
+                      <div className="relative w-full aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-zinc-900 shadow-inner group">
                         <NextImage 
                           src={log.image} 
                           alt="Elite Visual Concept" 
@@ -136,7 +128,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                          <p className={cn("text-[9px] font-black uppercase tracking-widest", themeColor)}>Insights Acionáveis</p>
                          <ul className="space-y-3">
                            {log.insights.map((insight: string, idx: number) => (
-                             <li key={idx} className="flex items-start gap-3 text-[11px] text-zinc-500 font-bold uppercase">
+                             <li key={idx} className="flex items-start gap-3 text-[10px] md:text-[11px] text-zinc-500 font-bold uppercase">
                                <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
                                {insight}
                              </li>
@@ -146,12 +138,12 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                     )}
                   </div>
                 </div>
-                <p className="text-[8px] text-zinc-800 font-black uppercase tracking-[0.4em] ml-4">
+                <p className="text-[7px] md:text-[8px] text-zinc-800 font-black uppercase tracking-[0.4em] ml-4">
                   DOC: {log.note}
                 </p>
               </div>
             ) : (
-              <div className="flex items-center gap-3 text-red-900 text-[10px] font-black uppercase tracking-widest bg-red-950/20 p-5 rounded-[2rem] border border-red-900/30 max-w-md">
+              <div className="flex items-center gap-3 text-red-900 text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-red-950/20 p-4 md:p-5 rounded-2xl md:rounded-[2rem] border border-red-900/30 max-w-md">
                 <AlertTriangle className="w-5 h-5 flex-shrink-0" />
                 <p>{log.content}</p>
               </div>
@@ -161,25 +153,25 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         {isLoading && (
           <div className="flex items-center gap-3 ml-4">
             <Loader2 className={cn("w-4 h-4 animate-spin", themeColor)} />
-            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-700">Sincronizando Linhagem Visual...</span>
+            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-zinc-700">Sincronizando Linhagem Visual...</span>
           </div>
         )}
       </div>
 
-      <form onSubmit={handleConsult} className="mt-auto pt-6 border-t border-zinc-900 relative">
+      <form onSubmit={handleConsult} className="mt-auto py-6 md:py-10 border-t border-zinc-900 relative bg-transparent">
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="SOLICITAR CONSULTORIA TÉCNICA OU VISUAL..."
           disabled={isLoading}
-          className="bg-zinc-950/50 border-zinc-800 h-20 rounded-[2rem] px-8 text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-32"
+          className="bg-zinc-950/80 border-zinc-800 h-16 md:h-20 rounded-xl md:rounded-[2rem] px-6 md:px-8 text-xs md:text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-20 md:pr-32"
         />
         <Button 
           type="submit" 
           disabled={isLoading || !query.trim()}
-          className={cn("absolute right-4 top-[3.1rem] h-12 w-12 rounded-2xl bg-primary text-primary-foreground transition-all hover:scale-105 active:scale-95")}
+          className={cn("absolute right-2 md:right-4 top-[2.1rem] md:top-[3.1rem] h-10 w-10 md:h-12 md:w-12 rounded-lg md:rounded-2xl bg-primary text-primary-foreground transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20")}
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
         </Button>
       </form>
     </div>
