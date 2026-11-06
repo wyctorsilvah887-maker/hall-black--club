@@ -1,13 +1,13 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle } from "lucide-react";
+import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Image as ImageIcon, Sparkles } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
+import NextImage from 'next/image';
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
@@ -41,7 +41,8 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           type: 'advisor', 
           content: result.data.response,
           insights: result.data.actionableInsights,
-          note: result.data.confidentialityNote
+          note: result.data.confidentialityNote,
+          image: result.data.generatedImage
         }]);
       } else {
         setLogs(prev => [...prev, { 
@@ -79,7 +80,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-8 pr-4 custom-scrollbar"
+        className="flex-1 overflow-y-auto space-y-8 pr-4 custom-scrollbar pb-10"
       >
         {logs.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-20">
@@ -96,32 +97,54 @@ export function BlackAdvisor({ profile }: { profile: any }) {
             className={`flex flex-col ${log.type === 'user' ? 'items-end' : 'items-start'} animate-in fade-in duration-500`}
           >
             {log.type === 'user' ? (
-              <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] max-w-md">
+              <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] max-w-md shadow-lg">
                 <p className="text-xs font-bold uppercase tracking-tight text-white">{log.content}</p>
               </div>
             ) : log.type === 'advisor' ? (
-              <div className="space-y-6 max-w-2xl">
-                <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-[2.5rem] shadow-2xl relative">
-                  <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg">
+              <div className="space-y-6 max-w-2xl w-full">
+                <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                  <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg z-10">
                     <ShieldCheck className={cn("w-4 h-4", themeColor)} />
                   </div>
-                  <p className="text-sm font-medium leading-relaxed text-zinc-300 italic">
-                    {log.content}
-                  </p>
                   
-                  {log.insights && log.insights.length > 0 && (
-                    <div className="mt-8 pt-8 border-t border-zinc-900 space-y-4">
-                       <p className={cn("text-[9px] font-black uppercase tracking-widest", themeColor)}>Insights Acionáveis</p>
-                       <ul className="space-y-3">
-                         {log.insights.map((insight: string, idx: number) => (
-                           <li key={idx} className="flex items-start gap-3 text-[11px] text-zinc-500 font-bold uppercase">
-                             <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                             {insight}
-                           </li>
-                         ))}
-                       </ul>
-                    </div>
-                  )}
+                  <div className="relative z-10 space-y-6">
+                    <p className="text-sm font-medium leading-relaxed text-zinc-300 italic">
+                      {log.content}
+                    </p>
+
+                    {log.image && (
+                      <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-zinc-900 shadow-inner group">
+                        <NextImage 
+                          src={log.image} 
+                          alt="Elite Visual Concept" 
+                          fill 
+                          className="object-cover transition-transform duration-700 group-hover:scale-105" 
+                          unoptimized
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                           <div className="p-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-zinc-800">
+                             <Sparkles className="w-3 h-3 text-primary" />
+                           </div>
+                           <span className="text-[8px] font-black text-white uppercase tracking-widest">Conceito Gerado</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {log.insights && log.insights.length > 0 && (
+                      <div className="pt-8 border-t border-zinc-900 space-y-4">
+                         <p className={cn("text-[9px] font-black uppercase tracking-widest", themeColor)}>Insights Acionáveis</p>
+                         <ul className="space-y-3">
+                           {log.insights.map((insight: string, idx: number) => (
+                             <li key={idx} className="flex items-start gap-3 text-[11px] text-zinc-500 font-bold uppercase">
+                               <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                               {insight}
+                             </li>
+                           ))}
+                         </ul>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <p className="text-[8px] text-zinc-800 font-black uppercase tracking-[0.4em] ml-4">
                   DOC: {log.note}
@@ -138,7 +161,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         {isLoading && (
           <div className="flex items-center gap-3 ml-4">
             <Loader2 className={cn("w-4 h-4 animate-spin", themeColor)} />
-            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-700">Processando Linhagem...</span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-700">Sincronizando Linhagem Visual...</span>
           </div>
         )}
       </div>
@@ -147,14 +170,14 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="SOLICITAR CONSULTORIA TÉCNICA..."
+          placeholder="SOLICITAR CONSULTORIA TÉCNICA OU VISUAL..."
           disabled={isLoading}
           className="bg-zinc-950/50 border-zinc-800 h-20 rounded-[2rem] px-8 text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-32"
         />
         <Button 
           type="submit" 
           disabled={isLoading || !query.trim()}
-          className={cn("absolute right-4 top-[3.1rem] h-12 w-12 rounded-2xl bg-primary text-primary-foreground")}
+          className={cn("absolute right-4 top-[3.1rem] h-12 w-12 rounded-2xl bg-primary text-primary-foreground transition-all hover:scale-105 active:scale-95")}
         >
           <ChevronRight className="w-6 h-6" />
         </Button>
