@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useMemo } from 'react';
@@ -138,48 +137,53 @@ export function EliteHub({ profile }: EliteHubProps) {
       </nav>
 
       <main className="max-w-7xl mx-auto px-6 pt-10 pb-12 md:pt-32 space-y-12 relative z-10">
-        {/* CABEÇALHO DE PRESTÍGIO */}
-        <section className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 border-b border-zinc-900 pb-12">
-          <div className="space-y-4">
-             <div className="flex items-center gap-3 text-zinc-500">
-               <ShieldCheck className={cn("w-4 h-4", themeColor)} />
-               <span className="text-[10px] font-black uppercase tracking-[0.5em]">Identidade Verificada</span>
-             </div>
-             <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tight leading-none">
-               {profile.name}
-             </h2>
-             <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className={cn("py-1 px-4 text-[9px] font-black tracking-widest rounded-full bg-zinc-950/50 border-zinc-800", themeColor)}>
-                    {getRankLabel(currentRank)}
-                  </Badge>
-                  <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[8px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">
-                    <Link href="/debug/badges" className="flex items-center gap-1">
-                      <ExternalLink className="w-3 h-3" /> Ver Hierarquia
-                    </Link>
-                  </Button>
-                </div>
-                <div className="hidden sm:block h-px w-8 bg-zinc-900" />
-                <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
-                  Pedigree Score: {profile.pedigreeScore || '100'}
-                </span>
-             </div>
-          </div>
-          <div className="scale-75 md:scale-100 origin-left md:origin-right">
-             <RankBadge status={currentRank} id={profile.id} size="md" />
-          </div>
-        </section>
+        
+        {/* CABEÇALHO DE PRESTÍGIO - OCULTO NA ABA CONSELHO */}
+        {activeTab !== 'council' && (
+          <>
+            <section className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 border-b border-zinc-900 pb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+              <div className="space-y-4">
+                 <div className="flex items-center gap-3 text-zinc-500">
+                   <ShieldCheck className={cn("w-4 h-4", themeColor)} />
+                   <span className="text-[10px] font-black uppercase tracking-[0.5em]">Identidade Verificada</span>
+                 </div>
+                 <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tight leading-none">
+                   {profile.name}
+                 </h2>
+                 <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className={cn("py-1 px-4 text-[9px] font-black tracking-widest rounded-full bg-zinc-950/50 border-zinc-800", themeColor)}>
+                        {getRankLabel(currentRank)}
+                      </Badge>
+                      <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[8px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">
+                        <Link href="/debug/badges" className="flex items-center gap-1">
+                          <ExternalLink className="w-3 h-3" /> Ver Hierarquia
+                        </Link>
+                      </Button>
+                    </div>
+                    <div className="hidden sm:block h-px w-8 bg-zinc-900" />
+                    <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
+                      Pedigree Score: {profile.pedigreeScore || '100'}
+                    </span>
+                 </div>
+              </div>
+              <div className="scale-75 md:scale-100 origin-left md:origin-right">
+                 <RankBadge status={currentRank} id={profile.id} size="md" />
+              </div>
+            </section>
 
-        {isAdmin && (
-          <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
-            <Button asChild variant="outline" className="w-full h-14 md:h-16 rounded-2xl border-primary/30 bg-primary/5 text-primary font-black uppercase tracking-widest hover:bg-primary/10 group transition-all">
-              <Link href="/staff" className="flex items-center justify-center gap-3">
-                <ShieldAlert className="w-5 h-5 animate-pulse" />
-                Acessar Terminal Staff
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
-          </div>
+            {isAdmin && (
+              <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
+                <Button asChild variant="outline" className="w-full h-14 md:h-16 rounded-2xl border-primary/30 bg-primary/5 text-primary font-black uppercase tracking-widest hover:bg-primary/10 group transition-all">
+                  <Link href="/staff" className="flex items-center justify-center gap-3">
+                    <ShieldAlert className="w-5 h-5 animate-pulse" />
+                    Acessar Terminal Staff
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </>
         )}
 
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
