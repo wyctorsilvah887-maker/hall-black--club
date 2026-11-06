@@ -8,18 +8,19 @@ import { Input } from "@/components/ui/input";
 import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Camera } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
+import { RankBadge } from './MythicIcons';
 
 /**
  * @fileOverview Componente Black Advisor - Business Edition.
  * Interface de terminal imersiva para consultoria de negócios e SaaS.
- * Exibe uma saudação automática do sistema com slot de imagem ao carregar.
+ * Exibe uma saudação automática do sistema com a insígnia do membro ao carregar.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  // Inicializamos com a primeira mensagem do Sistema (não IA) contendo o slot de foto
+  // Inicializamos com a primeira mensagem do Sistema (não IA)
   const [logs, setLogs] = useState<any[]>([
     { 
       type: 'advisor', 
@@ -102,19 +103,19 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                   </div>
                   
                   <div className="relative z-10 space-y-6">
-                    {/* SLOT DE FOTO APENAS NA PRIMEIRA MENSAGEM DO SISTEMA */}
-                    {log.isInitial && (
-                      <div className="relative w-full aspect-square md:aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-dashed border-zinc-800 bg-zinc-900/50 flex flex-col items-center justify-center gap-4 group transition-colors hover:border-primary/30">
-                         <div className="p-4 rounded-full bg-black/40 border border-zinc-800">
-                           <Camera className="w-6 h-6 text-zinc-700" />
-                         </div>
-                         <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.4em]">Campo de Foto Protocolar</p>
-                      </div>
-                    )}
-
                     <p className="text-sm font-medium leading-relaxed text-zinc-300 italic">
                       {log.content}
                     </p>
+
+                    {/* SLOT DE INSÍGNIA APENAS NA PRIMEIRA MENSAGEM DO SISTEMA */}
+                    {log.isInitial && (
+                      <div className="mt-4 flex flex-col items-center gap-1">
+                        <div className="scale-75 md:scale-90 origin-center py-2">
+                          <RankBadge status={profile.status} id={profile.id} size="sm" />
+                        </div>
+                        <p className="text-[7px] font-black text-zinc-800 uppercase tracking-[0.5em]">Identidade Confirmada</p>
+                      </div>
+                    )}
                     
                     {log.insights && log.insights.length > 0 && (
                       <div className="pt-8 border-t border-zinc-900 space-y-4">
