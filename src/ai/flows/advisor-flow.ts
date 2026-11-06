@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Black Advisor AI Agent - Business & SaaS Edition.
@@ -60,10 +61,11 @@ const advisorFlow = ai.defineFlow(
       try {
         const { media } = await ai.generate({
           model: 'googleai/imagen-4.0-fast-generate-001',
-          prompt: `Professional high-end studio quality, luxury aesthetic, clean composition, business elite style, ${output.imagePrompt}`,
+          prompt: `High-end professional aesthetic, luxury business style, minimalist, studio lighting, ${output.imagePrompt}`,
         });
 
         if (media && media.url) {
+          // Garantimos que a URL seja atribuída corretamente
           output.generatedImage = media.url;
         }
       } catch (error) {

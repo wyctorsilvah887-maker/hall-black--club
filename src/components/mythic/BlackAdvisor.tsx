@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -7,11 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Sparkles } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
-import NextImage from 'next/image';
 
 /**
  * @fileOverview Componente Black Advisor - Business Edition.
  * Interface de terminal imersiva para consultoria de negócios e SaaS.
+ * Otimizado para exibição de imagens geradas por IA.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
@@ -110,16 +111,14 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                     </p>
 
                     {log.image && (
-                      <div className="relative w-full aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-zinc-900 shadow-inner group">
-                        <NextImage 
+                      <div className="relative w-full aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-zinc-900 shadow-inner group bg-zinc-900">
+                        <img 
                           src={log.image} 
                           alt="Elite Business Concept" 
-                          fill 
-                          className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                          unoptimized
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                        <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-none">
                            <div className="p-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-zinc-800">
                              <Sparkles className="w-3 h-3 text-primary" />
                            </div>
