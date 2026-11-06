@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Lock, FileText, ChevronRight, Zap, ArrowLeft, BookOpen, DatabaseZap, Loader2 } from "lucide-react";
+import { Lock, FileText, ChevronRight, Zap, ArrowLeft, BookOpen, DatabaseZap, Loader2, BarChart3, TrendingUp, Landmark } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -19,15 +19,15 @@ import {
 } from "@/components/ui/dialog";
 
 /**
- * @fileOverview O Cofre (The Vault).
- * Repositório central de conhecimento técnico e estratégico.
- * Filtra conteúdos por pilares de Genética, Biohacking e Patrimônio.
+ * @fileOverview O Cofre (The Vault) - Business Edition.
+ * Repositório central de inteligência estratégica e modelos de negócio.
+ * Pilares: ESTRATÉGIA, SAAS, EQUITY.
  */
 
 interface VaultArticle {
   id: string;
   title: string;
-  category: 'GENETICS' | 'HEALTH' | 'LIFESTYLE';
+  category: 'STRATEGY' | 'SAAS' | 'EQUITY';
   content: string;
   timestamp: string;
   restrictedTo?: string;
@@ -48,9 +48,9 @@ export function TheVault({ profile }: { profile: any }) {
   const { data: articles, isLoading } = useCollection<VaultArticle>(vaultQuery as any);
 
   const categories = [
-    { id: 'GENETICS', label: 'Genética Avançada', icon: Zap },
-    { id: 'HEALTH', label: 'Biohacking Pet', icon: Zap },
-    { id: 'LIFESTYLE', label: 'Patrimônio Elite', icon: Zap },
+    { id: 'STRATEGY', label: 'Estratégia & Escala', icon: TrendingUp },
+    { id: 'SAAS', label: 'Modelos SaaS', icon: BarChart3 },
+    { id: 'EQUITY', label: 'Engenharia de Equity', icon: Landmark },
   ];
 
   const filteredArticles = articles?.filter(art => 
@@ -65,23 +65,23 @@ export function TheVault({ profile }: { profile: any }) {
     
     const sampleArticles = [
       {
-        title: "PROTOCOLO G-26: PUREZA DE LINHAGEM",
-        category: "GENETICS",
-        content: "Este documento detalha o mapeamento genômico necessário para manter a acreditação Hall Black. O foco é na estabilidade dos marcadores de elite através das gerações, garantindo que a sucessão biológica mantenha os padrões exigidos pelo Alto Conselho. Analisamos a preservação de traços dominantes e a eliminação de recessividades indesejadas na linhagem suprema.",
+        title: "PROTOCOLO S-26: ESCALA EXPONENCIAL",
+        category: "STRATEGY",
+        content: "Este documento detalha o framework de crescimento utilizado pelas maiores startups de elite. O foco é na otimização do CAC (Custo de Aquisição de Cliente) e na maximização do LTV (Lifetime Value). Analisamos táticas de blitzscaling e a construção de fossos competitivos inabaláveis no mercado atual.",
         timestamp: new Date().toISOString(),
         restrictedTo: "MASTER"
       },
       {
-        title: "BIOHACKING: SUPREMACIA VITAL",
-        category: "HEALTH",
-        content: "Guia técnico sobre suplementação molecular e regimes de bio-otimização para estender o ápice físico da linhagem pet. Abordamos a modulação dietética de precisão, o uso de nutracêuticos de quarta geração e protocolos de recuperação celular acelerada. O objetivo é a longevidade ativa, mantendo o vigor de um campeão por décadas.",
+        title: "ARQUITETURA SAAS: RECORRÊNCIA MÍTICA",
+        category: "SAAS",
+        content: "Guia técnico sobre estruturação de produtos com receita recorrente. Abordamos a modulação de tiers de preços, estratégias de retenção (Anti-Churn) e a implementação de product-led growth. O objetivo é criar máquinas de venda automáticas que operam com margens de lucro superiores a 80%.",
         timestamp: new Date(Date.now() - 86400000).toISOString(),
         restrictedTo: "MASTER"
       },
       {
-        title: "PATRIMÔNIO: O VALOR DA REDE",
-        category: "LIFESTYLE",
-        content: "Uma análise estratégica sobre a escassez das chaves originais do Hall Black Club. Este protocolo discute o valor intrínseco de pertencer a um ecossistema fechado de influência, as regras de sucessão patrimonial para as credenciais e como o prestígio acumulado do tutor se traduz em ativos reais dentro da rede de elite.",
+        title: "EQUITY: PROTEÇÃO E VALUATION",
+        category: "EQUITY",
+        content: "Uma análise estratégica sobre a valorização de ativos e preparação para M&A (Fusões e Aquisições). Este protocolo discute a blindagem patrimonial dos sócios, a estruturação de holdings de elite e como preparar uma empresa para um exit multimilionário, mantendo o controle estratégico da linhagem de negócios.",
         timestamp: new Date(Date.now() - 172800000).toISOString(),
         restrictedTo: "MASTER"
       }
@@ -94,13 +94,13 @@ export function TheVault({ profile }: { profile: any }) {
       }
       toast({
         title: "PROTOCOLO INICIALIZADO",
-        description: "Os arquivos de elite foram sincronizados com o seu Cofre.",
+        description: "Os arquivos de inteligência de negócios foram sincronizados.",
       });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "FALHA NA SINCRONIZAÇÃO",
-        description: "Não foi possível acessar a rede de dados.",
+        description: "Não foi possível acessar a rede de dados corporativos.",
       });
     } finally {
       setIsBootstrapping(false);
@@ -114,7 +114,7 @@ export function TheVault({ profile }: { profile: any }) {
         <div className="space-y-2">
           <h3 className="text-2xl font-black uppercase tracking-tighter text-white">O Cofre</h3>
           <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold leading-relaxed">
-            Conhecimento técnico avançado, genética e estratégias de elite reservadas aos detentores Hall Black Club.
+            Inteligência estratégica, modelos de SaaS de alta performance e engenharia financeira reservados aos membros do Hall Black Club.
           </p>
         </div>
         
@@ -166,7 +166,7 @@ export function TheVault({ profile }: { profile: any }) {
             </div>
             <div className="space-y-2">
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-700 max-w-xs mx-auto">
-                Protocolos {selectedCategory ? "desta categoria" : ""} em processamento mítico.
+                Protocolos estratégicos {selectedCategory ? "desta categoria" : ""} em processamento.
               </p>
               {!articles || articles.length === 0 ? (
                 <Button 
@@ -180,7 +180,7 @@ export function TheVault({ profile }: { profile: any }) {
                   ) : (
                     <>
                       <DatabaseZap className="w-3 h-3 mr-2" />
-                      Inicializar Protocolos de Elite
+                      Inicializar Cofre de Negócios
                     </>
                   )}
                 </Button>
@@ -214,7 +214,7 @@ export function TheVault({ profile }: { profile: any }) {
                   variant="link" 
                   className={cn("p-0 h-auto text-[9px] font-black uppercase tracking-[0.3em] flex items-center gap-2 self-start", themeColor)}
                 >
-                  Acessar Documento <ChevronRight className="w-3 h-3" />
+                  Acessar Estratégia <ChevronRight className="w-3 h-3" />
                 </Button>
               </CardContent>
             </Card>
@@ -239,11 +239,11 @@ export function TheVault({ profile }: { profile: any }) {
                     {readingArticle.title}
                   </DialogTitle>
                   <DialogDescription className="sr-only">
-                    Documento restrito: {readingArticle.title}
+                    Protocolo restrito de negócios: {readingArticle.title}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center gap-4 mt-4 text-zinc-600">
-                  <span className="text-[8px] font-black uppercase tracking-widest">Ref: HB-DOC-{readingArticle.id.substring(0,6).toUpperCase()}</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest">Protocolo: HB-BIZ-{readingArticle.id.substring(0,6).toUpperCase()}</span>
                   <span className="w-1 h-1 rounded-full bg-zinc-800" />
                   <span className="text-[8px] font-black uppercase tracking-widest">Sincronizado: {new Date(readingArticle.timestamp).toLocaleDateString('pt-BR')}</span>
                 </div>
@@ -254,7 +254,7 @@ export function TheVault({ profile }: { profile: any }) {
                 <div className="flex items-start gap-4 p-6 bg-zinc-900/30 border border-zinc-800/50 rounded-2xl">
                   <BookOpen className={cn("w-5 h-5 flex-shrink-0 mt-1", themeColor)} />
                   <p className="text-sm font-medium text-zinc-300 leading-relaxed italic">
-                    "Este documento é de uso restrito da elite Hall Black. A reprodução sem autorização do Alto Conselho resultará em revogação imediata da credencial."
+                    "Este documento estratégico é de uso exclusivo. O compartilhamento externo de diretrizes da elite resulta em exclusão imediata da rede."
                   </p>
                 </div>
                 
@@ -265,9 +265,9 @@ export function TheVault({ profile }: { profile: any }) {
                 </div>
 
                 <div className="pt-8 border-t border-zinc-900 flex flex-col items-center text-center gap-4">
-                  <Zap className={cn("w-6 h-6 opacity-20", themeColor)} />
+                  <TrendingUp className={cn("w-6 h-6 opacity-20", themeColor)} />
                   <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.5em]">
-                    Fim do Protocolo de Inteligência
+                    Fim do Protocolo de Inteligência de Mercado
                   </p>
                 </div>
               </div>
