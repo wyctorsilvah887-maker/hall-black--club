@@ -12,7 +12,7 @@ import NextImage from 'next/image';
 
 /**
  * @fileOverview Componente Black Advisor.
- * Gerencia a interação de chat e exibição de imagens geradas em layout flexível.
+ * Gerencia a interação de chat e exibição de imagens geradas em layout de terminal fixo.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
@@ -69,7 +69,8 @@ export function BlackAdvisor({ profile }: { profile: any }) {
   const themeColor = 'text-primary';
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full">
+    <div className="flex-1 flex flex-col h-full w-full overflow-hidden">
+      {/* HISTÓRICO COM SCROLL INDEPENDENTE */}
       <div 
         ref={scrollRef}
         className="flex-1 overflow-y-auto space-y-8 pr-2 md:pr-4 custom-scrollbar pb-10"
@@ -158,18 +159,19 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         )}
       </div>
 
-      <form onSubmit={handleConsult} className="mt-auto py-6 md:py-10 border-t border-zinc-900 relative bg-transparent">
+      {/* CAMPO DE INPUT FIXO NA BASE DO COMPONENTE */}
+      <form onSubmit={handleConsult} className="mt-auto pt-6 md:pt-8 border-t border-zinc-900 relative bg-zinc-950 flex-shrink-0">
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="SOLICITAR CONSULTORIA TÉCNICA OU VISUAL..."
           disabled={isLoading}
-          className="bg-zinc-950/80 border-zinc-800 h-16 md:h-20 rounded-xl md:rounded-[2rem] px-6 md:px-8 text-xs md:text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-20 md:pr-32"
+          className="bg-zinc-900/50 border-zinc-800 h-16 md:h-20 rounded-xl md:rounded-[2rem] px-6 md:px-8 text-xs md:text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-20 md:pr-32"
         />
         <Button 
           type="submit" 
           disabled={isLoading || !query.trim()}
-          className={cn("absolute right-2 md:right-4 top-[2.1rem] md:top-[3.1rem] h-10 w-10 md:h-12 md:w-12 rounded-lg md:rounded-2xl bg-primary text-primary-foreground transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20")}
+          className={cn("absolute right-2 md:right-4 top-[2.1rem] md:top-[2.6rem] h-10 w-10 md:h-12 md:w-12 rounded-lg md:rounded-2xl bg-primary text-primary-foreground transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20")}
         >
           <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
         </Button>

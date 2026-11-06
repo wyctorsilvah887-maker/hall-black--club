@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Página Dedicada do Black Advisor.
- * Oferece uma interface imersiva em tela cheia para consultoria de linhagem e geração de imagens.
+ * Oferece uma interface imersiva em tela cheia (Fixed Viewport) para consultoria.
  */
 
 export default function AdvisorPage() {
@@ -49,11 +49,11 @@ export default function AdvisorPage() {
   const themeClass = getThemeClass(currentRank);
 
   return (
-    <main className={cn("h-screen bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
-      <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 md:px-6 pt-6 md:pt-10">
+    <main className={cn("fixed inset-0 bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
+      <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 md:px-6 pt-6 md:pt-10 overflow-hidden">
         
-        {/* HEADER DE ELITE (COMPACTO PARA TELA CHEIA) */}
-        <header className="flex items-center justify-between gap-4 border-b border-zinc-900 pb-6 mb-6">
+        {/* HEADER FIXO */}
+        <header className="flex items-center justify-between gap-4 border-b border-zinc-900 pb-6 mb-6 flex-shrink-0">
           <div className="flex items-center gap-4">
             <Link href="/" className="p-2 hover:bg-zinc-900 rounded-full transition-colors active:scale-95">
               <ArrowLeft className="w-5 h-5 text-zinc-500" />
@@ -74,8 +74,8 @@ export default function AdvisorPage() {
           </div>
         </header>
 
-        {/* ÁREA DO AGENTE (TELA CHEIA) */}
-        <div className="flex-1 min-h-0 bg-zinc-950/20 border-t border-x border-zinc-900/50 rounded-t-[2.5rem] md:rounded-t-[3.5rem] p-4 md:p-8 shadow-2xl backdrop-blur-sm flex flex-col">
+        {/* ÁREA DO AGENTE (EXPANSÍVEL MAS TRAVADA) */}
+        <div className="flex-1 min-h-0 bg-zinc-950/20 border-t border-x border-zinc-900/50 rounded-t-[2.5rem] md:rounded-t-[3.5rem] p-4 md:p-8 shadow-2xl backdrop-blur-sm flex flex-col overflow-hidden">
           <BlackAdvisor profile={{ ...profile, status: currentRank }} />
         </div>
       </div>
