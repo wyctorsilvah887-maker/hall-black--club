@@ -1,18 +1,17 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Image as ImageIcon, Sparkles } from "lucide-react";
+import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Sparkles } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import NextImage from 'next/image';
 
 /**
- * @fileOverview Componente Black Advisor.
- * Gerencia a interação de chat e exibição de imagens geradas em layout de terminal fixo.
+ * @fileOverview Componente Black Advisor - Business Edition.
+ * Interface de terminal imersiva para consultoria de negócios e SaaS.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
@@ -78,9 +77,14 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         {logs.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-20">
             <Cpu className="w-12 h-12 md:w-16 md:h-16" />
-            <p className="text-[10px] font-black uppercase tracking-[0.5em] max-w-xs leading-relaxed">
-              Aguardando entrada de dados para processamento de elite.
-            </p>
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.5em] max-w-xs leading-relaxed">
+                Terminal de Estratégia Ativo
+              </p>
+              <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-500">
+                SaaS • Vendas • Sites • Serviços
+              </p>
+            </div>
           </div>
         )}
 
@@ -109,7 +113,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                       <div className="relative w-full aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-zinc-900 shadow-inner group">
                         <NextImage 
                           src={log.image} 
-                          alt="Elite Visual Concept" 
+                          alt="Elite Business Concept" 
                           fill 
                           className="object-cover transition-transform duration-700 group-hover:scale-105" 
                           unoptimized
@@ -119,14 +123,14 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                            <div className="p-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-zinc-800">
                              <Sparkles className="w-3 h-3 text-primary" />
                            </div>
-                           <span className="text-[8px] font-black text-white uppercase tracking-widest">Conceito Gerado</span>
+                           <span className="text-[8px] font-black text-white uppercase tracking-widest">Conceito de Estratégia</span>
                         </div>
                       </div>
                     )}
                     
                     {log.insights && log.insights.length > 0 && (
                       <div className="pt-8 border-t border-zinc-900 space-y-4">
-                         <p className={cn("text-[9px] font-black uppercase tracking-widest", themeColor)}>Insights Acionáveis</p>
+                         <p className={cn("text-[9px] font-black uppercase tracking-widest", themeColor)}>Protocolos de Ação</p>
                          <ul className="space-y-3">
                            {log.insights.map((insight: string, idx: number) => (
                              <li key={idx} className="flex items-start gap-3 text-[10px] md:text-[11px] text-zinc-500 font-bold uppercase">
@@ -140,7 +144,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                   </div>
                 </div>
                 <p className="text-[7px] md:text-[8px] text-zinc-800 font-black uppercase tracking-[0.4em] ml-4">
-                  DOC: {log.note}
+                  AUDITORIA: {log.note}
                 </p>
               </div>
             ) : (
@@ -154,7 +158,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         {isLoading && (
           <div className="flex items-center gap-3 ml-4">
             <Loader2 className={cn("w-4 h-4 animate-spin", themeColor)} />
-            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-zinc-700">Sincronizando Linhagem Visual...</span>
+            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-zinc-700">Auditando Ecossistema Digital...</span>
           </div>
         )}
       </div>
@@ -164,7 +168,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="SOLICITAR CONSULTORIA TÉCNICA OU VISUAL..."
+          placeholder="SUBMETER SITE, SAAS OU ESTRATÉGIA PARA ANÁLISE SEM FILTROS..."
           disabled={isLoading}
           className="bg-zinc-900/50 border-zinc-800 h-16 md:h-20 rounded-xl md:rounded-[2rem] px-6 md:px-8 text-xs md:text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-20 md:pr-32"
         />
