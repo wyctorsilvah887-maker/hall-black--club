@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Lock, FileText, ChevronRight, Zap, ArrowLeft, BookOpen, DatabaseZap, Loader2, BarChart3, TrendingUp, Landmark } from "lucide-react";
+import { Lock, FileText, ChevronRight, Zap, ArrowLeft, BookOpen, DatabaseZap, Loader2, BarChart3, TrendingUp, Landmark, Briefcase, Globe } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -19,15 +19,15 @@ import {
 } from "@/components/ui/dialog";
 
 /**
- * @fileOverview O Cofre (The Vault) - Business Edition.
- * Repositório central de inteligência estratégica e modelos de negócio.
- * Pilares: ESTRATÉGIA, SAAS, EQUITY.
+ * @fileOverview O Cofre (The Vault) - Business & Strategy Edition.
+ * Repositório central de inteligência estratégica e diversos modelos de negócio.
+ * Pilares: ESTRATÉGIA, MODELOS (SaaS, Serviços, E-commerce), FINANCE/EQUITY.
  */
 
 interface VaultArticle {
   id: string;
   title: string;
-  category: 'STRATEGY' | 'SAAS' | 'EQUITY';
+  category: 'STRATEGY' | 'MODELS' | 'FINANCE';
   content: string;
   timestamp: string;
   restrictedTo?: string;
@@ -49,8 +49,8 @@ export function TheVault({ profile }: { profile: any }) {
 
   const categories = [
     { id: 'STRATEGY', label: 'Estratégia & Escala', icon: TrendingUp },
-    { id: 'SAAS', label: 'Modelos SaaS', icon: BarChart3 },
-    { id: 'EQUITY', label: 'Engenharia de Equity', icon: Landmark },
+    { id: 'MODELS', label: 'Modelos de Negócio', icon: Briefcase },
+    { id: 'FINANCE', label: 'Equity & Expansão', icon: Landmark },
   ];
 
   const filteredArticles = articles?.filter(art => 
@@ -67,20 +67,27 @@ export function TheVault({ profile }: { profile: any }) {
       {
         title: "PROTOCOLO S-26: ESCALA EXPONENCIAL",
         category: "STRATEGY",
-        content: "Este documento detalha o framework de crescimento utilizado pelas maiores startups de elite. O foco é na otimização do CAC (Custo de Aquisição de Cliente) e na maximização do LTV (Lifetime Value). Analisamos táticas de blitzscaling e a construção de fossos competitivos inabaláveis no mercado atual.",
+        content: "Este documento detalha o framework de crescimento utilizado pelas maiores empresas de elite. O foco é na otimização de processos, delegação estratégica e na construção de fossos competitivos inabaláveis. Analisamos táticas de blitzscaling e como manter a cultura de alta performance durante o crescimento acelerado de empresas físicas ou digitais.",
         timestamp: new Date().toISOString(),
         restrictedTo: "MASTER"
       },
       {
-        title: "ARQUITETURA SAAS: RECORRÊNCIA MÍTICA",
-        category: "SAAS",
-        content: "Guia técnico sobre estruturação de produtos com receita recorrente. Abordamos a modulação de tiers de preços, estratégias de retenção (Anti-Churn) e a implementação de product-led growth. O objetivo é criar máquinas de venda automáticas que operam com margens de lucro superiores a 80%.",
+        title: "MODELOS DIGITAIS: RECORRÊNCIA E SAAS",
+        category: "MODELS",
+        content: "Guia técnico sobre estruturação de produtos com receita recorrente. Abordamos a modulação de tiers de preços, estratégias de retenção (Anti-Churn) e a implementação de product-led growth. O objetivo é criar máquinas de venda automáticas que operam com margens de lucro superiores a 80%, aplicáveis a softwares e plataformas de serviço.",
         timestamp: new Date(Date.now() - 86400000).toISOString(),
         restrictedTo: "MASTER"
       },
       {
+        title: "SERVIÇOS HIGH-TICKET: ARQUITETURA DE VALOR",
+        category: "MODELS",
+        content: "Protocolo sobre a venda e entrega de serviços de alto valor agregado (High-Ticket). Como posicionar sua consultoria, agência ou serviço especializado no topo do mercado, eliminando a concorrência por preço e focando em resultados transformadores que permitem cobranças premium.",
+        timestamp: new Date(Date.now() - 120000000).toISOString(),
+        restrictedTo: "MASTER"
+      },
+      {
         title: "EQUITY: PROTEÇÃO E VALUATION",
-        category: "EQUITY",
+        category: "FINANCE",
         content: "Uma análise estratégica sobre a valorização de ativos e preparação para M&A (Fusões e Aquisições). Este protocolo discute a blindagem patrimonial dos sócios, a estruturação de holdings de elite e como preparar uma empresa para um exit multimilionário, mantendo o controle estratégico da linhagem de negócios.",
         timestamp: new Date(Date.now() - 172800000).toISOString(),
         restrictedTo: "MASTER"
@@ -114,7 +121,7 @@ export function TheVault({ profile }: { profile: any }) {
         <div className="space-y-2">
           <h3 className="text-2xl font-black uppercase tracking-tighter text-white">O Cofre</h3>
           <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold leading-relaxed">
-            Inteligência estratégica, modelos de SaaS de alta performance e engenharia financeira reservados aos membros do Hall Black Club.
+            Inteligência estratégica, diversos modelos de negócio e engenharia financeira reservados aos membros do Hall Black Club.
           </p>
         </div>
         
@@ -180,7 +187,7 @@ export function TheVault({ profile }: { profile: any }) {
                   ) : (
                     <>
                       <DatabaseZap className="w-3 h-3 mr-2" />
-                      Inicializar Cofre de Negócios
+                      Inicializar Cofre de Inteligência
                     </>
                   )}
                 </Button>
@@ -254,7 +261,7 @@ export function TheVault({ profile }: { profile: any }) {
                 <div className="flex items-start gap-4 p-6 bg-zinc-900/30 border border-zinc-800/50 rounded-2xl">
                   <BookOpen className={cn("w-5 h-5 flex-shrink-0 mt-1", themeColor)} />
                   <p className="text-sm font-medium text-zinc-300 leading-relaxed italic">
-                    "Este documento estratégico é de uso exclusivo. O compartilhamento externo de diretrizes da elite resulta em exclusão imediata da rede."
+                    "Este documento estratégico é de uso exclusivo da rede Hall Black. O compartilhamento externo de diretrizes resulta em exclusão imediata da linhagem."
                   </p>
                 </div>
                 
@@ -265,7 +272,7 @@ export function TheVault({ profile }: { profile: any }) {
                 </div>
 
                 <div className="pt-8 border-t border-zinc-900 flex flex-col items-center text-center gap-4">
-                  <TrendingUp className={cn("w-6 h-6 opacity-20", themeColor)} />
+                  <Globe className={cn("w-6 h-6 opacity-20", themeColor)} />
                   <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.5em]">
                     Fim do Protocolo de Inteligência de Mercado
                   </p>
