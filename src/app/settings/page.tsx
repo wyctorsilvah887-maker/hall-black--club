@@ -1,15 +1,16 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { doc, collection, increment } from 'firebase/firestore';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Phone, UserCircle, Medal } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Phone, UserCircle, Medal, CreditCard, Sparkles } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -152,6 +153,18 @@ export default function SettingsPage() {
     toast({ title: "PRIVACIDADE", description: "Preferências atualizadas." });
   };
 
+  const handleSimulatePayment = () => {
+    if (!profile?.id || !db) return;
+    const userRef = doc(db, 'users', profile.id);
+    updateDocumentNonBlocking(userRef, { 
+      pedigreeScore: increment(100)
+    });
+    toast({ 
+      title: "PRESTÍGIO ADQUIRIDO", 
+      description: "+100 Pontos de Pedigree adicionados à sua linhagem.",
+    });
+  };
+
   const handleInitiateTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!transferEmail || !profile?.id || !db) return;
@@ -252,6 +265,22 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-zinc-800" />
+              </button>
+
+              <button 
+                onClick={handleSimulatePayment}
+                className="w-full flex items-center justify-between px-5 py-5 group active:bg-zinc-900/60 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={cn("p-2 rounded-xl bg-black border", themeBorder)}>
+                    <CreditCard className={cn("w-4 h-4", themeColor)} />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[11px] font-black uppercase tracking-widest">Contribuir para a Linhagem</p>
+                    <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">Acumular 100 pontos de prestígio</p>
+                  </div>
+                </div>
+                <Sparkles className="w-4 h-4 text-primary animate-pulse" />
               </button>
 
               <Link 

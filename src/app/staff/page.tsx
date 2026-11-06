@@ -3,11 +3,11 @@
 
 import React, { useState } from 'react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc } from '@/firebase';
-import { collection, query, orderBy, doc, where } from 'firebase/firestore';
+import { collection, query, orderBy, doc, where, increment } from 'firebase/firestore';
 import { 
   ShieldCheck, Clock, MessageSquare, CheckCircle2, 
   Loader2, ArrowLeft, Send, Search, Users, 
-  LayoutDashboard, UserCog, ChevronRight, X 
+  LayoutDashboard, UserCog, ChevronRight, X, CreditCard, Award
 } from "lucide-react";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -99,6 +99,18 @@ export default function StaffPanelPage() {
     toast({ 
       title: "PERMISSÃO ALTERADA", 
       description: `Membro ${targetUser.name} agora é ${newRole.toUpperCase()}.` 
+    });
+  };
+
+  const handleConfirmPayment = (targetUser: any) => {
+    if (!db) return;
+    const targetRef = doc(db, 'users', targetUser.id);
+    updateDocumentNonBlocking(targetRef, { 
+      pedigreeScore: increment(100)
+    });
+    toast({ 
+      title: "PAGAMENTO CONFIRMADO", 
+      description: `+100 Pontos de Prestígio creditados para ${targetUser.name}.` 
     });
   };
 
@@ -294,7 +306,7 @@ export default function StaffPanelPage() {
                     <tr className="bg-zinc-900/50 border-b border-zinc-900">
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Membro</th>
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Patente</th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Status</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Score</th>
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações</th>
                     </tr>
                   </thead>
@@ -315,19 +327,30 @@ export default function StaffPanelPage() {
                           </Badge>
                         </td>
                         <td className="px-8 py-6">
-                          <Badge className={cn("text-[8px] font-black", u.role === 'admin' ? "bg-primary text-white" : "bg-zinc-800 text-zinc-400")}>
-                            {u.role === 'admin' ? 'ADMIN' : 'MEMBRO'}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                             <Award className="w-3 h-3 text-primary" />
+                             <span className="text-xs font-black">{u.pedigreeScore || 0}</span>
+                          </div>
                         </td>
                         <td className="px-8 py-6 text-right">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => handleToggleRole(u)}
-                            className="text-[9px] font-black uppercase tracking-widest hover:text-primary"
-                          >
-                            {u.role === 'admin' ? 'Revogar Staff' : 'Promover Admin'}
-                          </Button>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => handleConfirmPayment(u)}
+                              className="h-8 border-primary/30 text-[9px] font-black uppercase tracking-widest hover:bg-primary/10"
+                            >
+                              <CreditCard className="w-3 h-3 mr-1" /> Mensalidade
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleToggleRole(u)}
+                              className="h-8 text-[9px] font-black uppercase tracking-widest hover:text-primary"
+                            >
+                              {u.role === 'admin' ? 'Membro' : 'Admin'}
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
