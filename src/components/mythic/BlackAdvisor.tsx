@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Camera } from "lucide-react";
+import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { RankBadge } from './MythicIcons';
@@ -13,14 +13,13 @@ import { RankBadge } from './MythicIcons';
 /**
  * @fileOverview Componente Black Advisor - Business Edition.
  * Interface de terminal imersiva para consultoria de negócios e SaaS.
- * Exibe uma saudação automática do sistema com a insígnia do membro ao carregar.
+ * Otimizado para focar no topo das novas mensagens e evitar clipping de ícones.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  // Inicializamos com a primeira mensagem do Sistema (não IA)
   const [logs, setLogs] = useState<any[]>([
     { 
       type: 'advisor', 
@@ -32,18 +31,15 @@ export function BlackAdvisor({ profile }: { profile: any }) {
   ]);
   
   const scrollRef = useRef<HTMLDivElement>(null);
+  const lastLogRef = useRef<HTMLDivElement>(null);
 
-  // Efeito de rolagem suave para o final do chat a cada atualização de logs ou carregamento
+  // Efeito para focar no TOPO da nova mensagem
   useEffect(() => {
-    if (scrollRef.current) {
-      const scrollContainer = scrollRef.current;
-      // Pequeno timeout para garantir que o DOM renderizou o novo conteúdo
-      setTimeout(() => {
-        scrollContainer.scrollTo({
-          top: scrollContainer.scrollHeight,
-          behavior: 'smooth'
-        });
-      }, 100);
+    if (lastLogRef.current) {
+      lastLogRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
     }
   }, [logs, isLoading]);
 
@@ -92,11 +88,12 @@ export function BlackAdvisor({ profile }: { profile: any }) {
       {/* HISTÓRICO COM SCROLL INDEPENDENTE */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-12 pr-2 md:pr-4 custom-scrollbar pb-20 pt-6"
+        className="flex-1 overflow-y-auto space-y-12 pr-2 md:pr-4 custom-scrollbar pb-20 pt-10"
       >
         {logs.map((log, i) => (
           <div 
             key={i} 
+            ref={i === logs.length - 1 ? lastLogRef : null}
             className={`flex flex-col ${log.type === 'user' ? 'items-end' : 'items-start'} animate-in fade-in duration-700 slide-in-from-bottom-2`}
           >
             {log.type === 'user' ? (
@@ -105,18 +102,17 @@ export function BlackAdvisor({ profile }: { profile: any }) {
               </div>
             ) : log.type === 'advisor' ? (
               <div className="space-y-6 max-w-[95%] md:max-w-2xl w-full">
-                {/* Removido overflow-hidden para permitir que o ícone -top-3 -left-3 apareça */}
+                {/* Garantimos que o container não tenha overflow-hidden para não cortar o ícone flutuante */}
                 <div className="bg-zinc-950 border border-zinc-900 p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] shadow-2xl relative">
                   <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg z-20 shadow-xl">
                     <ShieldCheck className={cn("w-4 h-4", themeColor)} />
                   </div>
                   
                   <div className="relative z-10 space-y-6">
-                    <p className="text-sm font-medium leading-relaxed text-zinc-300 italic">
+                    <div className="text-sm font-medium leading-relaxed text-zinc-300 italic whitespace-pre-wrap">
                       {log.content}
-                    </p>
+                    </div>
 
-                    {/* SLOT DE INSÍGNIA APENAS NA PRIMEIRA MENSAGEM DO SISTEMA */}
                     {log.isInitial && (
                       <div className="mt-4 flex flex-col items-center gap-1 border-t border-zinc-900/50 pt-6">
                         <div className="scale-75 md:scale-90 origin-center py-2">
@@ -154,7 +150,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           </div>
         ))}
         {isLoading && (
-          <div className="flex items-center gap-3 ml-4 animate-pulse">
+          <div className="flex items-center gap-3 ml-4 animate-pulse pt-4">
             <Loader2 className={cn("w-4 h-4 animate-spin", themeColor)} />
             <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-zinc-700">Auditando Ecossistema Digital...</span>
           </div>
@@ -162,11 +158,11 @@ export function BlackAdvisor({ profile }: { profile: any }) {
       </div>
 
       {/* CAMPO DE INPUT FIXO NA BASE */}
-      <form onSubmit={handleConsult} className="mt-auto pt-6 md:pt-8 border-t border-zinc-900 relative bg-zinc-950 flex-shrink-0 shadow-[0_-20px_40px_rgba(0,0,0,0.5)]">
+      <form onSubmit={handleConsult} className="mt-auto pt-6 md:pt-8 border-t border-zinc-900 relative bg-zinc-950 flex-shrink-0 shadow-[0_-20px_40px_rgba(0,0,0,0.5)] z-50">
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="SUBMETER SITE, SAAS OU ESTRATÉGIA PARA ANÁLISE..."
+          placeholder="SUBMETER PROJETO PARA ANÁLISE ESTRATÉGICA..."
           disabled={isLoading}
           className="bg-zinc-900/50 border-zinc-800 h-16 md:h-20 rounded-xl md:rounded-[2rem] px-6 md:px-8 text-xs md:text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-20 md:pr-32"
         />
@@ -181,3 +177,4 @@ export function BlackAdvisor({ profile }: { profile: any }) {
     </div>
   );
 }
+
