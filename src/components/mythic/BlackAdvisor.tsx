@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -11,20 +12,20 @@ import { cn } from '@/lib/utils';
 /**
  * @fileOverview Componente Black Advisor - Business Edition.
  * Interface de terminal imersiva para consultoria de negócios e SaaS.
- * Removida a exibição de imagens geradas; adicionado slot de foto na saudação inicial.
+ * Exibe uma saudação automática do sistema com slot de imagem ao carregar.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  // Inicializamos com a primeira mensagem do Advisor contendo o slot de foto
+  // Inicializamos com a primeira mensagem do Sistema (não IA) contendo o slot de foto
   const [logs, setLogs] = useState<any[]>([
     { 
       type: 'advisor', 
-      content: `Saudações, Membro. Link neural estabelecido. Sou seu Advisor estratégico para SaaS, vendas e arquitetura de negócios. Submeta seu projeto para análise sem filtros.`,
+      content: `Saudações, ${profile.name}. Link neural estabelecido para a patente ${profile.status}. Sou seu Advisor estratégico para SaaS, vendas e arquitetura de negócios. Submeta seu projeto para análise sem filtros.`,
       insights: ["Aguardando entrada estratégica"],
-      note: "CONEXÃO SEGURA NÍVEL " + profile.status,
+      note: `PROTOCOLO DE ACESSO: ${profile.status} IDENTIFICADO`,
       isInitial: true
     }
   ]);
@@ -101,7 +102,7 @@ export function BlackAdvisor({ profile }: { profile: any }) {
                   </div>
                   
                   <div className="relative z-10 space-y-6">
-                    {/* SLOT DE FOTO APENAS NA PRIMEIRA MENSAGEM */}
+                    {/* SLOT DE FOTO APENAS NA PRIMEIRA MENSAGEM DO SISTEMA */}
                     {log.isInitial && (
                       <div className="relative w-full aspect-square md:aspect-video rounded-xl md:rounded-2xl overflow-hidden border border-dashed border-zinc-800 bg-zinc-900/50 flex flex-col items-center justify-center gap-4 group transition-colors hover:border-primary/30">
                          <div className="p-4 rounded-full bg-black/40 border border-zinc-800">
