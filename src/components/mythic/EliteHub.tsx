@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
-  Settings, LogOut, Cpu, ExternalLink, ShieldAlert,
+  Settings, Cpu, ExternalLink, ShieldAlert,
   ChevronRight
 } from "lucide-react";
 import { useAuth } from '@/firebase';
@@ -74,11 +74,6 @@ export function EliteHub({ profile }: EliteHubProps) {
                 </Link>
               )
             ))}
-            
-            <button onClick={() => signOut(auth)} className="flex flex-col items-center gap-1 text-zinc-600 hover:text-red-500">
-              <LogOut className="w-6 h-6" />
-              <span className="text-[8px] font-black uppercase tracking-widest">Sair</span>
-            </button>
           </div>
 
           {/* Layout Desktop: Barra Superior Clássica */}
@@ -128,9 +123,6 @@ export function EliteHub({ profile }: EliteHubProps) {
                <Link href="/settings" className="p-2 text-zinc-600 hover:text-white transition-colors">
                  <Settings className="w-5 h-5" />
                </Link>
-               <button onClick={() => signOut(auth)} className="p-2 text-zinc-600 hover:text-red-500 transition-colors">
-                 <LogOut className="w-5 h-5" />
-               </button>
             </div>
           </div>
         </div>
