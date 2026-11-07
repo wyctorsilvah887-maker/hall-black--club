@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -21,7 +20,7 @@ import { cn } from '@/lib/utils';
 import { RankBadge } from './MythicIcons';
 
 /**
- * @fileOverview Seção do Conselho com sub-navegação: Linhagem, Ranking e Audiência.
+ * @fileOverview Seção do Conselho com sub-navegação: Alto Conselho, Ranking e Audiência.
  * Refinado para evitar clarões brancos e transições instáveis.
  */
 
@@ -104,12 +103,12 @@ export function HighCouncil({ profile }: { profile: any }) {
       {/* SUB-NAVEGAÇÃO DO CONSELHO */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-zinc-900/50 pb-8">
         <div className="space-y-1 text-center md:text-left">
-          <h3 className="text-2xl font-black uppercase tracking-tighter text-white">O Alto Conselho</h3>
-          <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Protocolo de Hierarquia Sovereign v5.0</p>
+          <h3 className="text-2xl font-black uppercase tracking-tighter text-white">Conselho Sovereign</h3>
+          <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Protocolo de Hierarquia Founders v5.0</p>
         </div>
         <div className="flex items-center gap-1.5 p-1.5 bg-zinc-950 border border-zinc-900 rounded-2xl shadow-inner">
           {[
-            { id: 'members', label: 'Linhagem', icon: LayoutGrid },
+            { id: 'members', label: 'Alto Conselho', icon: LayoutGrid },
             { id: 'ranking', label: 'Ranking', icon: Trophy },
             { id: 'audience', label: 'Audiência', icon: MessageSquare }
           ].map((tab) => (
@@ -136,12 +135,12 @@ export function HighCouncil({ profile }: { profile: any }) {
       {/* CONTEÚDO DINÂMICO - Key garante re-render limpo da animação */}
       <div key={activeTab} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
         
-        {/* ABA: LINHAGEM (GALLERY) */}
+        {/* ABA: ALTO CONSELHO (GALLERY) */}
         {activeTab === 'members' && (
           <section className="space-y-10">
             <div className="max-w-xl space-y-4">
               <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold leading-relaxed">
-                Os detentores das chaves originais. Uma linhagem de prestígio que governa o ecossistema Sovereign.
+                Os detentores das chaves originais. A elite suprema que governa o ecossistema Sovereign Founders Club.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
@@ -199,7 +198,7 @@ export function HighCouncil({ profile }: { profile: any }) {
             <div className="text-center space-y-4 mb-12">
               <Trophy className="w-12 h-12 text-primary mx-auto animate-bounce" />
               <h3 className="text-3xl font-black uppercase tracking-tighter text-white">Ranking de Prestígio</h3>
-              <p className="text-[10px] text-zinc-600 uppercase tracking-[0.3em] font-bold">Os Pilares da Linhagem Sovereign Founders</p>
+              <p className="text-[10px] text-zinc-600 uppercase tracking-[0.3em] font-bold">Os Pilares da Rede Sovereign Founders</p>
             </div>
 
             <div className="space-y-4">
@@ -334,7 +333,7 @@ export function HighCouncil({ profile }: { profile: any }) {
       </div>
 
       <footer className="pt-20 text-center opacity-10">
-         <p className="text-[7px] font-black uppercase tracking-[1em]">Conselho Sovereign Identity Protocol</p>
+         <p className="text-[7px] font-black uppercase tracking-[1em]">Sovereign Founders Identity Protocol</p>
       </footer>
     </div>
   );
