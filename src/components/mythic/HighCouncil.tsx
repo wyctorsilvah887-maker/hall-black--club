@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -21,6 +22,7 @@ import { RankBadge } from './MythicIcons';
 
 /**
  * @fileOverview Seção do Conselho com sub-navegação: Linhagem, Ranking e Audiência.
+ * Refinado para evitar clarões brancos e transições instáveis.
  */
 
 type CouncilTab = 'members' | 'ranking' | 'audience';
@@ -97,15 +99,15 @@ export function HighCouncil({ profile }: { profile: any }) {
   };
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-12">
       
       {/* SUB-NAVEGAÇÃO DO CONSELHO */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-zinc-900 pb-8">
-        <div className="space-y-2 text-center md:text-left">
-          <h3 className="text-2xl font-black uppercase tracking-tighter">O Alto Conselho</h3>
-          <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Protocolo de Hierarquia Hall Black v5.0</p>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-zinc-900/50 pb-8">
+        <div className="space-y-1 text-center md:text-left">
+          <h3 className="text-2xl font-black uppercase tracking-tighter text-white">O Alto Conselho</h3>
+          <p className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Protocolo de Hierarquia Sovereign v5.0</p>
         </div>
-        <div className="flex items-center gap-2 p-1 bg-zinc-950 border border-zinc-900 rounded-2xl">
+        <div className="flex items-center gap-1.5 p-1.5 bg-zinc-950 border border-zinc-900 rounded-2xl shadow-inner">
           {[
             { id: 'members', label: 'Linhagem', icon: LayoutGrid },
             { id: 'ranking', label: 'Ranking', icon: Trophy },
@@ -113,12 +115,15 @@ export function HighCouncil({ profile }: { profile: any }) {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => {
+                setActiveTab(tab.id as any);
+                if (tab.id !== 'audience') setShowInbox(false);
+              }}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all",
+                "flex items-center gap-2 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300",
                 activeTab === tab.id 
-                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
-                  : "text-zinc-500 hover:text-zinc-300"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/10" 
+                  : "text-zinc-600 hover:text-zinc-400 hover:bg-white/5"
               )}
             >
               <tab.icon className="w-3.5 h-3.5" />
@@ -128,15 +133,15 @@ export function HighCouncil({ profile }: { profile: any }) {
         </div>
       </div>
 
-      {/* CONTEÚDO DINÂMICO */}
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* CONTEÚDO DINÂMICO - Key garante re-render limpo da animação */}
+      <div key={activeTab} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
         
         {/* ABA: LINHAGEM (GALLERY) */}
         {activeTab === 'members' && (
           <section className="space-y-10">
             <div className="max-w-xl space-y-4">
               <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold leading-relaxed">
-                Os detentores das chaves originais. Uma linhagem de prestígio que governa o ecossistema Hall Black.
+                Os detentores das chaves originais. Uma linhagem de prestígio que governa o ecossistema Sovereign.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
@@ -162,7 +167,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                       <User className="w-10 h-10 text-zinc-900" />
                     </div>
                   )}
-                  <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black via-black/90 to-transparent space-y-1">
+                  <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black via-black/95 to-transparent space-y-1">
                     <p className="text-[9px] font-black text-white uppercase tracking-tighter truncate">{member.name}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-[7px] font-black uppercase tracking-widest text-primary">
@@ -193,8 +198,8 @@ export function HighCouncil({ profile }: { profile: any }) {
           <section className="space-y-8 max-w-4xl mx-auto">
             <div className="text-center space-y-4 mb-12">
               <Trophy className="w-12 h-12 text-primary mx-auto animate-bounce" />
-              <h3 className="text-3xl font-black uppercase tracking-tighter">Ranking de Prestígio</h3>
-              <p className="text-[10px] text-zinc-600 uppercase tracking-[0.3em] font-bold">Os Pilares da Linhagem Hall Black</p>
+              <h3 className="text-3xl font-black uppercase tracking-tighter text-white">Ranking de Prestígio</h3>
+              <p className="text-[10px] text-zinc-600 uppercase tracking-[0.3em] font-bold">Os Pilares da Linhagem Sovereign Founders</p>
             </div>
 
             <div className="space-y-4">
@@ -205,7 +210,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                   key={member.id} 
                   className={cn(
                     "flex items-center justify-between p-5 md:p-6 rounded-[2rem] border transition-all duration-500",
-                    index === 0 ? "bg-primary/5 border-primary/30 shadow-[0_0_30px_rgba(var(--primary),0.1)]" : "bg-zinc-950 border-zinc-900"
+                    index === 0 ? "bg-primary/5 border-primary/30 shadow-[0_0_30px_rgba(var(--primary),0.1)]" : "bg-zinc-950/40 border-zinc-900"
                   )}
                 >
                   <div className="flex items-center gap-4 md:gap-8">
@@ -224,7 +229,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                         <div className="flex items-center gap-2">
                            <span className="text-[8px] font-black text-primary uppercase tracking-widest">#{member.memberNumber?.toString().padStart(2, '0')}</span>
                            <span className="w-1 h-1 rounded-full bg-zinc-800" />
-                           <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">{member.city || 'Hall Black'}</span>
+                           <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">{member.city || 'Sovereign Hub'}</span>
                         </div>
                       </div>
                     </div>
@@ -244,7 +249,7 @@ export function HighCouncil({ profile }: { profile: any }) {
           <section className="space-y-12 max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-zinc-900 pb-8">
               <div className="space-y-2">
-                 <h3 className="text-2xl font-black uppercase tracking-tighter">Protocolo de Audiência</h3>
+                 <h3 className="text-2xl font-black uppercase tracking-tighter text-white">Protocolo de Audiência</h3>
                  <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">Canal Criptografado de Elite</p>
               </div>
               <Button 
@@ -318,7 +323,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                  <Button 
                    type="submit" 
                    disabled={isSending || !message.trim()}
-                   className="w-full h-14 bg-primary text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-lg shadow-primary/20"
+                   className="w-full h-14 bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-lg shadow-primary/20"
                  >
                    {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-4 h-4 mr-2" /> Emitir Protocolo</>}
                  </Button>
@@ -329,7 +334,7 @@ export function HighCouncil({ profile }: { profile: any }) {
       </div>
 
       <footer className="pt-20 text-center opacity-10">
-         <p className="text-[7px] font-black uppercase tracking-[1em]">Conselho Hall Black Identity Protocol</p>
+         <p className="text-[7px] font-black uppercase tracking-[1em]">Conselho Sovereign Identity Protocol</p>
       </footer>
     </div>
   );
