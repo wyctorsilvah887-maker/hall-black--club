@@ -71,7 +71,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
 
   const colors = getColors();
   
-  const labelText = isHallBlack ? 'HALL BLACK' :
+  const labelText = isHallBlack ? 'SOVEREIGN' :
                    isMythic ? 'MÍTICO RUBI' : 
                    isAmber ? 'LEGENDÁRIO ÂMBAR' :
                    isLegendary ? 'LENDÁRIO' : 
@@ -80,7 +80,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   const starsCount = (isHallBlack || isMythic || isAmber || isLegendary) ? 5 : 3;
   
   const labelFontSize = 
-    labelText === 'HALL BLACK' ? '18px' :
+    labelText === 'SOVEREIGN' ? '18px' :
     labelText === 'MÍTICO RUBI' ? '18px' : 
     labelText === 'LEGENDÁRIO ÂMBAR' ? '13px' :
     labelText === 'LENDÁRIO' ? '18px' :

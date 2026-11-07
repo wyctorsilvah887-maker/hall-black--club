@@ -80,14 +80,14 @@ export function EliteHub({ profile }: EliteHubProps) {
           <div className="hidden md:flex h-full items-center justify-between px-6 bg-black/50 backdrop-blur-xl border-b border-zinc-900/50">
             <div className="flex items-center gap-4">
               <Cpu className={cn("w-6 h-6", themeColor)} />
-              <h1 className={cn("text-xl font-black uppercase tracking-tighter", themeColor)}>Hall Black Hub</h1>
+              <h1 className={cn("text-xl font-black uppercase tracking-tighter", themeColor)}>Sovereign Hub</h1>
             </div>
             
             <div className="flex items-center gap-12">
               {[
                 { id: 'vault', icon: BookOpen, label: 'O Cofre', type: 'tab' },
                 { id: 'council', icon: Users, label: 'Conselho', type: 'tab' },
-                { id: 'advisor', icon: Terminal, label: 'Advisor IA', type: 'link', href: '/advisor' }
+                { id: 'advisor', icon: Terminal, label: 'Sovereign IA', type: 'link', href: '/advisor' }
               ].map((item) => (
                 item.type === 'tab' ? (
                   <button
@@ -186,7 +186,7 @@ export function EliteHub({ profile }: EliteHubProps) {
 
       <footer className="fixed top-1/2 -right-16 md:-right-20 -translate-y-1/2 hidden md:block opacity-10 pointer-events-none rotate-180 z-0">
         <p className="text-[7px] md:text-[8px] font-black uppercase tracking-[1.2em] vertical-text text-zinc-400">
-          Hall Black Elite Protocol v2.0
+          Sovereign Founders Elite Protocol v2.0
         </p>
       </footer>
     </div>

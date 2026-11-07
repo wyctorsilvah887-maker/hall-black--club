@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -23,8 +22,7 @@ interface AuthGateProps {
 }
 
 /**
- * @fileOverview Gateway de Autenticação Central.
- * Porta de entrada direta para membros do Hall Black Club.
+ * @fileOverview Gateway de Autenticação Central - Sovereign Founders Club.
  */
 
 export function AuthGate({ theme, tempProfile }: AuthGateProps) {
@@ -67,7 +65,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
     try {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
-        toast({ title: "BEM-VINDO", description: "Identidade confirmada." });
+        toast({ title: "BEM-VINDO", description: "Identidade Sovereign confirmada." });
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const userId = userCredential.user.uid;
@@ -172,7 +170,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
         toast({
           title: "BEM-VINDO AO CLUB",
-          description: `Sua credencial de Mestre #${memberNumber.toString().padStart(2, '0')} foi ativada.`,
+          description: `Sua credencial de Fundador #${memberNumber.toString().padStart(2, '0')} foi ativada.`,
         });
       }
     } catch (error: any) {
@@ -188,7 +186,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
     }
   };
 
-  const themeTextClass = theme === 'legendary' ? 'text-yellow-500' : theme === 'amber' ? 'text-orange-500' : theme === 'elite' ? 'text-zinc-400' : theme === 'master' ? 'text-orange-900' : 'text-primary';
   const themeBtnClass = theme === 'legendary' ? 'bg-yellow-500 text-black' : theme === 'amber' ? 'bg-orange-500 text-black' : 'bg-primary text-white';
 
   return (
@@ -199,8 +196,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
         <div className="text-center space-y-4">
           <div className="flex flex-col items-center gap-2">
             <Shield className="w-12 h-12 text-primary animate-pulse" />
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white">
-              HALL <span className="text-primary">BLACK</span>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white uppercase">
+              SOVEREIGN <span className="text-primary">FOUNDERS</span>
             </h1>
           </div>
           <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em] font-bold">
@@ -268,7 +265,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : (
               <span className="flex items-center gap-2">
                 {isLogin ? <LogIn className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                {isLogin ? 'AUTENTICAR' : 'REGISTRAR COMO MESTRE'}
+                {isLogin ? 'AUTENTICAR' : 'REGISTRAR COMO FUNDADOR'}
               </span>
             )}
           </Button>
@@ -287,7 +284,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
 
       <footer className="absolute bottom-8 text-center opacity-20">
         <p className="text-[8px] font-black uppercase tracking-[0.5em] text-zinc-600">
-          Hall Black Club Identity System • 2026
+          Sovereign Founders Identity System • 2026
         </p>
       </footer>
     </div>

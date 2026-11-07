@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'Hall Black Club | Mythic Elite',
-  description: 'Acesso exclusivo à elite do mundo pet.',
+  title: 'Sovereign Founders Club | Apex Elite',
+  description: 'Acesso exclusivo à elite do empreendedorismo e negócios.',
 };
 
 export default function RootLayout({

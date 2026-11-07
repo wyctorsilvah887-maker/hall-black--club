@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -11,8 +10,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Página Dedicada do Black Advisor.
- * Oferece uma interface imersiva em tela cheia (Fixed Viewport) para consultoria.
+ * @fileOverview Página Dedicada do Sovereign Advisor.
  */
 
 export default function AdvisorPage() {
@@ -39,7 +37,7 @@ export default function AdvisorPage() {
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
         <ShieldCheck className="w-16 h-16 text-zinc-900 mb-6" />
         <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Acesso Negado</h1>
-        <p className="text-zinc-600 text-xs uppercase tracking-widest max-w-xs mb-8">Autentique-se para acessar o Advisor.</p>
+        <p className="text-zinc-600 text-xs uppercase tracking-widest max-w-xs mb-8">Autentique-se para acessar o Sovereign Advisor.</p>
         <Link href="/" className="text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Voltar ao Portal</Link>
       </div>
     );
@@ -63,7 +61,7 @@ export default function AdvisorPage() {
                 <Terminal className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl md:text-3xl font-black uppercase tracking-tighter">Black Advisor</h1>
+                <h1 className="text-xl md:text-3xl font-black uppercase tracking-tighter">Sovereign Advisor</h1>
                 <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-bold">Terminal de Elite</p>
               </div>
             </div>
@@ -74,7 +72,7 @@ export default function AdvisorPage() {
           </div>
         </header>
 
-        {/* ÁREA DO AGENTE (EXPANSÍVEL MAS TRAVADA) */}
+        {/* ÁREA DO AGENTE */}
         <div className="flex-1 min-h-0 bg-zinc-950/20 border-t border-x border-zinc-900/50 rounded-t-[2.5rem] md:rounded-t-[3.5rem] p-4 md:p-8 shadow-2xl backdrop-blur-sm flex flex-col overflow-hidden">
           <BlackAdvisor profile={{ ...profile, status: currentRank }} />
         </div>
