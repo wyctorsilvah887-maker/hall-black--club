@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useMemo } from 'react';
@@ -5,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
   Settings, Cpu, ExternalLink, ShieldAlert,
-  ChevronRight
+  ChevronRight, MessageSquare
 } from "lucide-react";
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
@@ -45,6 +46,7 @@ export function EliteHub({ profile }: EliteHubProps) {
             {[
               { id: 'vault', icon: BookOpen, label: 'Cofre', type: 'tab' },
               { id: 'council', icon: Users, label: 'Conselho', type: 'tab' },
+              { id: 'lounge', icon: MessageSquare, label: 'Salão', type: 'link', href: '/lounge' },
               { id: 'advisor', icon: Terminal, label: 'IA', type: 'link', href: '/advisor' },
               { id: 'settings', icon: Settings, label: 'Ajustes', type: 'link', href: '/settings' }
             ].map((item) => (
@@ -87,6 +89,7 @@ export function EliteHub({ profile }: EliteHubProps) {
               {[
                 { id: 'vault', icon: BookOpen, label: 'O Cofre', type: 'tab' },
                 { id: 'council', icon: Users, label: 'Conselho', type: 'tab' },
+                { id: 'lounge', icon: MessageSquare, label: 'Salão Elite', type: 'link', href: '/lounge' },
                 { id: 'advisor', icon: Terminal, label: 'Sovereign IA', type: 'link', href: '/advisor' }
               ].map((item) => (
                 item.type === 'tab' ? (

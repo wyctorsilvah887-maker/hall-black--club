@@ -4,7 +4,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * HALL BLACK CLUB - PROTOCOLO DE ELITE v2026.12
+     * SOVEREIGN FOUNDERS CLUB - PROTOCOLO DE ELITE v2026.12
      */
 
     function isSignedIn() {
@@ -33,8 +33,8 @@ service cloud.firestore {
     }
 
     match /vault/{articleId} {
-      allow read, list, create: if isSignedIn();
-      allow update, delete: if isAdmin();
+      allow read, list: if isSignedIn();
+      allow create, update, delete: if isAdmin();
     }
 
     match /mythicCodes/{mythicCodeId} {
@@ -44,12 +44,16 @@ service cloud.firestore {
     }
 
     match /councilMessages/{messageId} {
-      // Membro cria sua própria mensagem
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      // Membro lê suas mensagens ou Admin lê todas
       allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
-      // Apenas Admin responde
       allow update: if isAdmin();
+    }
+
+    match /loungeMessages/{messageId} {
+      allow read, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAdmin();
+      allow update: if false;
     }
   }
 }

@@ -30,7 +30,8 @@
         "pedigreeScore": { "type": "number", "description": "Pontuação de prestígio baseada em linhagem e tempo." },
         "isPublicProfile": { "type": "boolean" },
         "aiMessageCount": { "type": "integer", "description": "Contagem de mensagens enviadas à IA no ciclo atual." },
-        "lastAiMessageReset": { "type": "string", "format": "date-time", "description": "Timestamp do último reset de créditos da IA." }
+        "lastAiMessageReset": { "type": "string", "format": "date-time", "description": "Timestamp do último reset de créditos da IA." },
+        "photo": { "type": "string" }
       },
       "required": ["id", "name", "email", "role"]
     },
@@ -63,6 +64,21 @@
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "message", "timestamp"]
+    },
+    "LoungeMessage": {
+      "title": "LoungeMessage",
+      "type": "object",
+      "description": "Mensagens de chat em tempo real no Salão do Conselho.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "userRank": { "type": "string" },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "userName", "content", "timestamp"]
     }
   },
   "auth": {
@@ -84,6 +100,10 @@
     "/councilMessages/{messageId}": {
       "schema": "CouncilMessage",
       "description": "Canal de audiência do Alto Conselho."
+    },
+    "/loungeMessages/{messageId}": {
+      "schema": "LoungeMessage",
+      "description": "Mensagens do Salão do Conselho."
     }
   }
 }
