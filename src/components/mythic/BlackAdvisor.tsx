@@ -5,25 +5,29 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle } from "lucide-react";
+import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, Battery, BatteryFull, BatteryMedium, BatteryLow } from "lucide-react";
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { RankBadge } from './MythicIcons';
+import { useFirestore, useToast } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 /**
- * @fileOverview Componente Black Advisor - Business Edition.
- * Interface de terminal imersiva para consultoria de negócios e SaaS.
- * Otimizado para focar no topo das novas mensagens e evitar clipping de ícones.
+ * @fileOverview Componente Sovereign Advisor - Business Edition.
+ * Interface de terminal imersiva para consultoria de negócios e SaaS com limite de uso.
  */
 
 export function BlackAdvisor({ profile }: { profile: any }) {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const db = useFirestore();
+  const { toast } = useToast();
   
   const [logs, setLogs] = useState<any[]>([
     { 
       type: 'advisor', 
-      content: `Saudações, ${profile.name}. Link neural estabelecido para a patente ${profile.status}. Sou seu Advisor estratégico para SaaS, vendas e arquitetura de negócios. Submeta seu projeto para análise sem filtros.`,
+      content: `Saudações, ${profile.name}. Link neural estabelecido para a patente ${profile.status}. Sou seu Advisor estratégico para escala, modelos de negócio e arquitetura financeira. Submeta seu projeto para análise sem filtros.`,
       insights: ["Aguardando entrada estratégica"],
       note: `PROTOCOLO DE ACESSO: ${profile.status} IDENTIFICADO`,
       isInitial: true
@@ -33,7 +37,16 @@ export function BlackAdvisor({ profile }: { profile: any }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastLogRef = useRef<HTMLDivElement>(null);
 
-  // Efeito para focar no TOPO da nova mensagem
+  // Lógica de Limite de Mensagens (15 a cada 12h)
+  const now = new Date();
+  const lastReset = profile.lastAiMessageReset ? new Date(profile.lastAiMessageReset) : new Date(0);
+  const diffMs = now.getTime() - lastReset.getTime();
+  const twelveHoursMs = 12 * 60 * 60 * 1000;
+  const isResetNeeded = diffMs >= twelveHoursMs;
+  
+  const messagesSent = isResetNeeded ? 0 : (profile.aiMessageCount || 0);
+  const messagesRemaining = 15 - messagesSent;
+
   useEffect(() => {
     if (lastLogRef.current) {
       lastLogRef.current.scrollIntoView({ 
@@ -45,7 +58,17 @@ export function BlackAdvisor({ profile }: { profile: any }) {
 
   const handleConsult = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim() || isLoading) return;
+    if (!query.trim() || isLoading || !db) return;
+
+    // Verificação de limite
+    if (messagesRemaining <= 0) {
+      toast({
+        variant: "destructive",
+        title: "PROTOCOLO DE SEGURANÇA",
+        description: "Limite de 15 mensagens por ciclo de 12 horas atingido. Recarga em andamento."
+      });
+      return;
+    }
 
     const userQuery = query.trim();
     setQuery('');
@@ -65,6 +88,14 @@ export function BlackAdvisor({ profile }: { profile: any }) {
           insights: result.data.actionableInsights,
           note: result.data.confidentialityNote
         }]);
+
+        // Atualizar contador de mensagens no Firestore
+        const userRef = doc(db, 'users', profile.id);
+        updateDocumentNonBlocking(userRef, {
+          aiMessageCount: messagesSent + 1,
+          lastAiMessageReset: isResetNeeded ? now.toISOString() : (profile.lastAiMessageReset || now.toISOString())
+        });
+
       } else {
         setLogs(prev => [...prev, { 
           type: 'error', 
@@ -85,10 +116,24 @@ export function BlackAdvisor({ profile }: { profile: any }) {
 
   return (
     <div className="flex-1 flex flex-col h-full w-full overflow-hidden">
+      
+      {/* INDICADOR DE CRÉDITOS NEURAIS */}
+      <div className="flex items-center justify-between px-2 mb-4 animate-in fade-in duration-1000">
+        <div className="flex items-center gap-2">
+          {messagesRemaining > 10 ? <BatteryFull className="w-3.5 h-3.5 text-green-500" /> :
+           messagesRemaining > 5 ? <BatteryMedium className="w-3.5 h-3.5 text-yellow-500" /> :
+           <BatteryLow className={cn("w-3.5 h-3.5", messagesRemaining === 0 ? "text-red-600 animate-pulse" : "text-orange-500")} />}
+          <span className="text-[9px] font-black uppercase tracking-widest text-zinc-600">Link Neural: {messagesRemaining}/15 Créditos</span>
+        </div>
+        {messagesRemaining === 0 && (
+          <span className="text-[8px] font-bold uppercase tracking-widest text-red-900 animate-pulse">Recarga do Ciclo em Andamento</span>
+        )}
+      </div>
+
       {/* HISTÓRICO COM SCROLL INDEPENDENTE */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-12 pr-2 md:pr-4 custom-scrollbar pb-20 pt-10"
+        className="flex-1 overflow-y-auto space-y-12 pr-2 md:pr-4 custom-scrollbar pb-20 pt-4"
       >
         {logs.map((log, i) => (
           <div 
@@ -102,7 +147,6 @@ export function BlackAdvisor({ profile }: { profile: any }) {
               </div>
             ) : log.type === 'advisor' ? (
               <div className="space-y-6 max-w-[95%] md:max-w-2xl w-full">
-                {/* Garantimos que o container não tenha overflow-hidden para não cortar o ícone flutuante */}
                 <div className="bg-zinc-950 border border-zinc-900 p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] shadow-2xl relative">
                   <div className="absolute -top-3 -left-3 bg-black border border-zinc-800 p-2 rounded-lg z-20 shadow-xl">
                     <ShieldCheck className={cn("w-4 h-4", themeColor)} />
@@ -162,13 +206,13 @@ export function BlackAdvisor({ profile }: { profile: any }) {
         <Input 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="SUBMETER PROJETO PARA ANÁLISE ESTRATÉGICA..."
-          disabled={isLoading}
+          placeholder={messagesRemaining > 0 ? "SUBMETER PROJETO PARA ANÁLISE ESTRATÉGICA..." : "LIMITE DE CRÉDITOS ATINGIDO..."}
+          disabled={isLoading || messagesRemaining <= 0}
           className="bg-zinc-900/50 border-zinc-800 h-16 md:h-20 rounded-xl md:rounded-[2rem] px-6 md:px-8 text-xs md:text-sm font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-20 md:pr-32"
         />
         <Button 
           type="submit" 
-          disabled={isLoading || !query.trim()}
+          disabled={isLoading || !query.trim() || messagesRemaining <= 0}
           className={cn("absolute right-2 md:right-4 top-[2.1rem] md:top-[2.6rem] h-10 w-10 md:h-12 md:w-12 rounded-lg md:rounded-2xl bg-primary text-primary-foreground transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20")}
         >
           <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
@@ -177,4 +221,3 @@ export function BlackAdvisor({ profile }: { profile: any }) {
     </div>
   );
 }
-

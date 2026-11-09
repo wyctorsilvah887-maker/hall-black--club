@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "MythicCode": {
@@ -27,7 +28,9 @@
         "memberNumber": { "type": "number" },
         "registrationDateTime": { "type": "string", "format": "date-time" },
         "pedigreeScore": { "type": "number", "description": "Pontuação de prestígio baseada em linhagem e tempo." },
-        "isPublicProfile": { "type": "boolean" }
+        "isPublicProfile": { "type": "boolean" },
+        "aiMessageCount": { "type": "integer", "description": "Contagem de mensagens enviadas à IA no ciclo atual." },
+        "lastAiMessageReset": { "type": "string", "format": "date-time", "description": "Timestamp do último reset de créditos da IA." }
       },
       "required": ["id", "name", "email", "role"]
     },
