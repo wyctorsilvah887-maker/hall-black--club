@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -9,7 +8,8 @@ import { Terminal, Cpu, Loader2, ShieldCheck, ChevronRight, Zap, AlertTriangle, 
 import { consultBlackAdvisor } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { RankBadge } from './MythicIcons';
-import { useFirestore, useToast } from '@/firebase';
+import { useFirestore } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 import { doc } from 'firebase/firestore';
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
