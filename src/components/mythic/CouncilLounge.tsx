@@ -4,7 +4,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDatabase, useUser } from '@/firebase';
 import { ref, push, onValue, off, serverTimestamp, query, limitToLast, set, onDisconnect } from 'firebase/database';
-import { Send, User, Loader2, Sparkles, Hash, ShieldAlert } from "lucide-react";
+import { Send, User, Loader2, Sparkles, ShieldAlert } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database.
- * Otimizado para mobile com experiência de tela cheia e indicadores em tempo real.
+ * Otimizado para mobile com indicadores de digitação e auto-scroll.
  */
 
 export function CouncilLounge({ profile }: { profile: any }) {
@@ -30,13 +30,13 @@ export function CouncilLounge({ profile }: { profile: any }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sincronização de Mensagens
+  // Sincronização de Mensagens e Status de Digitação
   useEffect(() => {
     if (!db) return;
 
+    // Listener para Mensagens
     const messagesRef = query(ref(db, 'loungeMessages'), limitToLast(100));
-    
-    const unsubscribe = onValue(messagesRef, (snapshot) => {
+    const unsubscribeMessages = onValue(messagesRef, (snapshot) => {
       setPermissionError(false);
       const data = snapshot.val();
       if (data) {
@@ -51,15 +51,15 @@ export function CouncilLounge({ profile }: { profile: any }) {
       }
       setIsLoading(false);
     }, (error) => {
-      console.error("RTDB Sync Error:", error);
       if (error.message.includes('permission_denied')) {
         setPermissionError(true);
       }
       setIsLoading(false);
     });
 
-    const typingRef = ref(db, 'typingStatus');
-    const typingUnsubscribe = onValue(typingRef, (snapshot) => {
+    // Listener para Status de Digitação
+    const typingStatusRef = ref(db, 'typingStatus');
+    const unsubscribeTyping = onValue(typingStatusRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const currentlyTyping = Object.entries(data)
@@ -73,31 +73,33 @@ export function CouncilLounge({ profile }: { profile: any }) {
 
     return () => {
       off(messagesRef);
-      off(typingRef);
+      off(typingStatusRef);
     };
   }, [db, user?.uid]);
 
-  // Gestão do status "Digitando"
+  // Atualização do status "Digitando" do usuário local
   useEffect(() => {
     if (!db || !user?.uid || !profile?.name) return;
 
     const userTypingRef = ref(db, `typingStatus/${user.uid}`);
 
-    if (newMessage.length > 0) {
+    const updateTyping = (isTyping: boolean) => {
       set(userTypingRef, {
         userName: profile.name,
-        isTyping: true,
+        isTyping,
         lastUpdate: serverTimestamp()
       });
+      if (isTyping) {
+        onDisconnect(userTypingRef).remove();
+      }
+    };
 
-      onDisconnect(userTypingRef).remove();
-
+    if (newMessage.length > 0) {
+      updateTyping(true);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-      typingTimeoutRef.current = setTimeout(() => {
-        set(userTypingRef, { isTyping: false });
-      }, 3000);
+      typingTimeoutRef.current = setTimeout(() => updateTyping(false), 3000);
     } else {
-      set(userTypingRef, { isTyping: false });
+      updateTyping(false);
     }
 
     return () => {
@@ -105,6 +107,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
     };
   }, [newMessage, db, user?.uid, profile?.name]);
 
+  // Auto-scroll para a última mensagem
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -121,10 +124,11 @@ export function CouncilLounge({ profile }: { profile: any }) {
 
     try {
       const messagesRef = ref(db, 'loungeMessages');
-      const typingRef = ref(db, `typingStatus/${user.uid}`);
+      const userTypingRef = ref(db, `typingStatus/${user.uid}`);
       const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
       
-      set(typingRef, { isTyping: false });
+      // Limpar status de digitando imediatamente ao enviar
+      set(userTypingRef, { isTyping: false });
 
       await push(messagesRef, {
         userId: user.uid,
@@ -135,12 +139,11 @@ export function CouncilLounge({ profile }: { profile: any }) {
         timestamp: serverTimestamp()
       });
     } catch (error: any) {
-      console.error("Erro ao transmitir mensagem:", error);
       if (error.message.includes('permission_denied')) {
         toast({
           variant: "destructive",
-          title: "ACESSO NEGADO",
-          description: "O Salão está trancado. Verifique as regras de rede no Console."
+          title: "SISTEMA BLOQUEADO",
+          description: "O Salão exige permissão de rede ativa no Console."
         });
       }
     } finally {
@@ -150,7 +153,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
 
   return (
     <div className="flex flex-col h-full bg-transparent overflow-hidden">
-      {/* ÁREA DE MENSAGENS */}
+      {/* ÁREA DE TRANSMISSÃO */}
       <div 
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-4 py-6 md:px-12 md:py-10 space-y-6 md:space-y-8 custom-scrollbar scroll-smooth"
@@ -158,7 +161,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full opacity-20">
             <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
-            <p className="text-[10px] font-black uppercase tracking-widest">Sintonizando Rede de Elite...</p>
+            <p className="text-[10px] font-black uppercase tracking-widest">Sintonizando Rede...</p>
           </div>
         ) : permissionError ? (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-10">
@@ -166,9 +169,9 @@ export function CouncilLounge({ profile }: { profile: any }) {
               <ShieldAlert className="w-16 h-16 text-red-600 animate-pulse" />
             </div>
             <div className="space-y-3">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-red-600">Protocolo de Rede Negado</p>
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-red-600">Acesso de Rede Negado</p>
               <p className="text-[10px] text-zinc-600 uppercase font-bold leading-relaxed max-w-xs mx-auto">
-                As regras do Realtime Database estão bloqueando a conexão. Atualize as regras no Console do Firebase.
+                Configure as regras do Realtime Database para permitir leitura/escrita.
               </p>
             </div>
           </div>
@@ -176,7 +179,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
           <div className="flex flex-col items-center justify-center h-full text-center space-y-6 opacity-20">
             <Sparkles className="w-16 h-16 text-primary" />
             <p className="text-[11px] font-black uppercase tracking-[0.4em] max-w-[240px] leading-relaxed">
-              O Salão está em silêncio. Inicie a transmissão para a rede Founders.
+              O Salão está em silêncio. Inicie a transmissão para a elite.
             </p>
           </div>
         ) : (
@@ -191,9 +194,9 @@ export function CouncilLounge({ profile }: { profile: any }) {
                     isMe ? "flex-row-reverse" : "flex-row"
                   )}
                 >
-                  <div className="flex-shrink-0 relative">
+                  <div className="flex-shrink-0">
                     <div className={cn(
-                      "w-8 h-8 md:w-11 md:h-11 rounded-full overflow-hidden border bg-zinc-950 shadow-2xl transition-transform hover:scale-105",
+                      "w-8 h-8 md:w-11 md:h-11 rounded-full overflow-hidden border bg-zinc-950 shadow-2xl",
                       msg.userRank === 'HALL_BLACK' ? "border-white/20" : 
                       msg.userRank === 'MYTHIC' ? "border-primary/50" : "border-zinc-800"
                     )}>
@@ -218,7 +221,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
                       </span>
                     </div>
                     <div className={cn(
-                      "p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] text-[11px] md:text-sm font-medium leading-relaxed shadow-2xl border backdrop-blur-md transition-all",
+                      "p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] text-[11px] md:text-sm font-medium leading-relaxed shadow-2xl border backdrop-blur-md",
                       isMe 
                         ? "bg-primary/10 border-primary/20 text-white rounded-tr-none" 
                         : "bg-zinc-900/40 border-zinc-800/40 text-zinc-200 rounded-tl-none"
@@ -230,17 +233,17 @@ export function CouncilLounge({ profile }: { profile: any }) {
               );
             })}
             
-            {/* Typing Indicator - Estilo Mobile */}
+            {/* Indicador de Digitação */}
             {typingUsers.length > 0 && (
-              <div className="flex items-center gap-2 px-2 py-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <div className="flex gap-1">
+              <div className="flex items-center gap-3 px-2 py-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="flex gap-1.5">
                   <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
                 <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">
                   {typingUsers.length === 1 
-                    ? `${typingUsers[0].split(' ')[0]} está digitando...` 
+                    ? `${typingUsers[0].split(' ')[0]} está compondo...` 
                     : `${typingUsers.length} fundadores digitando...`}
                 </span>
               </div>
@@ -249,13 +252,13 @@ export function CouncilLounge({ profile }: { profile: any }) {
         )}
       </div>
 
-      {/* ÁREA DE INPUT - OTIMIZADA MOBILE */}
-      <div className="flex-shrink-0 bg-black/60 backdrop-blur-2xl border-t border-zinc-900/50 p-4 md:p-10 pb-6 md:pb-12 z-50">
-        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-3 md:gap-4 relative">
+      {/* DOCK DE ENTRADA */}
+      <div className="flex-shrink-0 bg-black/60 backdrop-blur-3xl border-t border-zinc-900/50 p-4 md:p-10 pb-8 md:pb-12 z-50">
+        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-3 relative">
           <Input 
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={permissionError ? "LINK INTERROMPIDO..." : "TRANSMITIR MENSAGEM..."}
+            placeholder={permissionError ? "REDE INDISPONÍVEL..." : "TRANSMITIR..."}
             disabled={isSending || permissionError}
             className="bg-zinc-950/50 border-zinc-800 h-14 md:h-20 rounded-2xl md:rounded-[2.5rem] px-6 md:px-10 text-xs md:text-base font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-16 md:pr-24 shadow-inner"
           />
