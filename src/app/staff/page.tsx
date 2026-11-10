@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -19,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { cn } from '@/lib/utils';
+import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
  * @fileOverview Centro de Comando Staff - Alto Conselho Sovereign Founders Club.
@@ -38,7 +38,6 @@ export default function StaffPanelPage() {
   const [msgFilter, setMsgFilter] = useState<'all' | 'pending' | 'replied'>('all');
   const [userSearch, setUserSearch] = useState('');
 
-  // Perfil do Admin
   const userRef = useMemoFirebase(() => {
     if (!user || !db) return null;
     return doc(db, 'users', user.uid);
@@ -46,7 +45,6 @@ export default function StaffPanelPage() {
 
   const { data: userProfile, isLoading: isProfileLoading } = useDoc(userRef);
 
-  // Consulta de Mensagens
   const messagesQuery = useMemoFirebase(() => {
     if (!db || userProfile?.role !== 'admin') return null;
     return query(collection(db, 'councilMessages'), orderBy('timestamp', 'desc'));
@@ -54,7 +52,6 @@ export default function StaffPanelPage() {
 
   const { data: messages, isLoading: isMessagesLoading } = useCollection(messagesQuery);
 
-  // Consulta de Usuários
   const usersQuery = useMemoFirebase(() => {
     if (!db || userProfile?.role !== 'admin') return null;
     return query(collection(db, 'users'), orderBy('registrationDateTime', 'desc'));
@@ -114,11 +111,7 @@ export default function StaffPanelPage() {
   };
 
   if (isUserLoading || isProfileLoading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <EliteLoader />;
   }
 
   if (!userProfile || userProfile.role !== 'admin') {
@@ -138,7 +131,6 @@ export default function StaffPanelPage() {
     <main className="min-h-screen bg-black text-white selection:bg-primary/30 pb-20">
       <div className="max-w-7xl mx-auto px-6 py-12 space-y-12">
         
-        {/* HEADER */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-zinc-900 pb-12">
           <div className="space-y-4">
             <div className="flex items-center gap-4">
@@ -159,7 +151,6 @@ export default function StaffPanelPage() {
           </div>
         </header>
 
-        {/* DASHBOARD VIEW */}
         {currentView === 'dashboard' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <button 
@@ -206,7 +197,6 @@ export default function StaffPanelPage() {
           </div>
         )}
 
-        {/* MESSAGES VIEW */}
         {currentView === 'messages' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 animate-in fade-in duration-500">
             <aside className="lg:col-span-4 space-y-6">
@@ -285,7 +275,6 @@ export default function StaffPanelPage() {
           </div>
         )}
 
-        {/* USERS VIEW */}
         {currentView === 'users' && (
           <div className="space-y-8 animate-in fade-in duration-500">
             <div className="relative max-w-md">

@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -21,6 +20,7 @@ import { cn } from '@/lib/utils';
 import { sendTransferConfirmationEmail } from '@/app/actions';
 import { signOut } from 'firebase/auth';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
+import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
  * @fileOverview Página de configurações de elite do Sovereign Founders Club.
@@ -220,11 +220,7 @@ export default function SettingsPage() {
   };
 
   if (isUserLoading || isProfileLoading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <EliteLoader />;
   }
 
   const currentRank = calculateRankByTime(profile?.registrationDateTime, profile?.status);
@@ -248,7 +244,6 @@ export default function SettingsPage() {
     <main className={cn("min-h-screen bg-black text-white selection:bg-primary/30 animate-in fade-in duration-700", themeClass)}>
       <div className="max-w-xl mx-auto">
         
-        {/* HEADER MOBILE-FIRST */}
         <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl py-5 px-4 flex items-center justify-between border-b border-zinc-900/50">
           <Link href="/" className="p-2 -ml-3 hover:bg-zinc-900/50 rounded-full transition-colors active:scale-95">
             <ArrowLeft className="w-6 h-6" />
@@ -257,7 +252,6 @@ export default function SettingsPage() {
           <div className="w-10" />
         </header>
 
-        {/* LISTA DE OPÇÕES ESTILO APP */}
         <div className="py-6 space-y-10">
           
           <section>
@@ -399,7 +393,6 @@ export default function SettingsPage() {
         </footer>
       </div>
 
-      {/* DIALOG DE EDIÇÃO (FULLSCREEN MOBILE) */}
       <Dialog open={isProfileEditOpen} onOpenChange={setIsProfileEditOpen}>
         <DialogContent className="bg-black border-none text-white w-full h-full max-w-none m-0 p-0 z-[200] flex flex-col overflow-hidden">
           <div className="sticky top-0 bg-black/90 backdrop-blur-xl z-50 px-5 py-5 flex items-center justify-between border-b border-zinc-900/60">
@@ -500,7 +493,6 @@ export default function SettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* DIALOG DE TRANSFERÊNCIA */}
       <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-900/80 text-white w-[95vw] max-w-sm rounded-[2rem] p-0 overflow-hidden shadow-2xl z-[250]">
           <div className="absolute top-0 inset-x-0 h-1.5 bg-red-600" />
@@ -563,7 +555,6 @@ export default function SettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* EDITOR DE IMAGEM */}
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
         <DialogContent className="bg-zinc-950 border-zinc-900/60 text-white w-[95vw] max-sm p-6 rounded-[2rem] z-[300]">
           <DialogHeader>

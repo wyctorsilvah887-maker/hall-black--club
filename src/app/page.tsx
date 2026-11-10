@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -7,6 +6,7 @@ import { EliteHub } from '@/components/mythic/EliteHub';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
+import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
  * @fileOverview Página principal do Sovereign Founders Club.
@@ -39,11 +39,7 @@ export default function Home() {
   const { data: userProfileData, isLoading: isProfileLoading } = useDoc(userRef);
 
   if (isUserLoading || (user && isProfileLoading)) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-12 h-12 border-t-2 border-primary rounded-full animate-spin" />
-      </div>
-    );
+    return <EliteLoader />;
   }
 
   // Se o usuário está logado, mostra o Hub

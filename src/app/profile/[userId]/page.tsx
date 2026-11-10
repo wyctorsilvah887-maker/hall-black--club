@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use } from 'react';
@@ -12,6 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
+import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 interface ProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -29,11 +29,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
   const { data: profile, isLoading } = useDoc(userRef);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-12 h-12 border-t-2 border-primary rounded-full animate-spin" />
-      </div>
-    );
+    return <EliteLoader />;
   }
 
   if (!profile) {

@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
@@ -12,6 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CollarIcon, RankBadge } from '@/components/mythic/MythicIcons';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
+import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 interface PetPageProps {
   params: Promise<{ userId: string; petId: string }>;
@@ -67,11 +67,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
   const { data: owner, isLoading: isOwnerLoading } = useDoc(ownerRef);
 
   if (isPetLoading || isOwnerLoading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-10 h-10 border-t-2 border-primary rounded-full animate-spin" />
-      </div>
-    );
+    return <EliteLoader />;
   }
 
   if (!pet || !owner) {

@@ -118,6 +118,16 @@
   @apply bg-zinc-900 rounded-full;
 }
 
+@keyframes loading-bar {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-loading-bar {
+  animation: loading-bar 2s infinite ease-in-out;
+}
+
 @keyframes bronze-glow {
   0% { box-shadow: 0 0 5px hsla(35, 60%, 40%, 0.2); }
   50% { box-shadow: 0 0 20px hsla(35, 60%, 40%, 0.5); }
