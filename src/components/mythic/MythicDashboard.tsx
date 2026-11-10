@@ -108,9 +108,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
            <NextImage 
              src="/logo-sfc.gif" 
              alt="Sovereign Founders Club" 
-             width={240} 
-             height={64} 
-             className="h-13 md:h-15 w-auto object-contain"
+             width={210} 
+             height={56} 
+             className="h-10 md:h-12 w-auto object-contain"
              unoptimized
              priority
            />

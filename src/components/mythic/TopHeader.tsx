@@ -10,7 +10,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
- * Exibe o logotipo oficial logo-sfc.gif em dimensões ampliadas.
+ * Exibe o logotipo oficial logo-sfc.gif em dimensões equilibradas.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
@@ -30,9 +30,9 @@ export function TopHeader({ profile }: { profile: any }) {
           <NextImage 
             src="/logo-sfc.gif" 
             alt="Sovereign Founders Club" 
-            width={280} 
-            height={80} 
-            className="h-13 md:h-15 w-auto object-contain"
+            width={240} 
+            height={68} 
+            className="h-10 md:h-12 w-auto object-contain"
             unoptimized
             priority
           />

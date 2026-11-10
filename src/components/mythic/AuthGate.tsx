@@ -201,9 +201,9 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             <NextImage 
               src="/logo-sfc.gif" 
               alt="Sovereign Founders Club" 
-              width={350} 
-              height={90} 
-              className="w-72 md:w-80 h-auto object-contain"
+              width={280} 
+              height={72} 
+              className="w-60 md:w-72 h-auto object-contain"
               unoptimized
               priority
             />

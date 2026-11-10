@@ -71,9 +71,9 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <NextImage 
             src="/logo-sfc.gif" 
             alt="Sovereign Founders Club" 
-            width={400} 
-            height={100} 
-            className="w-80 md:w-96 h-auto object-contain"
+            width={320} 
+            height={80} 
+            className="w-64 md:w-80 h-auto object-contain"
             unoptimized
             priority
           />
