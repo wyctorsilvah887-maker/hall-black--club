@@ -1,16 +1,17 @@
+
 "use client"
 
 import React, { useState, useEffect } from 'react';
 import { AuthGate } from '@/components/mythic/AuthGate';
-import { EliteHub } from '@/components/mythic/EliteHub';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
+import HubPage from './hub/page';
 
 /**
  * @fileOverview Página principal do Sovereign Founders Club.
- * Gerencia o fluxo de acesso e renderiza o Elite Hub para membros autenticados.
+ * Gerencia o fluxo de acesso e renderiza o Hub Central para membros autenticados.
  */
 
 export default function Home() {
@@ -42,26 +43,12 @@ export default function Home() {
     return <EliteLoader />;
   }
 
-  // Se o usuário está logado, mostra o Hub
+  // Se o usuário está logado, mostra o Hub Central
   if (user) {
-    const activeProfile = userProfileData || {
-      ...tempProfile,
-      id: user.uid,
-      email: user.email,
-      name: user.displayName || tempProfile?.name || 'Membro Elite'
-    };
-
-    const currentRank = calculateRankByTime(activeProfile.registrationDateTime, activeProfile.status);
-    const themeClass = getThemeClass(currentRank);
-
-    return (
-      <main className={`min-h-screen bg-black ${themeClass}`}>
-        <EliteHub profile={activeProfile} />
-      </main>
-    );
+    return <HubPage />;
   }
 
-  // Se não está logado, mostra diretamente a tela de Auth (Login/Cadastro)
+  // Se não está logado, mostra a tela de Auth (Login/Cadastro)
   const currentRank = calculateRankByTime(tempProfile?.registrationDateTime, tempProfile?.status);
   const themeClass = getThemeClass(currentRank);
 

@@ -1,7 +1,8 @@
+
 "use client"
 
 import React from 'react';
-import { User, Zap } from 'lucide-react';
+import { User, Zap, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { cn } from '@/lib/utils';
@@ -24,17 +25,24 @@ export function TopHeader({ profile }: { profile: any }) {
       <div className="h-[env(safe-area-inset-top,0px)] w-full" />
       
       <div className="h-20 md:h-24 w-full flex items-center justify-between px-6">
-        <Link href="/" className="flex items-center active:scale-95 transition-transform">
-          <NextImage 
-            src="/logo-sfc.gif" 
-            alt="Sovereign Founders Club" 
-            width={340} 
-            height={100} 
-            className="h-16 md:h-18 w-auto object-contain"
-            unoptimized
-            priority
-          />
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center active:scale-95 transition-transform">
+            <NextImage 
+              src="/logo-sfc.gif" 
+              alt="Sovereign Founders Club" 
+              width={340} 
+              height={100} 
+              className="h-14 md:h-16 w-auto object-contain"
+              unoptimized
+              priority
+            />
+          </Link>
+          <div className="hidden lg:block h-8 w-px bg-zinc-900" />
+          <Link href="/hub" className="hidden lg:flex items-center gap-2 text-zinc-500 hover:text-white transition-colors">
+            <LayoutGrid className="w-4 h-4" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Hub Central</span>
+          </Link>
+        </div>
 
         <div className="flex items-center gap-4 md:gap-8">
           <div className="flex flex-col items-end">
@@ -44,7 +52,7 @@ export function TopHeader({ profile }: { profile: any }) {
                  {profile?.eliteScore || '100'}
                </span>
             </div>
-            <p className="text-[6px] font-black text-zinc-600 uppercase tracking-widest mt-1 mr-1">Elite Score</p>
+            <p className="text-[6px] font-black text-zinc-600 uppercase tracking-widest mt-1 mr-1">Prestige Score</p>
           </div>
 
           <div className="flex items-center gap-3">
