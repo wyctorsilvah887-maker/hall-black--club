@@ -82,10 +82,11 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   const labelFontSize = 
     labelText === 'SOVEREIGN' ? '18px' :
     labelText === 'MÍTICO RUBI' ? '18px' : 
-    labelText === 'LEGENDÁRIO ÂMBAR' ? '13px' :
+    labelText === 'LEGENDÁRIO ÂMBAR' ? '15px' :
     labelText === 'LENDÁRIO' ? '18px' :
     '24px';
     
+  const labelLetterSpacing = labelText === 'LEGENDÁRIO ÂMBAR' ? '2.5px' : '4px';
   const labelYPosition = '58';
 
   return (
@@ -153,7 +154,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
                   fontFamily: 'system-ui, sans-serif', 
                   fontWeight: '900', 
                   fontSize: labelFontSize, 
-                  letterSpacing: '4px'
+                  letterSpacing: labelLetterSpacing
                 }}
               >
                 {labelText}
@@ -182,7 +183,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
               fontFamily: 'system-ui, sans-serif', 
               fontWeight: '900', 
               fontSize: labelFontSize, 
-              letterSpacing: '4px',
+              letterSpacing: labelLetterSpacing,
               filter: isHallBlack ? 'none' : `drop-shadow(0 0 10px ${colors.aura})`
             }}
           >
