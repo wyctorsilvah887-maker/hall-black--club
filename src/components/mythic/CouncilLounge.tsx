@@ -1,7 +1,6 @@
-
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useDatabase, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { ref, push, onValue, off, serverTimestamp, query, limitToLast, set, onDisconnect } from 'firebase/database';
 import { doc } from 'firebase/firestore';
@@ -44,6 +43,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isTypingRef = useRef(false);
 
   const previewUserRef = useMemoFirebase(() => {
     if (!firestore || !previewUserId) return null;
@@ -86,9 +86,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
       if (data) {
         const currentlyTyping = Object.entries(data)
           .filter(([uid, status]: [string, any]) => {
-            // Filtrar status de outros usuários que estão digitando e não estão obsoletos (mais de 10s)
-            const isTyping = status.isTyping === true;
-            return uid !== user?.uid && isTyping;
+            return uid !== user?.uid && status.isTyping === true;
           })
           .map(([_, status]: [string, any]) => status.userName);
         setTypingUsers(currentlyTyping);
@@ -103,39 +101,44 @@ export function CouncilLounge({ profile }: { profile: any }) {
     };
   }, [db, user?.uid]);
 
-  // Atualização do status "Digitando" do usuário local
-  useEffect(() => {
+  // Função para atualizar status de digitação no RTDB
+  const updateTypingStatus = useCallback((isTyping: boolean) => {
     if (!db || !user?.uid || !profile?.name) return;
+    if (isTypingRef.current === isTyping) return; // Evitar escrita desnecessária
 
+    isTypingRef.current = isTyping;
     const userTypingRef = ref(db, `typingStatus/${user.uid}`);
 
-    const updateTyping = (isTyping: boolean) => {
+    if (isTyping) {
       set(userTypingRef, {
         userName: profile.name,
-        isTyping,
+        isTyping: true,
         lastUpdate: serverTimestamp()
-      }).catch(err => {
-        console.warn("Falha no Registro de Digitação RTDB:", err);
       });
-
-      if (isTyping) {
-        // Garantir remoção ao desconectar
-        onDisconnect(userTypingRef).remove();
-      }
-    };
-
-    if (newMessage.trim().length > 0) {
-      updateTyping(true);
-      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-      typingTimeoutRef.current = setTimeout(() => updateTyping(false), 4000);
+      onDisconnect(userTypingRef).remove();
     } else {
-      updateTyping(false);
+      set(userTypingRef, {
+        userName: profile.name,
+        isTyping: false,
+        lastUpdate: serverTimestamp()
+      });
+    }
+  }, [db, user?.uid, profile?.name]);
+
+  // Efeito para monitorar o campo de texto e disparar o status
+  useEffect(() => {
+    if (newMessage.trim().length > 0) {
+      updateTypingStatus(true);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => updateTypingStatus(false), 3000);
+    } else {
+      updateTypingStatus(false);
     }
 
     return () => {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
-  }, [newMessage, db, user?.uid, profile?.name]);
+  }, [newMessage, updateTypingStatus]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -150,19 +153,12 @@ export function CouncilLounge({ profile }: { profile: any }) {
     setIsSending(true);
     const content = newMessage.trim();
     setNewMessage('');
+    updateTypingStatus(false); // Limpar status imediatamente
 
     try {
       const messagesRef = ref(db, 'loungeMessages');
-      const userTypingRef = ref(db, `typingStatus/${user.uid}`);
       const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
       
-      // Limpar status de digitação imediatamente após enviar
-      set(userTypingRef, { 
-        userName: profile.name,
-        isTyping: false,
-        lastUpdate: serverTimestamp()
-      });
-
       await push(messagesRef, {
         userId: user.uid,
         userName: profile.name,
@@ -267,7 +263,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
               );
             })}
             
-            {/* INDICADOR DE DIGITAÇÃO: TRÊS PONTOS */}
+            {/* INDICADOR DE DIGITAÇÃO: TRÊS PONTOS ANIMADOS */}
             {typingUsers.length > 0 && (
               <div className="flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="flex-shrink-0">
@@ -281,10 +277,10 @@ export function CouncilLounge({ profile }: { profile: any }) {
                       ? `${typingUsers[0].split(' ')[0]} está digitando...` 
                       : `${typingUsers.length} fundadores digitando...`}
                   </span>
-                  <div className="bg-zinc-900/40 border border-zinc-800/40 p-4 md:p-5 rounded-[1.2rem] md:rounded-[1.5rem] rounded-tl-none flex items-center justify-center gap-2 w-20 md:w-24 shadow-2xl">
-                    <span className="w-2 h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0s' }} />
-                    <span className="w-2 h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0.2s' }} />
-                    <span className="w-2 h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0.4s' }} />
+                  <div className="bg-zinc-900/40 border border-zinc-800/40 p-4 md:p-5 rounded-[1.2rem] md:rounded-[1.5rem] rounded-tl-none flex items-center justify-center gap-2 w-16 md:w-20 shadow-2xl">
+                    <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0s' }} />
+                    <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0.2s' }} />
+                    <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0.4s' }} />
                   </div>
                 </div>
               </div>
@@ -345,7 +341,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
               </div>
 
               <div className="pt-12 pb-8 px-8 flex flex-col items-center text-center space-y-6">
-                {/* INSÍGNIA ABAIXO DA FOTO */}
                 <div className="flex flex-col items-center -mt-8 mb-2 w-full">
                   <div className="scale-75 origin-center">
                     <RankBadge status={calculateRankByTime(previewProfile.registrationDateTime, previewProfile.status)} id={previewProfile.id} size="sm" />
