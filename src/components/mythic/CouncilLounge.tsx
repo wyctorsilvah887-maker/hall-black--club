@@ -371,7 +371,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
                      calculateRankByTime(previewProfile.registrationDateTime, previewProfile.status) === 'HALL_BLACK' ? "border-zinc-800" :
                      calculateRankByTime(previewProfile.registrationDateTime, previewProfile.status) === 'MYTHIC' ? "border-primary" : "border-zinc-900"
                    )}>
-                     {previewProfile.photo ? (
+                     {previewProfile.photo && previewProfile.isPublicProfile ? (
                        <Image src={previewProfile.photo} alt={previewProfile.name} width={96} height={96} className="object-cover" unoptimized />
                      ) : (
                        <User className="w-full h-full p-6 text-zinc-900" />
@@ -397,37 +397,53 @@ export function CouncilLounge({ profile }: { profile: any }) {
                   <p className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.3em]">#{previewProfile.memberNumber?.toString().padStart(2, '0')} FOUNDER</p>
                 </div>
 
-                {previewProfile.bio && (
-                  <p className="text-[10px] text-zinc-400 font-medium leading-relaxed italic max-w-[240px]">
-                    "{previewProfile.bio}"
-                  </p>
+                {previewProfile.isPublicProfile ? (
+                  <>
+                    {previewProfile.bio && (
+                      <p className="text-[10px] text-zinc-400 font-medium leading-relaxed italic max-w-[240px]">
+                        "{previewProfile.bio}"
+                      </p>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-3 w-full pt-2">
+                      <div className="bg-zinc-900/30 p-3 rounded-2xl border border-zinc-900/50 flex flex-col items-center gap-1">
+                        <MapPin className="w-3 h-3 text-zinc-700" />
+                        <span className="text-[7px] font-black uppercase tracking-widest text-zinc-500 truncate w-full">
+                          {previewProfile.city || 'Sovereign'}
+                        </span>
+                      </div>
+                      <div className="bg-zinc-900/30 p-3 rounded-2xl border border-zinc-900/50 flex flex-col items-center gap-1">
+                        <ShieldCheck className="w-3 h-3 text-primary" />
+                        <span className="text-[7px] font-black uppercase tracking-widest text-zinc-500">Verificado</span>
+                      </div>
+                    </div>
+
+                    <Button asChild className="w-full h-12 bg-primary hover:bg-accent text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/10 group">
+                      <Link href={`/profile/${previewProfile.id}`}>
+                        Ver Perfil Completo <ChevronRight className="w-3 h-3 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
+                  </>
+                ) : (
+                  <div className="py-4 space-y-4 w-full">
+                    <div className="p-4 bg-zinc-900/20 border border-dashed border-zinc-800 rounded-2xl">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">Acesso de Identidade Restrito</p>
+                    </div>
+                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest leading-relaxed">
+                      Este membro optou por manter suas credenciais de elite sob sigilo místico.
+                    </p>
+                  </div>
                 )}
-
-                <div className="grid grid-cols-2 gap-3 w-full pt-2">
-                  <div className="bg-zinc-900/30 p-3 rounded-2xl border border-zinc-900/50 flex flex-col items-center gap-1">
-                    <MapPin className="w-3 h-3 text-zinc-700" />
-                    <span className="text-[7px] font-black uppercase tracking-widest text-zinc-500 truncate w-full">
-                      {previewProfile.city || 'Sovereign'}
-                    </span>
-                  </div>
-                  <div className="bg-zinc-900/30 p-3 rounded-2xl border border-zinc-900/50 flex flex-col items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-primary" />
-                    <span className="text-[7px] font-black uppercase tracking-widest text-zinc-500">Verificado</span>
-                  </div>
-                </div>
-
-                <Button asChild className="w-full h-12 bg-primary hover:bg-accent text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/10 group">
-                  <Link href={`/profile/${previewProfile.id}`}>
-                    Ver Perfil Completo <ChevronRight className="w-3 h-3 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
+                {!previewProfile.isPublicProfile && (
+                  <Button variant="ghost" onClick={() => setPreviewUserId(null)} className="text-[9px] font-black uppercase tracking-widest">Fechar Dossiê</Button>
+                )}
               </div>
             </div>
           ) : (
             <div className="py-20 flex flex-col items-center justify-center gap-4 text-center px-10">
               <ShieldAlert className="w-12 h-12 text-zinc-900" />
               <p className="text-[10px] font-black uppercase tracking-widest text-zinc-600 leading-relaxed">
-                Este membro optou por manter suas credenciais sob sigilo absoluto.
+                Falha ao sincronizar link de identidade.
               </p>
               <Button variant="ghost" onClick={() => setPreviewUserId(null)} className="text-[9px] font-black uppercase tracking-widest">Fechar</Button>
             </div>
@@ -437,3 +453,4 @@ export function CouncilLounge({ profile }: { profile: any }) {
     </div>
   );
 }
+
