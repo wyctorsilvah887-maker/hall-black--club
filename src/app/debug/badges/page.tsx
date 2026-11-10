@@ -59,7 +59,7 @@ export default function BadgeGalleryPage() {
                     <RankBadge status={rank.status} id={`debug-${rank.status}`} size="lg" />
                  </div>
                  <div className="text-center space-y-3 max-w-xs">
-                    <h3 className="text-sm md:text-base font-black uppercase tracking-widest">{rank.label}</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-widest">{rank.label}</h3>
                     <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
                       {rank.description}
                     </p>
