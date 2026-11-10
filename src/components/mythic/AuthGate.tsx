@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -138,7 +139,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           email: email,
           emergencyContact: emergencyPhone,
           registrationDateTime: new Date().toISOString(),
-          pedigreeScore: 100,
+          eliteScore: 100,
           ...inheritedData,
           memberNumber: memberNumber
         };

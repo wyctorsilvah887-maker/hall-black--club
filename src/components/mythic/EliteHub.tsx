@@ -24,7 +24,7 @@ interface EliteHubProps {
 /**
  * @fileOverview Elite Hub - Central de Comando Sovereign.
  * Navegação simplificada no Dock inferior.
- * Cabeçalho superior fixo gerencia o acesso ao perfil.
+ * Cabeçalho superior fixo gerencia o acesso ao perfil e exibe o Elite Score.
  */
 
 export function EliteHub({ profile }: EliteHubProps) {
@@ -43,7 +43,7 @@ export function EliteHub({ profile }: EliteHubProps) {
       {/* CABEÇALHO SUPERIOR FIXO */}
       <TopHeader profile={profile} />
 
-      {/* DOCK DE NAVEGAÇÃO UNIFICADO (BASE) - Ajustes Removido */}
+      {/* DOCK DE NAVEGAÇÃO UNIFICADO (BASE) */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-8 h-24 pointer-events-none">
         <div className="max-w-xl mx-auto h-full pointer-events-auto">
           <div className="bg-zinc-950/80 backdrop-blur-2xl border border-zinc-900 rounded-[2.5rem] h-full flex items-center justify-around px-6 shadow-[0_-15px_50px_rgba(0,0,0,0.9)]">
@@ -83,7 +83,7 @@ export function EliteHub({ profile }: EliteHubProps) {
         </div>
       </nav>
 
-      {/* CONTEÚDO PRINCIPAL - Adicionado PT-20 para não ficar sob o header fixo */}
+      {/* CONTEÚDO PRINCIPAL */}
       <main className="max-w-7xl mx-auto px-6 pt-20 md:pt-28 space-y-12 relative z-10">
         
         {/* HEADER DE PRESTÍGIO */}
@@ -105,7 +105,7 @@ export function EliteHub({ profile }: EliteHubProps) {
                   </div>
                   <div className="hidden sm:block h-px w-8 bg-zinc-900" />
                   <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
-                    Pedigree Score: {profile.pedigreeScore || '100'}
+                    Status de Linhagem Ativo
                   </span>
                </div>
             </div>

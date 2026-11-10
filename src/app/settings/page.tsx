@@ -24,7 +24,6 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Página de configurações de elite do Hall Black Club.
- * Otimizada para mobile com experiência estilo App nativo.
  */
 
 export default function SettingsPage() {
@@ -157,11 +156,11 @@ export default function SettingsPage() {
     if (!profile?.id || !db) return;
     const userRef = doc(db, 'users', profile.id);
     updateDocumentNonBlocking(userRef, { 
-      pedigreeScore: increment(100)
+      eliteScore: increment(100)
     });
     toast({ 
       title: "PRESTÍGIO ADQUIRIDO", 
-      description: "+100 Pontos de Pedigree adicionados à sua linhagem.",
+      description: "+100 Pontos de Elite adicionados à sua linhagem.",
     });
   };
 
@@ -277,7 +276,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="text-left">
                     <p className="text-[11px] font-black uppercase tracking-widest">Contribuir para a Linhagem</p>
-                    <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">Acumular 100 pontos de prestígio</p>
+                    <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">Acumular 100 pontos de elite</p>
                   </div>
                 </div>
                 <Sparkles className="w-4 h-4 text-primary animate-pulse" />
@@ -476,7 +475,7 @@ export default function SettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* DIALOG DE TRANSFERÊNCIA (ADAPTADO MOBILE) */}
+      {/* DIALOG DE TRANSFERÊNCIA */}
       <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-900/80 text-white w-[95vw] max-w-sm rounded-[2rem] p-0 overflow-hidden shadow-2xl z-[250]">
           <div className="absolute top-0 inset-x-0 h-1.5 bg-red-600" />

@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -5,7 +6,7 @@ import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebas
 import { collection, query, orderBy, limit, where } from 'firebase/firestore';
 import { 
   User, ShieldCheck, MapPin, Lock, MessageSquare, Send, 
-  Clock, Loader2, Trophy, Medal, Star, Users, LayoutGrid 
+  Clock, Loader2, Trophy, Medal, Star, Users, LayoutGrid, Zap 
 } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,6 @@ import { RankBadge } from './MythicIcons';
 
 /**
  * @fileOverview Seção do Conselho com sub-navegação: Alto Conselho, Ranking e Audiência.
- * Refinado para evitar clarões brancos e transições instáveis.
  */
 
 type CouncilTab = 'members' | 'ranking' | 'audience';
@@ -61,7 +61,7 @@ export function HighCouncil({ profile }: { profile: any }) {
     ? allMembers.filter(m => m.status !== 'REVOKED').slice(0, 60)
     : [];
 
-  const rankedMembers = [...members].sort((a, b) => (b.pedigreeScore || 0) - (a.pedigreeScore || 0));
+  const rankedMembers = [...members].sort((a, b) => (b.eliteScore || 0) - (a.eliteScore || 0));
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,7 +132,7 @@ export function HighCouncil({ profile }: { profile: any }) {
         </div>
       </div>
 
-      {/* CONTEÚDO DINÂMICO - Key garante re-render limpo da animação */}
+      {/* CONTEÚDO DINÂMICO */}
       <div key={activeTab} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
         
         {/* ABA: ALTO CONSELHO (GALLERY) */}
@@ -234,8 +234,11 @@ export function HighCouncil({ profile }: { profile: any }) {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl md:text-2xl font-black text-white tracking-tighter">{member.pedigreeScore || '100'}</p>
-                    <p className="text-[7px] font-black text-zinc-700 uppercase tracking-widest">Pedigree Score</p>
+                    <div className="flex items-center justify-end gap-1.5">
+                       <Zap className="w-3.5 h-3.5 text-primary" />
+                       <p className="text-xl md:text-2xl font-black text-white tracking-tighter">{member.eliteScore || '100'}</p>
+                    </div>
+                    <p className="text-[7px] font-black text-zinc-700 uppercase tracking-widest">Elite Score</p>
                   </div>
                 </div>
               ))}

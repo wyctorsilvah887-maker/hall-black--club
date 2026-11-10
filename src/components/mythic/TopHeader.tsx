@@ -2,7 +2,7 @@
 "use client"
 
 import React from 'react';
-import { Crown, User } from 'lucide-react';
+import { Crown, User, Zap } from 'lucide-react';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 /**
  * @fileOverview Cabeçalho Superior de Elite - Hall Black Club.
  * Configurado como 'fixed' para visibilidade absoluta em navegadores.
- * Oculta-se automaticamente em modo PWA (standalone) via CSS.
+ * Exibe o Elite Score de forma proeminente.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
@@ -35,21 +35,34 @@ export function TopHeader({ profile }: { profile: any }) {
         </div>
       </Link>
 
-      <div className="flex items-center gap-4">
-        <div className="text-right hidden sm:block">
-          <p className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Protocolo v2026.12</p>
-          <p className="text-[10px] font-black text-white uppercase tracking-tight">{profile?.name}</p>
-        </div>
-        <Link href="/settings" className="relative group">
-          <div className="w-10 h-10 rounded-full border-2 border-zinc-800 overflow-hidden bg-zinc-950 group-hover:border-primary transition-colors shadow-2xl">
-            {profile?.photo ? (
-              <NextImage src={profile.photo} alt={profile.name} width={40} height={40} className="object-cover" unoptimized />
-            ) : (
-              <User className="w-full h-full p-2.5 text-zinc-800" />
-            )}
+      <div className="flex items-center gap-4 md:gap-8">
+        {/* ELITE SCORE DISPLAY */}
+        <div className="flex flex-col items-end">
+          <div className="flex items-center gap-1.5 bg-zinc-950 px-3 py-1.5 rounded-full border border-zinc-900 shadow-inner">
+             <Zap className="w-3 h-3 text-primary animate-pulse" />
+             <span className="text-[11px] font-black text-white tracking-tighter">
+               {profile?.eliteScore || '100'}
+             </span>
           </div>
-          <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-black rounded-full shadow-lg" />
-        </Link>
+          <p className="text-[6px] font-black text-zinc-600 uppercase tracking-widest mt-1 mr-1">Elite Score</p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="text-right hidden sm:block">
+            <p className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Protocolo v2026.12</p>
+            <p className="text-[10px] font-black text-white uppercase tracking-tight">{profile?.name}</p>
+          </div>
+          <Link href="/settings" className="relative group">
+            <div className="w-10 h-10 rounded-full border-2 border-zinc-800 overflow-hidden bg-zinc-950 group-hover:border-primary transition-colors shadow-2xl">
+              {profile?.photo ? (
+                <NextImage src={profile.photo} alt={profile.name} width={40} height={40} className="object-cover" unoptimized />
+              ) : (
+                <User className="w-full h-full p-2.5 text-zinc-800" />
+              )}
+            </div>
+            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-black rounded-full shadow-lg" />
+          </Link>
+        </div>
       </div>
     </header>
   );

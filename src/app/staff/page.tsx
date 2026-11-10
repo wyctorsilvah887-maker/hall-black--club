@@ -7,7 +7,7 @@ import { collection, query, orderBy, doc, where, increment } from 'firebase/fire
 import { 
   ShieldCheck, Clock, MessageSquare, CheckCircle2, 
   Loader2, ArrowLeft, Send, Search, Users, 
-  LayoutDashboard, UserCog, ChevronRight, X, CreditCard, Award
+  LayoutDashboard, UserCog, ChevronRight, X, CreditCard, Award, Zap
 } from "lucide-react";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,6 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Centro de Comando Staff - Alto Conselho Hall Black.
- * Dashboard modular para gestão de audiências e membros.
  */
 
 type StaffView = 'dashboard' | 'messages' | 'users';
@@ -106,11 +105,11 @@ export default function StaffPanelPage() {
     if (!db) return;
     const targetRef = doc(db, 'users', targetUser.id);
     updateDocumentNonBlocking(targetRef, { 
-      pedigreeScore: increment(100)
+      eliteScore: increment(100)
     });
     toast({ 
       title: "PAGAMENTO CONFIRMADO", 
-      description: `+100 Pontos de Prestígio creditados para ${targetUser.name}.` 
+      description: `+100 Pontos de Elite creditados para ${targetUser.name}.` 
     });
   };
 
@@ -306,7 +305,7 @@ export default function StaffPanelPage() {
                     <tr className="bg-zinc-900/50 border-b border-zinc-900">
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Membro</th>
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Patente</th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Score</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Elite Score</th>
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações</th>
                     </tr>
                   </thead>
@@ -328,8 +327,8 @@ export default function StaffPanelPage() {
                         </td>
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-2">
-                             <Award className="w-3 h-3 text-primary" />
-                             <span className="text-xs font-black">{u.pedigreeScore || 0}</span>
+                             <Zap className="w-3 h-3 text-primary" />
+                             <span className="text-xs font-black">{u.eliteScore || 0}</span>
                           </div>
                         </td>
                         <td className="px-8 py-6 text-right">
