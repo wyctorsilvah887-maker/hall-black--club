@@ -23,8 +23,8 @@ interface EliteHubProps {
 
 /**
  * @fileOverview Elite Hub - Central de Comando Sovereign.
- * Navegação unificada no Dock inferior para experiência PWA / Mobile-First.
- * Agora inclui o TopHeader para navegação em desktop/browser.
+ * Navegação simplificada no Dock inferior.
+ * Cabeçalho superior fixo gerencia o acesso ao perfil.
  */
 
 export function EliteHub({ profile }: EliteHubProps) {
@@ -38,12 +38,12 @@ export function EliteHub({ profile }: EliteHubProps) {
   const themeColor = 'text-primary';
 
   return (
-    <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden transition-colors duration-700 pb-32", themeClass)}>
+    <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative transition-colors duration-700 pb-32", themeClass)}>
       
-      {/* CABEÇALHO SUPERIOR (Oculto em PWA) */}
+      {/* CABEÇALHO SUPERIOR FIXO */}
       <TopHeader profile={profile} />
 
-      {/* DOCK DE NAVEGAÇÃO UNIFICADO (BASE) */}
+      {/* DOCK DE NAVEGAÇÃO UNIFICADO (BASE) - Ajustes Removido */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-8 h-24 pointer-events-none">
         <div className="max-w-xl mx-auto h-full pointer-events-auto">
           <div className="bg-zinc-950/80 backdrop-blur-2xl border border-zinc-900 rounded-[2.5rem] h-full flex items-center justify-around px-6 shadow-[0_-15px_50px_rgba(0,0,0,0.9)]">
@@ -83,7 +83,8 @@ export function EliteHub({ profile }: EliteHubProps) {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 pt-12 space-y-12 relative z-10">
+      {/* CONTEÚDO PRINCIPAL - Adicionado PT-20 para não ficar sob o header fixo */}
+      <main className="max-w-7xl mx-auto px-6 pt-20 md:pt-28 space-y-12 relative z-10">
         
         {/* HEADER DE PRESTÍGIO */}
         {activeTab !== 'council' && (

@@ -13,7 +13,7 @@ import { TopHeader } from '@/components/mythic/TopHeader';
 
 /**
  * @fileOverview Página do Salão do Conselho - Sovereign Founders Club.
- * Integrada com TopHeader em modo sticky.
+ * Integrada com TopHeader fixo.
  */
 
 export default function LoungePage() {
@@ -52,18 +52,18 @@ export default function LoungePage() {
   return (
     <main className={cn("fixed inset-0 bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
       
-      {/* CABEÇALHO SUPERIOR STICKY */}
+      {/* CABEÇALHO SUPERIOR FIXO */}
       <TopHeader profile={profile} />
 
-      {/* BOTÃO VOLTAR FLUTUANTE */}
+      {/* BOTÃO VOLTAR FLUTUANTE - Reposicionado abaixo do header */}
       <div className="absolute top-20 left-6 z-50 md:top-24">
         <Link href="/" className="p-3 bg-black/40 backdrop-blur-xl border border-zinc-900 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all active:scale-90 shadow-2xl">
           <ArrowLeft className="w-5 h-5" />
         </Link>
       </div>
 
-      {/* CHAT CONTAINER */}
-      <div className="flex-1 flex flex-col w-full max-w-6xl mx-auto overflow-hidden relative">
+      {/* CHAT CONTAINER - Adicionado PT para compensar o fixed header */}
+      <div className="flex-1 flex flex-col w-full max-w-6xl mx-auto overflow-hidden relative pt-16 md:pt-20">
         <div className="pt-4 md:pt-6 px-8 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
              <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
