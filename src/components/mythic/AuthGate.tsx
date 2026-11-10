@@ -12,10 +12,17 @@ import {
   updateProfile 
 } from "firebase/auth";
 import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs, query, where } from "firebase/firestore";
-import { Loader2, UserPlus, LogIn, Phone } from "lucide-react";
+import { Loader2, UserPlus, LogIn, Phone, CreditCard, ShieldCheck, Sparkles, CheckCircle2 } from "lucide-react";
 import NextImage from 'next/image';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface AuthGateProps {
   theme?: string;
@@ -24,6 +31,7 @@ interface AuthGateProps {
 
 /**
  * @fileOverview Gateway de Autenticação Central - Sovereign Founders Club.
+ * Gerencia Login, Registro e o novo Protocolo de Assinatura de Elite.
  */
 
 export function AuthGate({ theme, tempProfile }: AuthGateProps) {
@@ -34,6 +42,10 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
   const [name, setName] = useState('');
   const [emergencyPhone, setEmergencyPhone] = useState('');
   
+  // Estado para o Modal de Pagamento
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
   const auth = useAuth();
   const db = useFirestore();
   const { toast } = useToast();
@@ -57,10 +69,29 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
     setEmergencyPhone(formatPhoneMask(e.target.value));
   };
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleAuthInitiation = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    
+
+    if (isLogin) {
+      handleAuth();
+    } else {
+      // Se for cadastro, abre o modal de pagamento primeiro
+      setIsPaymentModalOpen(true);
+    }
+  };
+
+  const handleConfirmPaymentAndRegister = async () => {
+    setIsProcessingPayment(true);
+    // Simulação de processamento de gateway de elite
+    setTimeout(() => {
+      handleAuth();
+      setIsPaymentModalOpen(false);
+      setIsProcessingPayment(false);
+    }, 2000);
+  };
+
+  const handleAuth = async () => {
     setIsLoading(true);
 
     try {
@@ -212,7 +243,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="space-y-4 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl shadow-2xl">
+        <form onSubmit={handleAuthInitiation} className="space-y-4 bg-zinc-900/30 p-8 rounded-2xl border border-zinc-800/50 backdrop-blur-xl shadow-2xl">
           {!isLogin && (
             <>
               <div className="space-y-2">
@@ -288,6 +319,82 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           </button>
         </div>
       </div>
+
+      {/* MODAL DE PAGAMENTO OBRIGATÓRIO */}
+      <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+        <DialogContent className="bg-zinc-950 border-zinc-900 text-white w-[95vw] max-w-md rounded-[2.5rem] p-0 overflow-hidden shadow-2xl z-[300]">
+          <div className="absolute top-0 inset-x-0 h-1.5 bg-primary animate-pulse" />
+          
+          <div className="p-8 space-y-8">
+            <div className="flex flex-col items-center text-center space-y-6">
+              <div className="p-4 rounded-3xl bg-primary/10 border border-primary/20 relative group">
+                <CreditCard className="w-12 h-12 text-primary group-hover:scale-110 transition-transform duration-500" />
+                <Sparkles className="absolute -top-2 -right-2 w-5 h-5 text-primary animate-pulse" />
+              </div>
+              
+              <DialogHeader className="space-y-2">
+                <DialogTitle className="text-2xl font-black uppercase tracking-tighter text-center leading-tight">
+                  Assinatura de Elite
+                </DialogTitle>
+                <DialogDescription className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold text-center">
+                  Protocolo de Acesso à Comunidade
+                </DialogDescription>
+              </DialogHeader>
+            </div>
+
+            <div className="bg-black/40 border border-zinc-900 rounded-[2rem] p-6 space-y-6">
+              <div className="flex flex-col items-center gap-1">
+                 <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Valor da Linhagem</p>
+                 <div className="flex items-baseline gap-1">
+                    <span className="text-lg font-black text-primary">R$</span>
+                    <span className="text-5xl font-black tracking-tighter">10,90</span>
+                    <span className="text-xs font-black text-zinc-500 uppercase tracking-widest">/mês</span>
+                 </div>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  "Acesso ao Cofre de Inteligência",
+                  "Rede Segura Black Room",
+                  "Advisor IA sem Filtros",
+                  "Credencial de Prestígio"
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <Button 
+                onClick={handleConfirmPaymentAndRegister}
+                disabled={isProcessingPayment}
+                className="w-full h-16 bg-primary hover:bg-accent text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95"
+              >
+                {isProcessingPayment ? (
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                ) : (
+                  <span className="flex items-center gap-2">
+                    CONFIRMAR ASSINATURA <ShieldCheck className="w-4 h-4" />
+                  </span>
+                )}
+              </Button>
+              <button 
+                onClick={() => setIsPaymentModalOpen(false)}
+                className="w-full text-[9px] font-black text-zinc-600 hover:text-zinc-400 uppercase tracking-widest transition-colors"
+              >
+                Retornar ao Protocolo Anterior
+              </button>
+            </div>
+          </div>
+          
+          <footer className="bg-black/40 py-4 text-center border-t border-zinc-900/50">
+             <p className="text-[7px] font-black text-zinc-700 uppercase tracking-[0.5em]">Transação Criptografada Sovereign Pay</p>
+          </footer>
+        </DialogContent>
+      </Dialog>
 
       <footer className="absolute bottom-8 text-center opacity-20">
         <p className="text-[8px] font-black uppercase tracking-[0.5em] text-zinc-600">
