@@ -68,7 +68,7 @@
     "LoungeMessage": {
       "title": "LoungeMessage",
       "type": "object",
-      "description": "Mensagens de chat em tempo real no Salão do Conselho.",
+      "description": "Mensagens de chat em tempo real no Black Room.",
       "properties": {
         "id": { "type": "string" },
         "userId": { "type": "string" },
@@ -103,7 +103,7 @@
     },
     "/loungeMessages/{messageId}": {
       "schema": "LoungeMessage",
-      "description": "Mensagens do Salão do Conselho."
+      "description": "Mensagens do Black Room."
     }
   }
 }

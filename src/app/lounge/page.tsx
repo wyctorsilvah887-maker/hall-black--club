@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { TopHeader } from '@/components/mythic/TopHeader';
 
 /**
- * @fileOverview Página do Salão do Conselho - Sovereign Founders Club.
+ * @fileOverview Página do Black Room - Sovereign Founders Club.
  * Integrada com TopHeader fixo.
  */
 
@@ -40,7 +40,7 @@ export default function LoungePage() {
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
         <ShieldCheck className="w-16 h-16 text-zinc-900 mb-6" />
         <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Acesso Restrito</h1>
-        <p className="text-zinc-600 text-xs uppercase tracking-widest max-w-xs mb-8">Autentique-se para entrar no Salão do Conselho.</p>
+        <p className="text-zinc-600 text-xs uppercase tracking-widest max-w-xs mb-8">Autentique-se para entrar no Black Room.</p>
         <Link href="/" className="text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Voltar ao Portal</Link>
       </div>
     );
@@ -70,8 +70,8 @@ export default function LoungePage() {
                <MessageSquare className="w-4 h-4 text-primary" />
              </div>
              <div>
-               <h1 className="text-xl font-black uppercase tracking-tighter leading-tight">Salão Elite</h1>
-               <p className="text-[7px] text-zinc-600 uppercase tracking-widest font-bold">Lounge Founders</p>
+               <h1 className="text-xl font-black uppercase tracking-tighter leading-tight">Black Room</h1>
+               <p className="text-[7px] text-zinc-600 uppercase tracking-widest font-bold">Secret Room</p>
              </div>
           </div>
           <div className="flex items-center gap-2 bg-zinc-950/50 p-2 px-4 rounded-full border border-zinc-900">

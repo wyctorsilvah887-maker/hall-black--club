@@ -24,7 +24,7 @@ import { RankBadge } from './MythicIcons';
 import Link from 'next/link';
 
 /**
- * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database com Indicadores de Digitação e Identidade Visual por Patente.
+ * @fileOverview Black Room - Chat em tempo real utilizando Firebase Realtime Database com Indicadores de Digitação e Identidade Visual por Patente.
  */
 
 type TypingUser = {
@@ -237,7 +237,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
           <div className="flex flex-col items-center justify-center h-full text-center space-y-6 opacity-20">
             <Sparkles className="w-16 h-16 text-primary" />
             <p className="text-[11px] font-black uppercase tracking-[0.4em] max-w-[240px] leading-relaxed">
-              O Salão está em silêncio. Inicie a transmissão para a elite.
+              O Black Room está em silêncio. Inicie a transmissão para a elite.
             </p>
           </div>
         ) : (
@@ -453,4 +453,3 @@ export function CouncilLounge({ profile }: { profile: any }) {
     </div>
   );
 }
-
