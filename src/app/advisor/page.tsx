@@ -13,7 +13,7 @@ import { TopHeader } from '@/components/mythic/TopHeader';
 
 /**
  * @fileOverview Página Dedicada do Sovereign Advisor.
- * Otimizada para experiência PWA e agora integra o TopHeader.
+ * Integrada com TopHeader em modo sticky.
  */
 
 export default function AdvisorPage() {
@@ -52,7 +52,7 @@ export default function AdvisorPage() {
   return (
     <main className={cn("fixed inset-0 bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
       
-      {/* CABEÇALHO SUPERIOR */}
+      {/* CABEÇALHO SUPERIOR STICKY */}
       <TopHeader profile={profile} />
 
       {/* BOTÃO VOLTAR FLUTUANTE */}
@@ -62,7 +62,7 @@ export default function AdvisorPage() {
         </Link>
       </div>
 
-      <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 pt-16 md:pt-20 overflow-hidden">
+      <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 pt-4 md:pt-8 overflow-hidden">
         
         {/* INFO HEADER */}
         <div className="flex items-center justify-between gap-4 mb-8 px-4">

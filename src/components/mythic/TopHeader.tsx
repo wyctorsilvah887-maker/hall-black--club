@@ -10,6 +10,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Hall Black Club.
+ * Configurado como 'sticky' para permanecer visível durante o scroll sem sobrepor o conteúdo.
  * Oculta-se automaticamente em modo PWA (standalone) via CSS.
  */
 
@@ -19,7 +20,7 @@ export function TopHeader({ profile }: { profile: any }) {
 
   return (
     <header className={cn(
-      "pwa-header-hide sticky top-0 z-[60] w-full bg-black/60 backdrop-blur-2xl border-b border-zinc-900/50 h-16 md:h-20 flex items-center justify-between px-6 transition-all duration-500",
+      "pwa-header-hide sticky top-0 z-[60] w-full bg-black/80 backdrop-blur-2xl border-b border-zinc-900/50 h-16 md:h-20 flex items-center justify-between px-6 transition-all duration-500 shrink-0",
       themeClass
     )}>
       <Link href="/" className="flex items-center gap-3 active:scale-95 transition-transform">
