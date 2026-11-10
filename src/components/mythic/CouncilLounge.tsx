@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { RankBadge } from './RankBadge';
+import { RankBadge } from './MythicIcons';
 import Link from 'next/link';
 
 /**

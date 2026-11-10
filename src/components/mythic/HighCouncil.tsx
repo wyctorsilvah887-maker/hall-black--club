@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Card } from "@/components/ui/card";
 import { cn } from '@/lib/utils';
-import { RankBadge } from './RankBadge';
+import { RankBadge } from './MythicIcons';
 
 /**
  * @fileOverview Seção do Conselho - Sovereign Founders Club.
