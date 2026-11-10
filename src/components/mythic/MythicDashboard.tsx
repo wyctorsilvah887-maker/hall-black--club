@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useMemo } from 'react';
@@ -77,7 +78,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     const reader = new FileReader();
     reader.onload = () => setEditorState({ isOpen: true, image: reader.result as string, target });
     reader.readAsDataURL(file);
-    e.value = '';
+    e.target.value = '';
   };
 
   const handleAddPet = async (e: React.FormEvent) => {
@@ -102,14 +103,14 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
 
   return (
     <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30", themeClass)}>
-      <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-900/50 h-16 md:h-20 flex items-center justify-between px-6">
+      <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-900/50 h-20 md:h-24 flex items-center justify-between px-6">
         <div className="flex items-center">
            <NextImage 
              src="/logo-sfc.gif" 
              alt="Sovereign Founders Club" 
-             width={320} 
-             height={90} 
-             className="h-14 md:h-16 w-auto object-contain"
+             width={340} 
+             height={100} 
+             className="h-16 md:h-18 w-auto object-contain"
              unoptimized
              priority
            />

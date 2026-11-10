@@ -1,3 +1,4 @@
+
 "use client"
 
 import React from 'react';
@@ -9,7 +10,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
- * Exibe o logotipo oficial logo-sfc.gif em dimensões equilibradas e imponentes.
+ * Exibe o logotipo oficial logo-sfc.gif em dimensões imponentes para mobile.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
@@ -24,14 +25,14 @@ export function TopHeader({ profile }: { profile: any }) {
       {/* Safe Area Spacer for iOS standalone mode */}
       <div className="h-[env(safe-area-inset-top,0px)] w-full" />
       
-      <div className="h-16 md:h-20 w-full flex items-center justify-between px-6">
+      <div className="h-20 md:h-24 w-full flex items-center justify-between px-6">
         <Link href="/" className="flex items-center active:scale-95 transition-transform">
           <NextImage 
             src="/logo-sfc.gif" 
             alt="Sovereign Founders Club" 
-            width={320} 
-            height={90} 
-            className="h-14 md:h-16 w-auto object-contain"
+            width={340} 
+            height={100} 
+            className="h-16 md:h-18 w-auto object-contain"
             unoptimized
             priority
           />
