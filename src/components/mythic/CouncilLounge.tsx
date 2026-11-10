@@ -4,12 +4,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDatabase, useUser } from '@/firebase';
 import { ref, push, onValue, off, serverTimestamp, query, limitToLast } from 'firebase/database';
-import { Send, User, Loader2, Sparkles, Hash } from "lucide-react";
+import { Send, User, Loader2, Sparkles, Hash, ShieldAlert } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from '@/lib/utils';
 import { calculateRankByTime } from '@/lib/rank-utils';
+import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database.
@@ -19,20 +20,21 @@ import { calculateRankByTime } from '@/lib/rank-utils';
 export function CouncilLounge({ profile }: { profile: any }) {
   const db = useDatabase();
   const { user } = useUser();
+  const { toast } = useToast();
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [permissionError, setPermissionError] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!db) return;
 
-    // Referência para as mensagens no RTDB, limitada às últimas 100
     const messagesRef = query(ref(db, 'loungeMessages'), limitToLast(100));
     
-    // Escuta em tempo real no RTDB
     const unsubscribe = onValue(messagesRef, (snapshot) => {
+      setPermissionError(false);
       const data = snapshot.val();
       if (data) {
         const messageList = Object.entries(data).map(([id, val]: [string, any]) => ({
@@ -46,8 +48,10 @@ export function CouncilLounge({ profile }: { profile: any }) {
       }
       setIsLoading(false);
     }, (error) => {
-      // Nota: Erros de permissão no RTDB devem ser ajustados no console do Firebase
       console.error("RTDB Sync Error:", error);
+      if (error.message.includes('permission_denied')) {
+        setPermissionError(true);
+      }
       setIsLoading(false);
     });
 
@@ -74,7 +78,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
       const messagesRef = ref(db, 'loungeMessages');
       const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
       
-      // Envio direto para o Realtime Database
       await push(messagesRef, {
         userId: user.uid,
         userName: profile.name,
@@ -83,8 +86,15 @@ export function CouncilLounge({ profile }: { profile: any }) {
         content: content,
         timestamp: serverTimestamp()
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao transmitir mensagem via RTDB:", error);
+      if (error.message.includes('permission_denied')) {
+        toast({
+          variant: "destructive",
+          title: "ACESSO NEGADO",
+          description: "O Salão está trancado. Verifique as chaves de rede (Rules)."
+        });
+      }
     } finally {
       setIsSending(false);
     }
@@ -104,8 +114,10 @@ export function CouncilLounge({ profile }: { profile: any }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Live RTDB</span>
+          <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", permissionError ? "bg-red-600" : "bg-primary")} />
+          <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">
+            {permissionError ? 'Erro de Link' : 'Live RTDB'}
+          </span>
         </div>
       </div>
 
@@ -118,6 +130,16 @@ export function CouncilLounge({ profile }: { profile: any }) {
           <div className="flex flex-col items-center justify-center h-full opacity-20">
             <Loader2 className="w-8 h-8 animate-spin mb-4" />
             <p className="text-[10px] font-black uppercase tracking-widest">Sintonizando Rede...</p>
+          </div>
+        ) : permissionError ? (
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-4 px-10">
+            <ShieldAlert className="w-12 h-12 text-red-900" />
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600">Protocolo Negado</p>
+              <p className="text-[9px] text-zinc-600 uppercase font-bold leading-relaxed">
+                As regras do Realtime Database estão bloqueando a conexão. Atualize as regras no Console do Firebase.
+              </p>
+            </div>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-10">
@@ -180,13 +202,13 @@ export function CouncilLounge({ profile }: { profile: any }) {
         <Input 
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="TRANSMITIR MENSAGEM..."
-          disabled={isSending}
+          placeholder={permissionError ? "LINK INTERROMPIDO..." : "TRANSMITIR MENSAGEM..."}
+          disabled={isSending || permissionError}
           className="bg-zinc-900/50 border-zinc-800 h-12 rounded-xl px-5 text-[11px] font-black uppercase tracking-tight focus-visible:ring-primary/40"
         />
         <Button 
           type="submit" 
-          disabled={isSending || !newMessage.trim()}
+          disabled={isSending || !newMessage.trim() || permissionError}
           className="h-12 w-12 rounded-xl bg-primary text-primary-foreground hover:bg-accent transition-all active:scale-95 shadow-lg shadow-primary/20"
         >
           {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
