@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database.
- * Otimizado para mobile com indicadores de digitação e auto-scroll.
+ * Otimizado para mobile com indicadores de digitação (3 pontinhos) e auto-scroll.
  */
 
 export function CouncilLounge({ profile }: { profile: any }) {
@@ -175,7 +175,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
               </p>
             </div>
           </div>
-        ) : messages.length === 0 ? (
+        ) : messages.length === 0 && typingUsers.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-6 opacity-20">
             <Sparkles className="w-16 h-16 text-primary" />
             <p className="text-[11px] font-black uppercase tracking-[0.4em] max-w-[240px] leading-relaxed">
@@ -233,19 +233,26 @@ export function CouncilLounge({ profile }: { profile: any }) {
               );
             })}
             
-            {/* Indicador de Digitação */}
+            {/* Indicador de Digitação (3 Pontinhos) */}
             {typingUsers.length > 0 && (
-              <div className="flex items-center gap-3 px-2 py-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <div className="flex gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 md:w-11 md:h-11 rounded-full bg-zinc-950 border border-zinc-900 flex items-center justify-center overflow-hidden">
+                    <User className="w-5 h-5 text-zinc-800" />
+                  </div>
                 </div>
-                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">
-                  {typingUsers.length === 1 
-                    ? `${typingUsers[0].split(' ')[0]} está compondo...` 
-                    : `${typingUsers.length} fundadores digitando...`}
-                </span>
+                <div className="flex flex-col space-y-1.5">
+                  <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest px-1 italic">
+                    {typingUsers.length === 1 
+                      ? `${typingUsers[0].split(' ')[0]} está digitando...` 
+                      : `${typingUsers.length} fundadores digitando...`}
+                  </span>
+                  <div className="bg-zinc-900/40 border border-zinc-800/40 p-3 md:p-4 rounded-[1.2rem] rounded-tl-none flex items-center justify-center gap-1.5 w-16 md:w-20">
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
               </div>
             )}
           </>
