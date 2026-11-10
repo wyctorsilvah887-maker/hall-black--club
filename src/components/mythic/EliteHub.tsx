@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useMemo } from 'react';
@@ -6,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
   Settings, Cpu, ExternalLink, ShieldAlert,
-  ChevronRight, MessageSquare
+  ChevronRight, MessageSquare, Medal
 } from "lucide-react";
 import Link from 'next/link';
 import { HighCouncil } from './HighCouncil';
@@ -104,9 +103,16 @@ export function EliteHub({ profile }: EliteHubProps) {
                     </Badge>
                   </div>
                   <div className="hidden sm:block h-px w-8 bg-zinc-900" />
-                  <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
-                    Status de Linhagem Ativo
-                  </span>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
+                      Status de Linhagem Ativo
+                    </span>
+                    <Button asChild variant="ghost" size="sm" className="h-7 px-3 rounded-full bg-zinc-900/50 border border-zinc-800 hover:bg-zinc-800 hover:text-white text-[8px] font-black uppercase tracking-widest transition-all">
+                      <Link href="/debug/badges" className="flex items-center gap-2">
+                        <Medal className="w-3.5 h-3.5 text-primary" /> Hierarquia
+                      </Link>
+                    </Button>
+                  </div>
                </div>
             </div>
             <div className="scale-75 md:scale-100 origin-left md:origin-right">

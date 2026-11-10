@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -49,7 +48,6 @@ export function TopHeader({ profile }: { profile: any }) {
 
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
-            <p className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Protocolo v2026.12</p>
             <p className="text-[10px] font-black text-white uppercase tracking-tight">{profile?.name}</p>
           </div>
           <Link href="/settings" className="relative group">
