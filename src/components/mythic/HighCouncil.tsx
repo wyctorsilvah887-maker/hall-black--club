@@ -6,7 +6,7 @@ import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebas
 import { collection, query, orderBy, limit, where } from 'firebase/firestore';
 import { 
   User, ShieldCheck, MapPin, Lock, MessageSquare, Send, 
-  Clock, Loader2, Trophy, Medal, Star, Users, LayoutGrid, Zap, ChevronRight 
+  Clock, Loader2, Trophy, Medal, Star, Users, LayoutGrid, Zap, ChevronRight, Crown 
 } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import { RankBadge } from './MythicIcons';
 
 /**
  * @fileOverview Seção do Conselho com sub-navegação: Alto Conselho, Ranking e Audiência.
- * Layout de ranking organizado com estética de elite.
+ * Ranking atualizado com ícones de Coroa, Troféu e Medalha de Bronze para o Top 3.
  */
 
 type CouncilTab = 'members' | 'ranking' | 'audience';
@@ -206,29 +206,36 @@ export function HighCouncil({ profile }: { profile: any }) {
 
             <div className="space-y-3">
               {isMembersLoading ? (
-                Array(5).fill(0).map((_, i) => <div key={i} className="h-16 bg-zinc-900/20 rounded-2xl animate-pulse" />)
+                Array(5).fill(0).map((_, i) => <div key={i} className="h-20 bg-zinc-900/20 rounded-2xl animate-pulse" />)
               ) : rankedMembers.map((member, index) => (
                 <div 
                   key={member.id} 
                   className={cn(
-                    "group relative flex items-center gap-4 md:gap-6 p-4 md:p-5 rounded-2xl border transition-all duration-500 overflow-hidden",
+                    "group relative flex items-center gap-4 md:gap-8 p-4 md:p-6 rounded-3xl border transition-all duration-500 overflow-hidden",
                     index === 0 
-                      ? "bg-primary/5 border-primary/30 shadow-[0_0_40px_rgba(var(--primary),0.15)]" 
+                      ? "bg-primary/5 border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.2)] py-6" 
                       : "bg-zinc-950/40 border-zinc-900/80 hover:border-zinc-800"
                   )}
                 >
                   {/* POSITION INDICATOR */}
-                  <div className="flex-shrink-0 w-10 md:w-14 flex items-center justify-center">
-                    {index === 0 ? <Star className="w-6 h-6 text-primary fill-primary animate-hallblack-ruby-glow rounded-full p-1" /> :
-                     index === 1 ? <Medal className="w-6 h-6 text-yellow-500" /> :
-                     index === 2 ? <Medal className="w-6 h-6 text-zinc-400" /> :
-                     <span className="text-sm font-black text-zinc-700 font-mono tracking-tighter">{(index + 1).toString().padStart(2, '0')}</span>}
+                  <div className="flex-shrink-0 w-12 md:w-16 flex items-center justify-center">
+                    {index === 0 ? (
+                      <Crown className="w-8 h-8 text-yellow-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.7)] animate-pulse" />
+                    ) : index === 1 ? (
+                      <Trophy className="w-7 h-7 text-zinc-300 drop-shadow-[0_0_10px_rgba(212,212,216,0.4)]" />
+                    ) : index === 2 ? (
+                      <Medal className="w-7 h-7 text-amber-700 drop-shadow-[0_0_10px_rgba(180,83,9,0.4)]" />
+                    ) : (
+                      <span className="text-sm font-black text-zinc-700 font-mono tracking-tighter">
+                        {(index + 1).toString().padStart(2, '0')}
+                      </span>
+                    )}
                   </div>
 
                   {/* AVATAR */}
                   <div className="flex-shrink-0 relative">
                     <div className={cn(
-                      "w-12 h-12 md:w-14 md:h-14 rounded-xl bg-zinc-900 overflow-hidden border transition-all duration-500 group-hover:scale-105",
+                      "w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-zinc-900 overflow-hidden border transition-all duration-500 group-hover:scale-105",
                       index === 0 ? "border-primary/50" : "border-zinc-800"
                     )}>
                       {member.photo ? (
@@ -239,32 +246,29 @@ export function HighCouncil({ profile }: { profile: any }) {
                         </div>
                       )}
                     </div>
-                    {index === 0 && (
-                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-black" />
-                    )}
                   </div>
 
                   {/* MEMBER DETAILS */}
-                  <div className="flex-1 min-w-0 space-y-1">
+                  <div className="flex-1 min-w-0 space-y-1.5">
                     <div className="flex items-center gap-2">
                        <h4 className={cn(
-                         "text-sm md:text-base font-black uppercase tracking-tight truncate",
+                         "text-base md:text-lg font-black uppercase tracking-tight truncate",
                          index === 0 ? "text-white" : "text-zinc-300"
                        )}>
                          {member.name}
                        </h4>
                        {member.role === 'admin' && (
-                         <ShieldCheck className="w-3 h-3 text-primary" />
+                         <ShieldCheck className="w-3.5 h-3.5 text-primary" />
                        )}
                     </div>
                     <div className="flex items-center gap-3 flex-wrap">
-                       <span className="text-[8px] font-black text-primary uppercase tracking-widest">
+                       <span className="text-[8px] md:text-[9px] font-black text-primary uppercase tracking-widest">
                          #{member.memberNumber?.toString().padStart(2, '0')} FOUNDER
                        </span>
                        <div className="h-2 w-px bg-zinc-800" />
-                       <div className="flex items-center gap-1 text-zinc-600">
-                         <MapPin className="w-2.5 h-2.5" />
-                         <span className="text-[8px] font-bold uppercase truncate max-w-[100px]">
+                       <div className="flex items-center gap-1.5 text-zinc-600">
+                         <MapPin className="w-3 h-3" />
+                         <span className="text-[8px] md:text-[9px] font-bold uppercase truncate max-w-[120px]">
                            {member.city || 'Sovereign Hub'}
                          </span>
                        </div>
@@ -272,22 +276,22 @@ export function HighCouncil({ profile }: { profile: any }) {
                   </div>
 
                   {/* ELITE SCORE SECTION */}
-                  <div className="flex-shrink-0 text-right pr-2">
-                    <div className="flex items-center justify-end gap-1.5 mb-0.5">
-                       <Zap className={cn("w-3.5 h-3.5", index === 0 ? "text-primary animate-pulse" : "text-zinc-700")} />
+                  <div className="flex-shrink-0 text-right pr-4">
+                    <div className="flex items-center justify-end gap-2 mb-0.5">
+                       <Zap className={cn("w-4 h-4", index === 0 ? "text-primary animate-pulse" : "text-zinc-700")} />
                        <p className={cn(
-                         "text-lg md:text-2xl font-black tracking-tighter",
+                         "text-xl md:text-3xl font-black tracking-tighter",
                          index === 0 ? "text-white" : "text-zinc-400"
                        )}>
                          {member.eliteScore || '100'}
                        </p>
                     </div>
-                    <p className="text-[7px] font-black text-zinc-800 uppercase tracking-widest">Elite Score</p>
+                    <p className="text-[7px] md:text-[8px] font-black text-zinc-800 uppercase tracking-widest">Elite Score</p>
                   </div>
                   
-                  {/* DECORATIVE LINE FOR TOP 1 */}
+                  {/* TOP 1 GRADIENT LINE */}
                   {index === 0 && (
-                    <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                   )}
                 </div>
               ))}
