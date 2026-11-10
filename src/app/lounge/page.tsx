@@ -9,10 +9,12 @@ import { CouncilLounge } from '@/components/mythic/CouncilLounge';
 import { ArrowLeft, MessageSquare, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { TopHeader } from '@/components/mythic/TopHeader';
 
 /**
  * @fileOverview Página do Salão do Conselho - Sovereign Founders Club.
  * Otimizada para tela cheia e experiência mobile nativa (PWA).
+ * Agora integra o TopHeader e mantém o botão de voltar para navegação rápida.
  */
 
 export default function LoungePage() {
@@ -51,8 +53,11 @@ export default function LoungePage() {
   return (
     <main className={cn("fixed inset-0 bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
       
-      {/* BOTÃO VOLTAR FLUTUANTE (Substitui Header Fixo para PWA) */}
-      <div className="absolute top-6 left-6 z-50">
+      {/* CABEÇALHO SUPERIOR */}
+      <TopHeader profile={profile} />
+
+      {/* BOTÃO VOLTAR FLUTUANTE (Disponível sempre para navegação rápida) */}
+      <div className="absolute top-20 left-6 z-50 md:top-24">
         <Link href="/" className="p-3 bg-black/40 backdrop-blur-xl border border-zinc-900 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all active:scale-90 shadow-2xl">
           <ArrowLeft className="w-5 h-5" />
         </Link>
@@ -60,7 +65,7 @@ export default function LoungePage() {
 
       {/* CHAT CONTAINER - TELA CHEIA */}
       <div className="flex-1 flex flex-col w-full max-w-6xl mx-auto overflow-hidden relative">
-        <div className="pt-20 px-8 pb-4 flex items-center justify-between">
+        <div className="pt-16 md:pt-20 px-8 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
              <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
                <MessageSquare className="w-4 h-4 text-primary" />

@@ -15,6 +15,7 @@ import { RankBadge } from './MythicIcons';
 import { calculateRankByTime, getRankLabel, getThemeClass } from '@/lib/rank-utils';
 import { Button } from "@/components/ui/button";
 import { cn } from '@/lib/utils';
+import { TopHeader } from './TopHeader';
 
 interface EliteHubProps {
   profile: any;
@@ -23,6 +24,7 @@ interface EliteHubProps {
 /**
  * @fileOverview Elite Hub - Central de Comando Sovereign.
  * Navegação unificada no Dock inferior para experiência PWA / Mobile-First.
+ * Agora inclui o TopHeader para navegação em desktop/browser.
  */
 
 export function EliteHub({ profile }: EliteHubProps) {
@@ -35,11 +37,12 @@ export function EliteHub({ profile }: EliteHubProps) {
   const themeClass = getThemeClass(currentRank);
   const themeColor = 'text-primary';
 
-  const isAdmin = profile.role === 'admin';
-
   return (
     <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30 relative overflow-x-hidden transition-colors duration-700 pb-32", themeClass)}>
       
+      {/* CABEÇALHO SUPERIOR (Oculto em PWA) */}
+      <TopHeader profile={profile} />
+
       {/* DOCK DE NAVEGAÇÃO UNIFICADO (BASE) */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-8 h-24 pointer-events-none">
         <div className="max-w-xl mx-auto h-full pointer-events-auto">
