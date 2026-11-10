@@ -1,26 +1,12 @@
 {
   "name": "Sovereign Founders Club",
   "short_name": "Sovereign",
-  "description": "Sistema de elite para networking e inteligência de negócios.",
+  "description": "Acesso exclusivo à elite do empreendedorismo e negócios.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "orientation": "portrait",
-  "scope": "/",
   "icons": [
-    {
-      "src": "/favicon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
     {
       "src": "/maskable_icon_x48.png",
       "sizes": "48x48",
@@ -31,13 +17,13 @@
       "src": "/maskable_icon_x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "/maskable_icon_x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }

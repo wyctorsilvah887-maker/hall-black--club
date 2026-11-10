@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useMemo } from 'react';
@@ -108,9 +107,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
            <NextImage 
              src="/logo-sfc.gif" 
              alt="Sovereign Founders Club" 
-             width={280} 
-             height={80} 
-             className="h-12 md:h-14 w-auto object-contain"
+             width={320} 
+             height={90} 
+             className="h-14 md:h-16 w-auto object-contain"
              unoptimized
              priority
            />

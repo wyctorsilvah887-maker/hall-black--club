@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -71,9 +70,9 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
           <NextImage 
             src="/logo-sfc.gif" 
             alt="Sovereign Founders Club" 
-            width={320} 
-            height={80} 
-            className="w-64 md:w-80 h-auto object-contain"
+            width={340} 
+            height={90} 
+            className="w-72 md:w-80 h-auto object-contain"
             unoptimized
             priority
           />

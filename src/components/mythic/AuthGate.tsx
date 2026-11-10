@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -201,9 +200,9 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
             <NextImage 
               src="/logo-sfc.gif" 
               alt="Sovereign Founders Club" 
-              width={280} 
-              height={72} 
-              className="w-60 md:w-72 h-auto object-contain"
+              width={300} 
+              height={80} 
+              className="w-64 md:w-80 h-auto object-contain"
               unoptimized
               priority
             />
