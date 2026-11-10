@@ -9,6 +9,7 @@ import Link from 'next/link';
 /**
  * @fileOverview Galeria de Exposição de Patentes - Protocolo de Elite.
  * Exposição técnica das credenciais atualizadas com o novo ápice supremo: HALL BLACK.
+ * Refinamento final de etiquetas externas para harmonização visual.
  */
 
 export default function BadgeGalleryPage() {
