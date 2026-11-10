@@ -179,8 +179,8 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
           <Card className="bg-zinc-950/40 border-zinc-900 p-6 flex flex-col items-center justify-center text-center space-y-4 rounded-3xl">
              <Trophy className={cn("w-10 h-10", themeColorClass)} />
              <div className="space-y-1">
-               <h3 className="text-xl font-black uppercase">Pedigree Score</h3>
-               <p className="text-4xl font-black tracking-tighter">{profile.pedigreeScore || '100'}</p>
+               <h3 className="text-xl font-black uppercase">Elite Score</h3>
+               <p className="text-4xl font-black tracking-tighter">{profile.eliteScore || '100'}</p>
              </div>
              <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">Tempo de Casa Verificado</p>
           </Card>

@@ -78,7 +78,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           state: '',
           isPublicProfile: true,
           status: tempProfile?.status || 'MASTER',
-          theme: tempProfile?.theme || 'master'
+          theme: tempProfile?.theme || 'master',
+          eliteScore: 100
         };
 
         if (tempProfile?.isTransfer && tempProfile?.fromUserId) {
@@ -96,7 +97,8 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               state: data.state || '',
               isPublicProfile: data.isPublicProfile ?? true,
               status: data.status || 'MASTER',
-              theme: data.theme || 'master'
+              theme: data.theme || 'master',
+              eliteScore: data.eliteScore || 100
             };
 
             const petsRef = collection(db, 'users', tempProfile.fromUserId, 'pets');
@@ -139,7 +141,6 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
           email: email,
           emergencyContact: emergencyPhone,
           registrationDateTime: new Date().toISOString(),
-          eliteScore: 100,
           ...inheritedData,
           memberNumber: memberNumber
         };
