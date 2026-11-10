@@ -1,58 +1,40 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useFirebase, useUser } from '@/firebase';
-import { ref, push, set, onValue, query, limitToLast } from 'firebase/database';
+import { useFirestore, useUser, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy, limit, serverTimestamp } from 'firebase/firestore';
 import { Send, User, Loader2, Sparkles, Hash } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from '@/lib/utils';
 import { calculateRankByTime } from '@/lib/rank-utils';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 /**
- * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database.
+ * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firestore.
+ * Utiliza o Protocolo de Sincronização Sovereign para máxima segurança.
  */
 
 export function CouncilLounge({ profile }: { profile: any }) {
-  const { database } = useFirebase();
+  const db = useFirestore();
   const { user } = useUser();
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!database) return;
+  // Memoiza a consulta para evitar loops de renderização e otimizar performance
+  const loungeQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(
+      collection(db, 'loungeMessages'),
+      orderBy('timestamp', 'asc'),
+      limit(100)
+    );
+  }, [db]);
 
-    // Referência para o chat no RTDB
-    const messagesRef = ref(database, 'loungeMessages');
-    // Consulta as últimas 100 mensagens
-    const q = query(messagesRef, limitToLast(100));
-
-    // Listener em tempo real do RTDB
-    const unsubscribe = onValue(q, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Converte o objeto do RTDB em array e ordena por timestamp
-        const messageList = Object.entries(data).map(([id, val]: [string, any]) => ({
-          id,
-          ...val
-        })).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-        
-        setMessages(messageList);
-      } else {
-        setMessages([]);
-      }
-      setIsLoading(false);
-    }, (error) => {
-      console.error("Erro ao sintonizar rede RTDB:", error);
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [database]);
+  const { data: messages, isLoading } = useCollection(loungeQuery);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -62,28 +44,27 @@ export function CouncilLounge({ profile }: { profile: any }) {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!database || !user?.uid || !newMessage.trim()) return;
+    if (!db || !user?.uid || !newMessage.trim()) return;
 
     setIsSending(true);
     const content = newMessage.trim();
     setNewMessage('');
 
     try {
-      const messagesRef = ref(database, 'loungeMessages');
-      const newMsgRef = push(messagesRef);
+      const messagesRef = collection(db, 'loungeMessages');
       const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
       
-      // Grava no RTDB
-      await set(newMsgRef, {
+      // Envio não-bloqueante para experiência fluida
+      addDocumentNonBlocking(messagesRef, {
         userId: user.uid,
         userName: profile.name,
         userPhoto: profile.photo || null,
         userRank: currentRank,
         content: content,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString() // Usando ISO para ordenação consistente no cliente
       });
     } catch (error) {
-      console.error("Falha na transmissão RTDB:", error);
+      // Erros são tratados centralizadamente pelo FirebaseErrorListener
     } finally {
       setIsSending(false);
     }
@@ -98,13 +79,13 @@ export function CouncilLounge({ profile }: { profile: any }) {
             <Hash className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-white">Frequência Realtime</h3>
-            <p className="text-[8px] text-zinc-600 uppercase font-bold tracking-[0.2em]">Canal Soberano v2.0</p>
+            <h3 className="text-sm font-black uppercase tracking-widest text-white">Frequência Sovereign</h3>
+            <p className="text-[8px] text-zinc-600 uppercase font-bold tracking-[0.2em]">Canal em Tempo Real v5.0</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Link Ativo</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Sincronizado</span>
         </div>
       </div>
 
@@ -116,13 +97,13 @@ export function CouncilLounge({ profile }: { profile: any }) {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full opacity-20">
             <Loader2 className="w-8 h-8 animate-spin mb-4" />
-            <p className="text-[10px] font-black uppercase tracking-widest">Sintonizando Rede Realtime...</p>
+            <p className="text-[10px] font-black uppercase tracking-widest">Sintonizando Rede...</p>
           </div>
         ) : !messages || messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-10">
             <Sparkles className="w-12 h-12" />
             <p className="text-[10px] font-black uppercase tracking-[0.3em] max-w-[200px]">
-              O Salão está em silêncio. Inicie a transmissão de elite via RTDB.
+              O Salão está em silêncio. Inicie a transmissão de elite.
             </p>
           </div>
         ) : (
@@ -139,7 +120,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
                 <div className="flex-shrink-0 relative">
                   <div className={cn(
                     "w-8 h-8 rounded-full overflow-hidden border bg-zinc-900 shadow-xl",
-                    msg.userRank === 'HALL_BLACK' ? "border-white/20" : 
+                    msg.userRank === 'HALL_BLACK' || msg.userRank === 'SOVEREIGN' ? "border-white/20" : 
                     msg.userRank === 'MYTHIC' ? "border-primary/50" : "border-zinc-800"
                   )}>
                     {msg.userPhoto ? (
@@ -179,7 +160,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
         <Input 
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="TRANSMITIR VIA RTDB..."
+          placeholder="TRANSMITIR MENSAGEM..."
           disabled={isSending}
           className="bg-zinc-900/50 border-zinc-800 h-12 rounded-xl px-5 text-[11px] font-black uppercase tracking-tight focus-visible:ring-primary/40"
         />
