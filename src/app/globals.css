@@ -27,9 +27,26 @@
   }
 }
 
-/* Temas de Patente - Fora do layer base para maior prioridade */
+/* Ajustes de Safe Area para PWAs */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Esconder cabeçalhos em modo standalone (PWA instalado) */
+@media (display-mode: standalone) {
+  .pwa-header-hide {
+    display: none !important;
+  }
+}
+
+/* Temas de Patente */
 .theme-hallblack {
-  --primary: 350 100% 25%; /* Obsidiana Rubi */
+  --primary: 350 100% 25%;
   --primary-foreground: 0 0% 100%;
   --accent: 347 100% 50%;
   --ring: 350 100% 30%;
@@ -37,7 +54,7 @@
 }
 
 .theme-mythic {
-  --primary: 350 82% 35%; /* Rubi Mítico */
+  --primary: 350 82% 35%;
   --primary-foreground: 0 0% 100%;
   --accent: 347 92% 48%;
   --ring: 347 92% 48%;
@@ -45,7 +62,7 @@
 }
 
 .theme-legendary {
-  --primary: 47 100% 50%; /* Gold */
+  --primary: 47 100% 50%;
   --primary-foreground: 0 0% 0%;
   --accent: 45 100% 58%;
   --ring: 47 100% 50%;
@@ -53,7 +70,7 @@
 }
 
 .theme-amber {
-  --primary: 35 100% 50%; /* Laranja Legendário */
+  --primary: 35 100% 50%;
   --primary-foreground: 0 0% 0%;
   --accent: 30 100% 60%;
   --ring: 35 100% 50%;
@@ -61,7 +78,7 @@
 }
 
 .theme-elite {
-  --primary: 0 0% 80%; /* Silver */
+  --primary: 0 0% 80%;
   --primary-foreground: 0 0% 0%;
   --accent: 0 0% 95%;
   --ring: 0 0% 80%;
@@ -69,7 +86,7 @@
 }
 
 .theme-master {
-  --primary: 35 60% 40%; /* Bronze */
+  --primary: 35 60% 40%;
   --primary-foreground: 0 0% 100%;
   --accent: 35 70% 50%;
   --ring: 35 60% 40%;
@@ -85,6 +102,8 @@
     font-family: 'Poppins', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -93,6 +112,17 @@
     writing-mode: vertical-rl;
     text-orientation: mixed;
   }
+}
+
+/* Scrollbars Minimalistas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-zinc-900 rounded-full;
 }
 
 @keyframes bronze-glow {
@@ -134,19 +164,14 @@
   animation: silver-glow 3s infinite ease-in-out;
 }
 
-@keyframes gold-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.mythic-shine-sweep {
-  animation: shine-sweep 3s infinite ease-in-out;
-}
-
 @keyframes shine-sweep {
   0% { transform: translateX(-100%); }
   50% { transform: translateX(100%); }
   100% { transform: translateX(100%); }
+}
+
+.mythic-shine-sweep {
+  animation: shine-sweep 3s infinite ease-in-out;
 }
 
 @keyframes star-fill {

@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Página do Salão do Conselho - Sovereign Founders Club.
- * Otimizada para tela cheia e experiência mobile nativa.
+ * Otimizada para tela cheia e experiência mobile nativa (PWA).
  */
 
 export default function LoungePage() {
@@ -50,30 +50,31 @@ export default function LoungePage() {
 
   return (
     <main className={cn("fixed inset-0 bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
-      {/* HEADER FIXO - ADAPTADO MOBILE */}
-      <header className="flex items-center justify-between gap-4 border-b border-zinc-900/50 px-4 py-4 md:px-8 md:py-6 flex-shrink-0 bg-black/40 backdrop-blur-xl z-50">
-        <div className="flex items-center gap-3 md:gap-4">
-          <Link href="/" className="p-2 -ml-2 hover:bg-zinc-900/50 rounded-full transition-colors active:scale-95">
-            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 text-zinc-500" />
-          </Link>
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="p-1.5 md:p-2 rounded-xl bg-primary/10 border border-primary/20">
-              <MessageSquare className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-lg md:text-2xl font-black uppercase tracking-tighter leading-tight">Salão Elite</h1>
-              <p className="text-[7px] md:text-[8px] text-zinc-600 uppercase tracking-widest font-bold">Lounge Founders</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 md:gap-3 bg-zinc-950/50 p-1.5 md:p-2 px-3 md:px-4 rounded-full border border-zinc-900">
-           <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-           <div className="text-[7px] md:text-[8px] font-black uppercase tracking-widest text-zinc-400">Live Connection</div>
-        </div>
-      </header>
+      
+      {/* BOTÃO VOLTAR FLUTUANTE (Substitui Header Fixo para PWA) */}
+      <div className="absolute top-6 left-6 z-50">
+        <Link href="/" className="p-3 bg-black/40 backdrop-blur-xl border border-zinc-900 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all active:scale-90 shadow-2xl">
+          <ArrowLeft className="w-5 h-5" />
+        </Link>
+      </div>
 
       {/* CHAT CONTAINER - TELA CHEIA */}
       <div className="flex-1 flex flex-col w-full max-w-6xl mx-auto overflow-hidden relative">
+        <div className="pt-20 px-8 pb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+             <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
+               <MessageSquare className="w-4 h-4 text-primary" />
+             </div>
+             <div>
+               <h1 className="text-xl font-black uppercase tracking-tighter leading-tight">Salão Elite</h1>
+               <p className="text-[7px] text-zinc-600 uppercase tracking-widest font-bold">Lounge Founders</p>
+             </div>
+          </div>
+          <div className="flex items-center gap-2 bg-zinc-950/50 p-2 px-4 rounded-full border border-zinc-900">
+             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+             <div className="text-[7px] font-black uppercase tracking-widest text-zinc-400">Rede Ativa</div>
+          </div>
+        </div>
         <CouncilLounge profile={profile} />
       </div>
     </main>
