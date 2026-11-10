@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useMemo } from 'react';
@@ -104,9 +105,6 @@ export function EliteHub({ profile }: EliteHubProps) {
                   </div>
                   <div className="hidden sm:block h-px w-8 bg-zinc-900" />
                   <div className="flex items-center gap-4">
-                    <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
-                      Status de Linhagem Ativo
-                    </span>
                     <Button asChild variant="ghost" size="sm" className="h-7 px-3 rounded-full bg-zinc-900/50 border border-zinc-800 hover:bg-zinc-800 hover:text-white text-[8px] font-black uppercase tracking-widest transition-all">
                       <Link href="/debug/badges" className="flex items-center gap-2">
                         <Medal className="w-3.5 h-3.5 text-primary" /> Hierarquia
