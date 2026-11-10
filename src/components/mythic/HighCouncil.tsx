@@ -9,6 +9,7 @@ import {
   Clock, Loader2, Trophy, Medal, Star, Users, LayoutGrid, Zap, ChevronRight, Crown 
 } from "lucide-react";
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +23,7 @@ import { RankBadge } from './MythicIcons';
 
 /**
  * @fileOverview Seção do Conselho com sub-navegação: Alto Conselho, Ranking e Audiência.
- * Ranking atualizado com ícones de Coroa, Troféu e Medalha de Bronze para o Top 3.
+ * Implementada navegação para perfis individuais com verificação de privacidade.
  */
 
 type CouncilTab = 'members' | 'ranking' | 'audience';
@@ -150,9 +151,10 @@ export function HighCouncil({ profile }: { profile: any }) {
                   <div key={i} className="aspect-[3/4] bg-zinc-900/20 rounded-[1.5rem] animate-pulse" />
                 ))
               ) : members.map((member) => (
-                <div 
+                <Link 
+                  href={`/profile/${member.id}`}
                   key={member.id} 
-                  className="group relative aspect-[3/4] bg-zinc-950 border border-zinc-900 rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all duration-700"
+                  className="group relative aspect-[3/4] bg-zinc-950 border border-zinc-900 rounded-[2rem] overflow-hidden hover:border-primary/50 transition-all duration-700 active:scale-[0.98]"
                 >
                   {member.photo ? (
                     <Image 
@@ -181,7 +183,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
               {!isMembersLoading && Array(Math.max(0, 12 - members.length)).fill(0).map((_, i) => (
                 <div key={`empty-${i}`} className="aspect-[3/4] bg-zinc-950/20 border border-zinc-900 border-dashed rounded-[2rem] flex flex-col items-center justify-center opacity-10">
@@ -208,10 +210,11 @@ export function HighCouncil({ profile }: { profile: any }) {
               {isMembersLoading ? (
                 Array(5).fill(0).map((_, i) => <div key={i} className="h-20 bg-zinc-900/20 rounded-2xl animate-pulse" />)
               ) : rankedMembers.map((member, index) => (
-                <div 
+                <Link 
+                  href={`/profile/${member.id}`}
                   key={member.id} 
                   className={cn(
-                    "group relative flex items-center gap-4 md:gap-8 p-4 md:p-6 rounded-3xl border transition-all duration-500 overflow-hidden",
+                    "group relative flex items-center gap-4 md:gap-8 p-4 md:p-6 rounded-3xl border transition-all duration-500 overflow-hidden active:scale-[0.99]",
                     index === 0 
                       ? "bg-primary/5 border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.2)] py-6" 
                       : "bg-zinc-950/40 border-zinc-900/80 hover:border-zinc-800"
@@ -293,7 +296,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                   {index === 0 && (
                     <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                   )}
-                </div>
+                </Link>
               ))}
             </div>
           </section>
