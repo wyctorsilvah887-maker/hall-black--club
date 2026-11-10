@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -343,19 +344,20 @@ export function CouncilLounge({ profile }: { profile: any }) {
                 </div>
               </div>
 
-              <div className="pt-14 pb-8 px-8 flex flex-col items-center text-center space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black uppercase tracking-tighter text-white leading-tight">{previewProfile.name}</h3>
-                  <p className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.3em]">#{previewProfile.memberNumber?.toString().padStart(2, '0')} FOUNDER</p>
-                </div>
-
-                <div className="flex flex-col items-center gap-3 w-full">
+              <div className="pt-12 pb-8 px-8 flex flex-col items-center text-center space-y-6">
+                {/* INSÍGNIA ABAIXO DA FOTO */}
+                <div className="flex flex-col items-center -mt-8 mb-2 w-full">
                   <div className="scale-75 origin-center">
                     <RankBadge status={calculateRankByTime(previewProfile.registrationDateTime, previewProfile.status)} id={previewProfile.id} size="sm" />
                   </div>
-                  <Badge variant="outline" className="border-zinc-900 text-zinc-500 text-[8px] font-black tracking-widest py-1 px-4 rounded-full">
+                  <Badge variant="outline" className="border-zinc-900 text-zinc-500 text-[8px] font-black tracking-widest py-1 px-4 rounded-full mt-2">
                     {getRankLabel(calculateRankByTime(previewProfile.registrationDateTime, previewProfile.status))}
                   </Badge>
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-xl font-black uppercase tracking-tighter text-white leading-tight">{previewProfile.name}</h3>
+                  <p className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.3em]">#{previewProfile.memberNumber?.toString().padStart(2, '0')} FOUNDER</p>
                 </div>
 
                 {previewProfile.bio && (
