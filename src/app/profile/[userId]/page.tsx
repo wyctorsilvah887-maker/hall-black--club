@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use } from 'react';
@@ -39,7 +40,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
         <h1 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Identidade Não Encontrada</h1>
         <p className="text-zinc-500 text-xs uppercase tracking-widest max-w-xs mb-8">Esta credencial não existe em nossos registros de elite.</p>
         <Button asChild variant="outline" className="border-zinc-800 text-zinc-400 hover:text-white rounded-full">
-          <Link href="/">Voltar ao Início</Link>
+          <Link href="/hub">Voltar ao Início</Link>
         </Button>
       </div>
     );
@@ -52,7 +53,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
         <h1 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Perfil Restrito</h1>
         <p className="text-zinc-500 text-xs uppercase tracking-widest max-w-xs mb-8">Este membro optou por manter suas credenciais sob sigilo místico.</p>
         <Button asChild variant="outline" className="border-zinc-800 text-zinc-400 hover:text-white rounded-full">
-          <Link href="/">Voltar ao Início</Link>
+          <Link href="/hub">Voltar ao Início</Link>
         </Button>
       </div>
     );
@@ -85,7 +86,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
   return (
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white ${themeClass}`}>
       <div className="max-w-4xl mx-auto px-5 py-8 md:py-20 space-y-10 md:space-y-12">
-        <Link href="/" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-[0.3em]">
+        <Link href="/hub" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-[0.3em]">
           <ArrowLeft className="w-4 h-4" /> Voltar ao Início
         </Link>
 

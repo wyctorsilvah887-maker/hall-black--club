@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -245,7 +246,7 @@ export default function SettingsPage() {
       <div className="max-w-xl mx-auto">
         
         <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl py-5 px-4 flex items-center justify-between border-b border-zinc-900/50">
-          <Link href="/" className="p-2 -ml-3 hover:bg-zinc-900/50 rounded-full transition-colors active:scale-95">
+          <Link href="/hub" className="p-2 -ml-3 hover:bg-zinc-900/50 rounded-full transition-colors active:scale-95">
             <ArrowLeft className="w-6 h-6" />
           </Link>
           <h1 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-400">Configurações</h1>

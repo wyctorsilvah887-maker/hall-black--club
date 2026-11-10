@@ -26,7 +26,7 @@ export function TopHeader({ profile }: { profile: any }) {
       
       <div className="h-20 md:h-24 w-full flex items-center justify-between px-6">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center active:scale-95 transition-transform">
+          <Link href="/hub" className="flex items-center active:scale-95 transition-transform">
             <NextImage 
               src="/logo-sfc.gif" 
               alt="Sovereign Founders Club" 

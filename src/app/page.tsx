@@ -2,22 +2,20 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AuthGate } from '@/components/mythic/AuthGate';
-import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
-import HubPage from './hub/page';
 
 /**
- * @fileOverview Página principal do Sovereign Founders Club.
- * Gerencia o fluxo de acesso e renderiza o Hub Central para membros autenticados.
+ * @fileOverview Ponto de entrada do sistema.
+ * Atua como Gateway de Autenticação. Redireciona membros para /hub.
  */
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
-  const db = useFirestore();
-  
+  const router = useRouter();
   const [tempProfile, setTempProfile] = useState<any>(null);
 
   useEffect(() => {
@@ -32,23 +30,17 @@ export default function Home() {
     }
   }, []);
 
-  const userRef = useMemoFirebase(() => {
-    if (!user || !db) return null;
-    return doc(db, 'users', user.uid);
-  }, [user, db]);
+  // Redirecionamento automático para o Hub se o usuário já estiver logado
+  useEffect(() => {
+    if (user && !isUserLoading) {
+      router.push('/hub');
+    }
+  }, [user, isUserLoading, router]);
 
-  const { data: userProfileData, isLoading: isProfileLoading } = useDoc(userRef);
-
-  if (isUserLoading || (user && isProfileLoading)) {
+  if (isUserLoading || user) {
     return <EliteLoader />;
   }
 
-  // Se o usuário está logado, mostra o Hub Central
-  if (user) {
-    return <HubPage />;
-  }
-
-  // Se não está logado, mostra a tela de Auth (Login/Cadastro)
   const currentRank = calculateRankByTime(tempProfile?.registrationDateTime, tempProfile?.status);
   const themeClass = getThemeClass(currentRank);
 
