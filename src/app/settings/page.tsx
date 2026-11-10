@@ -24,7 +24,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Página de configurações de elite do Hall Black Club.
- * Lógica de privacidade aprimorada: sub-opções são desabilitadas se o perfil for privado.
+ * Lógica de privacidade aprimorada: sub-opções são desabilitadas na UI mas preservam estado no DB.
  */
 
 export default function SettingsPage() {
@@ -145,22 +145,10 @@ export default function SettingsPage() {
     if (!profile?.id || !db) return;
 
     const userRef = doc(db, 'users', profile.id);
-    let updates: any = { [field]: value };
+    const updates = { [field]: value };
 
     if (field === 'isPublicProfile') {
       setIsPublic(value);
-      if (!value) {
-        // Se desligar o perfil público, desabilita e reseta os outros campos localmente e no DB
-        setShowBio(false);
-        setShowLocation(false);
-        setShowJoinDate(false);
-        updates = {
-          ...updates,
-          showBio: false,
-          showLocation: false,
-          showJoinDate: false
-        };
-      }
     } else if (field === 'showBio') {
       setShowBio(value);
     } else if (field === 'showLocation') {
@@ -170,7 +158,12 @@ export default function SettingsPage() {
     }
 
     updateDocumentNonBlocking(userRef, updates);
-    toast({ title: "PRIVACIDADE", description: "Preferências atualizadas." });
+    toast({ 
+      title: "PRIVACIDADE", 
+      description: field === 'isPublicProfile' 
+        ? (value ? "Seu perfil agora está visível na rede." : "Seu perfil foi colocado sob sigilo.")
+        : "Preferências de visibilidade atualizadas." 
+    });
   };
 
   const handleSimulatePayment = () => {
@@ -573,7 +566,7 @@ export default function SettingsPage() {
 
       {/* EDITOR DE IMAGEM */}
       <Dialog open={!!editorState} onOpenChange={(open) => { if(!open) setEditorState(null); }}>
-        <DialogContent className="bg-zinc-950 border-zinc-900/60 text-white w-[95vw] max-w-sm p-6 rounded-[2rem] z-[300]">
+        <DialogContent className="bg-zinc-950 border-zinc-900/60 text-white w-[95vw] max-sm p-6 rounded-[2rem] z-[300]">
           <DialogHeader>
             <DialogTitle className="text-lg font-black uppercase tracking-tighter">Enquadramento</DialogTitle>
             <DialogDescription className="text-xs text-zinc-600 uppercase tracking-widest">Ajuste seu retrato de elite.</DialogDescription>
