@@ -1,8 +1,12 @@
-
 {
-  "name": "Sovereign Founders Club | Apex Elite",
+  "name": "Sovereign Founders Club",
   "short_name": "Sovereign",
   "description": "Acesso exclusivo à elite do empreendedorismo e negócios.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "scope": "/",
   "icons": [
     {
       "src": "/maskable_icon_x48.png",
@@ -21,12 +25,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
     }
-  ],
-  "theme_color": "#000000",
-  "background_color": "#000000",
-  "display": "standalone",
-  "orientation": "portrait",
-  "scope": "/",
-  "start_url": "/"
+  ]
 }

@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -10,7 +9,6 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
- * Exibe o logotipo oficial logo-sfc.gif em dimensões imponentes para mobile.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
@@ -39,7 +37,6 @@ export function TopHeader({ profile }: { profile: any }) {
         </Link>
 
         <div className="flex items-center gap-4 md:gap-8">
-          {/* ELITE SCORE DISPLAY */}
           <div className="flex flex-col items-end">
             <div className="flex items-center gap-1.5 bg-zinc-950 px-3 py-1.5 rounded-full border border-zinc-900 shadow-inner">
                <Zap className="w-3 h-3 text-primary animate-pulse" />
