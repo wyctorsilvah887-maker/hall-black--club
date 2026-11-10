@@ -30,9 +30,9 @@ export function TopHeader({ profile }: { profile: any }) {
           <NextImage 
             src="/logo-sfc.gif" 
             alt="Sovereign Founders Club" 
-            width={180} 
-            height={48} 
-            className="h-8 md:h-10 w-auto object-contain"
+            width={220} 
+            height={60} 
+            className="h-10 md:h-12 w-auto object-contain"
             unoptimized
           />
         </Link>

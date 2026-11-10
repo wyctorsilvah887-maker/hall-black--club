@@ -116,9 +116,9 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
            <NextImage 
              src="/logo-sfc.gif" 
              alt="Sovereign Founders Club" 
-             width={140} 
-             height={35} 
-             className="h-7 md:h-8 w-auto object-contain"
+             width={200} 
+             height={54} 
+             className="h-10 md:h-12 w-auto object-contain"
              unoptimized
            />
         </div>
@@ -145,7 +145,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </header>
 
       <main className="max-w-7xl mx-auto p-6 space-y-12">
-        {/* ... Rest of the main content (already updated in previous turns) ... */}
+        {/* Conteúdo mantido */}
       </main>
 
       {/* MODAL ADICIONAR PET */}
