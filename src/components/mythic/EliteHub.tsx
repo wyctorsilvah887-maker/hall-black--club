@@ -51,8 +51,7 @@ export function EliteHub({ profile }: EliteHubProps) {
               { id: 'vault', icon: BookOpen, label: 'Cofre', type: 'tab' },
               { id: 'council', icon: Users, label: 'Conselho', type: 'tab' },
               { id: 'lounge', icon: MessageSquare, label: 'Salão', type: 'link', href: '/lounge' },
-              { id: 'advisor', icon: Terminal, label: 'IA', type: 'link', href: '/advisor' },
-              { id: 'settings', icon: Settings, label: 'Ajustes', type: 'link', href: '/settings' }
+              { id: 'advisor', icon: Terminal, label: 'IA', type: 'link', href: '/advisor' }
             ].map((item) => (
               item.type === 'tab' ? (
                 <button
