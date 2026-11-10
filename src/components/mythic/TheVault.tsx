@@ -40,6 +40,8 @@ export function TheVault({ profile }: { profile: any }) {
   const [readingArticle, setReadingArticle] = useState<VaultArticle | null>(null);
   const [isBootstrapping, setIsBootstrapping] = useState(false);
   
+  const isAdmin = profile.role === 'admin';
+  
   const vaultQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(collection(db, 'vault'), orderBy('timestamp', 'desc'));
@@ -60,7 +62,7 @@ export function TheVault({ profile }: { profile: any }) {
   const themeColor = 'text-primary';
 
   const handleSeedData = async () => {
-    if (!db) return;
+    if (!db || !isAdmin) return;
     setIsBootstrapping(true);
     
     const sampleArticles = [
@@ -121,7 +123,7 @@ export function TheVault({ profile }: { profile: any }) {
         <div className="space-y-2">
           <h3 className="text-2xl font-black uppercase tracking-tighter text-white">O Cofre</h3>
           <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold leading-relaxed">
-            Inteligência estratégica, diversos modelos de negócio e engenharia financeira reservados aos membros do Hall Black Club.
+            Inteligência estratégica, diversos modelos de negócio e engenharia financeira reservados aos membros do Sovereign Founders Club.
           </p>
         </div>
         
@@ -175,7 +177,7 @@ export function TheVault({ profile }: { profile: any }) {
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-700 max-w-xs mx-auto">
                 Protocolos estratégicos {selectedCategory ? "desta categoria" : ""} em processamento.
               </p>
-              {!articles || articles.length === 0 ? (
+              {(!articles || articles.length === 0) && isAdmin ? (
                 <Button 
                   onClick={handleSeedData}
                   disabled={isBootstrapping}
@@ -191,7 +193,7 @@ export function TheVault({ profile }: { profile: any }) {
                     </>
                   )}
                 </Button>
-              ) : (
+              ) : !articles || articles.length === 0 ? null : (
                 <Button variant="link" onClick={() => setSelectedCategory(null)} className="text-[9px] uppercase tracking-widest font-black text-primary">
                   Limpar Filtro
                 </Button>
