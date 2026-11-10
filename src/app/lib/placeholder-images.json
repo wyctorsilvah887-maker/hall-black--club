@@ -2,6 +2,24 @@
 {
   "placeholderImages": [
     {
+      "id": "vault-landing",
+      "description": "The Vault Landing Feature",
+      "imageUrl": "https://picsum.photos/seed/vault-landing/1200/900",
+      "imageHint": "luxury safe"
+    },
+    {
+      "id": "ia-landing",
+      "description": "Sovereign IA Landing Feature",
+      "imageUrl": "https://picsum.photos/seed/ia-landing/1200/900",
+      "imageHint": "futuristic server"
+    },
+    {
+      "id": "room-landing",
+      "description": "Black Room Landing Feature",
+      "imageUrl": "https://picsum.photos/seed/room-landing/1200/900",
+      "imageHint": "luxury lounge"
+    },
+    {
       "id": "luxury-pet",
       "description": "Luxury Pet Portrait",
       "imageUrl": "https://picsum.photos/seed/hallblack1/800/600",
