@@ -78,7 +78,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     const reader = new FileReader();
     reader.onload = () => setEditorState({ isOpen: true, image: reader.result as string, target });
     reader.readAsDataURL(file);
-    e.target.value = '';
+    e.value = '';
   };
 
   const handleAddPet = async (e: React.FormEvent) => {
@@ -101,14 +101,6 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     } finally { setIsSubmitting(false); }
   };
 
-  const handleToggleEmergency = (pet: any) => {
-    if (!profile?.id) return;
-    const petRef = doc(db, 'users', profile.id, 'pets', pet.id);
-    const newState = !pet.isEmergencyActive;
-    updateDocumentNonBlocking(petRef, { isEmergencyActive: newState });
-    toast({ variant: newState ? "destructive" : "default", title: newState ? "SOS ATIVADO" : "SOS DESATIVADO" });
-  };
-
   return (
     <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30", themeClass)}>
       <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-900/50 h-16 md:h-20 flex items-center justify-between px-6">
@@ -116,10 +108,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
            <NextImage 
              src="/logo-sfc.gif" 
              alt="Sovereign Founders Club" 
-             width={200} 
-             height={54} 
-             className="h-10 md:h-12 w-auto object-contain"
+             width={240} 
+             height={64} 
+             className="h-13 md:h-15 w-auto object-contain"
              unoptimized
+             priority
            />
         </div>
 
@@ -145,10 +138,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
       </header>
 
       <main className="max-w-7xl mx-auto p-6 space-y-12">
-        {/* Conteúdo mantido */}
+        <div className="py-20 text-center opacity-20">
+           <p className="text-[10px] font-black uppercase tracking-[0.5em]">Central de Ativos de Elite</p>
+        </div>
       </main>
 
-      {/* MODAL ADICIONAR PET */}
       <Dialog open={isAddPetOpen} onOpenChange={setIsAddPetOpen}>
         <DialogContent className="bg-zinc-950 border-zinc-900 text-white w-[92vw] max-w-sm rounded-[1.5rem] p-6 z-[200]">
           <DialogHeader>
