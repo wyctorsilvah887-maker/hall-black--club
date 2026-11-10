@@ -37,13 +37,6 @@
   }
 }
 
-/* Esconder cabeçalhos em modo standalone (PWA instalado) */
-@media (display-mode: standalone) {
-  .pwa-header-hide {
-    display: none !important;
-  }
-}
-
 /* Temas de Patente */
 .theme-hallblack {
   --primary: 350 100% 25%;
