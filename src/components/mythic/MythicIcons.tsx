@@ -82,7 +82,7 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   const labelFontSize = 
     labelText === 'SOVEREIGN' ? '18px' :
     labelText === 'MÍTICO RUBI' ? '18px' : 
-    labelText === 'LEGENDÁRIO ÂMBAR' ? '15px' :
+    labelText === 'LEGENDÁRIO ÂMBAR' ? '14px' :
     labelText === 'LENDÁRIO' ? '18px' :
     '24px';
     

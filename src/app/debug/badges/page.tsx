@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { RankBadge } from '@/components/mythic/MythicIcons';
 import { ShieldCheck, ArrowLeft, Zap } from "lucide-react";
 import Link from 'next/link';
@@ -11,6 +11,12 @@ import Link from 'next/link';
  */
 
 export default function BadgeGalleryPage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const ranks = [
     { status: 'HALL_BLACK', label: 'Hall Black', description: 'O Ápice Supremo. O tutor que transcendeu a linhagem, unificando todos os graus de prestígio.' },
     { status: 'MYTHIC', label: 'Mítico Rubi', description: 'Autoridade suprema e acesso ao conselho secreto. A guardiã da linhagem mística.' },
@@ -19,6 +25,8 @@ export default function BadgeGalleryPage() {
     { status: 'ELITE', label: 'Membro Elite', description: 'Patente intermediária alcançada após 4 meses como Mestre.' },
     { status: 'MASTER', label: 'Mestre do Clube', description: 'Nível de Entrada. O início da jornada na elite Hall Black.' }
   ];
+
+  if (!mounted) return null;
 
   return (
     <main className="min-h-screen bg-black text-white p-6 md:p-20 selection:bg-primary/30">
@@ -50,7 +58,7 @@ export default function BadgeGalleryPage() {
                     <RankBadge status={rank.status} id={`debug-${rank.status}`} size="lg" />
                  </div>
                  <div className="text-center space-y-3 max-w-xs">
-                    <h3 className="text-xl font-black uppercase tracking-tight">{rank.label}</h3>
+                    <h3 className="text-base md:text-lg font-black uppercase tracking-widest">{rank.label}</h3>
                     <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
                       {rank.description}
                     </p>
