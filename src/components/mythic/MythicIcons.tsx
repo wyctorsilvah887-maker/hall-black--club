@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useId } from 'react';
@@ -82,11 +83,11 @@ export const RankBadge = ({ status, className, size = 'md', id }: RankBadgeProps
   const labelFontSize = 
     labelText === 'SOVEREIGN' ? '18px' :
     labelText === 'MÍTICO RUBI' ? '18px' : 
-    labelText === 'LEGENDÁRIO ÂMBAR' ? '14px' :
+    labelText === 'LEGENDÁRIO ÂMBAR' ? '12px' :
     labelText === 'LENDÁRIO' ? '18px' :
     '24px';
     
-  const labelLetterSpacing = labelText === 'LEGENDÁRIO ÂMBAR' ? '2.5px' : '4px';
+  const labelLetterSpacing = labelText === 'LEGENDÁRIO ÂMBAR' ? '2px' : '4px';
   const labelYPosition = '58';
 
   return (
