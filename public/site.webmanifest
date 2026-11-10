@@ -1,22 +1,17 @@
-
 {
   "name": "Sovereign Founders Club",
   "short_name": "Sovereign",
-  "description": "Acesso exclusivo à elite do empreendedorismo e negócios.",
+  "description": "Sistema de elite para networking e inteligência de negócios.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/favicon-32x32.png",
       "sizes": "32x32",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/favicon-16x16.png",
-      "sizes": "16x16",
       "type": "image/png",
       "purpose": "any"
     },
