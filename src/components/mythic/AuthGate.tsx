@@ -13,7 +13,8 @@ import {
   updateProfile 
 } from "firebase/auth";
 import { doc, setDoc, updateDoc, getCountFromServer, collection, getDoc, getDocs, query, where } from "firebase/firestore";
-import { Loader2, UserPlus, LogIn, Shield, Phone } from "lucide-react";
+import { Loader2, UserPlus, LogIn, Phone } from "lucide-react";
+import NextImage from 'next/image';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -197,10 +198,15 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
       <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="text-center space-y-4">
           <div className="flex flex-col items-center gap-2">
-            <Shield className="w-12 h-12 text-primary animate-pulse" />
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white uppercase">
-              SOVEREIGN <span className="text-primary">FOUNDERS</span>
-            </h1>
+            <NextImage 
+              src="/logo-sfc.gif" 
+              alt="Sovereign Founders Club" 
+              width={280} 
+              height={70} 
+              className="w-56 md:w-64 h-auto object-contain"
+              unoptimized
+              priority
+            />
           </div>
           <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em] font-bold">
             Protocolo de Entrada v2026.12

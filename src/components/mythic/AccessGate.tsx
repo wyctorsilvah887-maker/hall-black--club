@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { validateMythicCode, validateTransferClaim } from "@/lib/mythic-service";
 import { useFirestore } from "@/firebase";
-import { Loader2, Crown, LogIn, ArrowRightLeft, ShieldCheck, Mail } from "lucide-react";
+import { Loader2, LogIn, ArrowRightLeft, ShieldCheck, Mail } from "lucide-react";
+import NextImage from 'next/image';
 
 interface AccessGateProps {
   onSuccess: (profile: any) => void;
@@ -66,15 +67,16 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-primary/10 rounded-full blur-[80px] md:blur-[140px] pointer-events-none" />
       
       <div className="w-full max-w-md space-y-8 md:space-y-10 relative z-10 text-center">
-        <div className="space-y-3 md:space-y-4">
-          <div className="flex items-center justify-center gap-2 md:gap-3 mb-1 md:mb-2">
-            <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
-            <Crown className="w-4 h-4 text-primary animate-pulse" />
-            <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white">
-            SOVEREIGN <span className="text-primary animate-text-ruby-glow">FOUNDERS</span>
-          </h1>
+        <div className="flex flex-col items-center space-y-4">
+          <NextImage 
+            src="/logo-sfc.gif" 
+            alt="Sovereign Founders Club" 
+            width={320} 
+            height={80} 
+            className="w-64 md:w-80 h-auto object-contain"
+            unoptimized
+            priority
+          />
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mt-2">
             Protocolo de Elite v2026.12
           </p>

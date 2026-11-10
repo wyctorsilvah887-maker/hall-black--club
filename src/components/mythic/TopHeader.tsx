@@ -2,7 +2,7 @@
 "use client"
 
 import React from 'react';
-import { Crown, User, Zap } from 'lucide-react';
+import { User, Zap } from 'lucide-react';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { cn } from '@/lib/utils';
@@ -10,8 +10,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
- * Configurado como 'fixed' para visibilidade absoluta.
- * Suporta Safe Area Insets para dispositivos móveis (PWA).
+ * Exibe o logotipo oficial logo-sfc.gif.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
@@ -27,16 +26,15 @@ export function TopHeader({ profile }: { profile: any }) {
       <div className="h-[env(safe-area-inset-top,0px)] w-full" />
       
       <div className="h-16 md:h-20 w-full flex items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-3 active:scale-95 transition-transform">
-          <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-            <Crown className="w-5 h-5 text-primary animate-pulse" />
-          </div>
-          <div>
-            <h1 className="text-sm md:text-lg font-black uppercase tracking-tighter text-white leading-none">
-              Sovereign <span className="text-primary">Founders</span>
-            </h1>
-            <p className="text-[7px] text-zinc-600 font-bold uppercase tracking-widest mt-0.5">Elite Identity</p>
-          </div>
+        <Link href="/" className="flex items-center active:scale-95 transition-transform">
+          <NextImage 
+            src="/logo-sfc.gif" 
+            alt="Sovereign Founders Club" 
+            width={180} 
+            height={48} 
+            className="h-8 md:h-10 w-auto object-contain"
+            unoptimized
+          />
         </Link>
 
         <div className="flex items-center gap-4 md:gap-8">
