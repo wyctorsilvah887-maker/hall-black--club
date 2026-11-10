@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -23,8 +24,13 @@ import { RankBadge } from './MythicIcons';
 import Link from 'next/link';
 
 /**
- * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database com Indicadores de Digitação.
+ * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database com Indicadores de Digitação e Identidade Visual por Patente.
  */
+
+type TypingUser = {
+  name: string;
+  rank: string;
+};
 
 export function CouncilLounge({ profile }: { profile: any }) {
   const db = useDatabase();
@@ -37,7 +43,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [permissionError, setPermissionError] = useState(false);
-  const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
   
   const [previewUserId, setPreviewUserId] = useState<string | null>(null);
 
@@ -51,6 +57,24 @@ export function CouncilLounge({ profile }: { profile: any }) {
   }, [firestore, previewUserId]);
 
   const { data: previewProfile, isLoading: isPreviewLoading } = useDoc(previewUserRef);
+
+  // Helper para estilos de nome por patente
+  const getRankNameStyles = (rank: string) => {
+    switch (rank) {
+      case 'HALL_BLACK': 
+        return "text-white drop-shadow-[0_0_10px_rgba(255,0,0,0.8)] font-black italic animate-pulse";
+      case 'MYTHIC': 
+        return "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)] font-black animate-pulse";
+      case 'AMBER': 
+        return "text-orange-500 drop-shadow-[0_0_5px_rgba(249,115,22,0.4)] font-bold";
+      case 'LEGENDARY': 
+        return "text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.4)] font-bold";
+      case 'ELITE': 
+        return "text-zinc-400 font-bold";
+      default: 
+        return "text-orange-900 font-bold";
+    }
+  };
 
   // Sincronização de Mensagens e Status de Digitação
   useEffect(() => {
@@ -88,7 +112,10 @@ export function CouncilLounge({ profile }: { profile: any }) {
           .filter(([uid, status]: [string, any]) => {
             return uid !== user?.uid && status.isTyping === true;
           })
-          .map(([_, status]: [string, any]) => status.userName);
+          .map(([_, status]: [string, any]) => ({
+            name: status.userName,
+            rank: status.userRank || 'MASTER'
+          }));
         setTypingUsers(currentlyTyping);
       } else {
         setTypingUsers([]);
@@ -104,14 +131,16 @@ export function CouncilLounge({ profile }: { profile: any }) {
   // Função para atualizar status de digitação no RTDB
   const updateTypingStatus = useCallback((isTyping: boolean) => {
     if (!db || !user?.uid || !profile?.name) return;
-    if (isTypingRef.current === isTyping) return; // Evitar escrita desnecessária
+    if (isTypingRef.current === isTyping) return; 
 
     isTypingRef.current = isTyping;
     const userTypingRef = ref(db, `typingStatus/${user.uid}`);
+    const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
 
     if (isTyping) {
       set(userTypingRef, {
         userName: profile.name,
+        userRank: currentRank,
         isTyping: true,
         lastUpdate: serverTimestamp()
       });
@@ -119,11 +148,12 @@ export function CouncilLounge({ profile }: { profile: any }) {
     } else {
       set(userTypingRef, {
         userName: profile.name,
+        userRank: currentRank,
         isTyping: false,
         lastUpdate: serverTimestamp()
       });
     }
-  }, [db, user?.uid, profile?.name]);
+  }, [db, user?.uid, profile?.name, profile.registrationDateTime, profile.status]);
 
   // Efeito para monitorar o campo de texto e disparar o status
   useEffect(() => {
@@ -153,7 +183,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
     setIsSending(true);
     const content = newMessage.trim();
     setNewMessage('');
-    updateTypingStatus(false); // Limpar status imediatamente
+    updateTypingStatus(false); 
 
     try {
       const messagesRef = ref(db, 'loungeMessages');
@@ -199,7 +229,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
             <div className="space-y-3">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-red-600">Acesso de Rede Negado</p>
               <p className="text-[10px] text-zinc-600 uppercase font-bold leading-relaxed max-w-xs mx-auto">
-                Verifique as regras do Realtime Database (typingStatus e loungeMessages).
+                Verifique as regras do Realtime Database.
               </p>
             </div>
           </div>
@@ -225,7 +255,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
                   <div className="flex-shrink-0 cursor-pointer active:scale-90 transition-transform" onClick={() => setPreviewUserId(msg.userId)}>
                     <div className={cn(
                       "w-8 h-8 md:w-11 md:h-11 rounded-full overflow-hidden border bg-zinc-950 shadow-2xl",
-                      msg.userRank === 'HALL_BLACK' ? "border-white/20" : 
+                      msg.userRank === 'HALL_BLACK' ? "border-red-900/50" : 
                       msg.userRank === 'MYTHIC' ? "border-primary/50" : "border-zinc-800"
                     )}>
                       {msg.userPhoto ? (
@@ -242,9 +272,11 @@ export function CouncilLounge({ profile }: { profile: any }) {
                   )}>
                     <div className="flex items-center gap-2 px-1 cursor-pointer group" onClick={() => setPreviewUserId(msg.userId)}>
                       <span className={cn(
-                        "text-[8px] md:text-[9px] font-black uppercase tracking-widest group-hover:underline",
-                        isMe ? "text-primary" : "text-zinc-500"
-                      )}>{msg.userName}</span>
+                        "text-[8px] md:text-[9px] uppercase tracking-widest group-hover:underline transition-all",
+                        getRankNameStyles(msg.userRank)
+                      )}>
+                        {msg.userName}
+                      </span>
                       <span className="text-[7px] md:text-[8px] font-bold uppercase text-zinc-700">
                         {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                       </span>
@@ -263,7 +295,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
               );
             })}
             
-            {/* INDICADOR DE DIGITAÇÃO: TRÊS PONTOS ANIMADOS */}
+            {/* INDICADOR DE DIGITAÇÃO */}
             {typingUsers.length > 0 && (
               <div className="flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="flex-shrink-0">
@@ -272,11 +304,19 @@ export function CouncilLounge({ profile }: { profile: any }) {
                   </div>
                 </div>
                 <div className="flex flex-col space-y-1.5">
-                  <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest px-1 italic">
-                    {typingUsers.length === 1 
-                      ? `${typingUsers[0].split(' ')[0]} está digitando...` 
-                      : `${typingUsers.length} fundadores digitando...`}
-                  </span>
+                  <div className="flex flex-wrap gap-1 px-1">
+                    {typingUsers.map((tu, idx) => (
+                      <span key={idx} className={cn(
+                        "text-[8px] uppercase tracking-widest italic",
+                        getRankNameStyles(tu.rank)
+                      )}>
+                        {tu.name.split(' ')[0]}{idx < typingUsers.length - 1 ? ',' : ''}
+                      </span>
+                    ))}
+                    <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest italic ml-1">
+                      {typingUsers.length === 1 ? 'está digitando...' : 'estão digitando...'}
+                    </span>
+                  </div>
                   <div className="bg-zinc-900/40 border border-zinc-800/40 p-4 md:p-5 rounded-[1.2rem] md:rounded-[1.5rem] rounded-tl-none flex items-center justify-center gap-2 w-16 md:w-20 shadow-2xl">
                     <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0s' }} />
                     <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0.2s' }} />
@@ -351,7 +391,9 @@ export function CouncilLounge({ profile }: { profile: any }) {
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-xl font-black uppercase tracking-tighter text-white leading-tight">{previewProfile.name}</h3>
+                  <h3 className={cn("text-xl uppercase tracking-tighter leading-tight", getRankNameStyles(calculateRankByTime(previewProfile.registrationDateTime, previewProfile.status)))}>
+                    {previewProfile.name}
+                  </h3>
                   <p className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.3em]">#{previewProfile.memberNumber?.toString().padStart(2, '0')} FOUNDER</p>
                 </div>
 
