@@ -24,6 +24,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Página de configurações de elite do Hall Black Club.
+ * Lógica de privacidade aprimorada: sub-opções são desabilitadas se o perfil for privado.
  */
 
 export default function SettingsPage() {
@@ -142,13 +143,33 @@ export default function SettingsPage() {
 
   const handleTogglePrivacyField = (field: string, value: boolean) => {
     if (!profile?.id || !db) return;
-    if (field === 'isPublicProfile') setIsPublic(value);
-    if (field === 'showBio') setShowBio(value);
-    if (field === 'showLocation') setShowLocation(value);
-    if (field === 'showJoinDate') setShowJoinDate(value);
 
     const userRef = doc(db, 'users', profile.id);
-    updateDocumentNonBlocking(userRef, { [field]: value });
+    let updates: any = { [field]: value };
+
+    if (field === 'isPublicProfile') {
+      setIsPublic(value);
+      if (!value) {
+        // Se desligar o perfil público, desabilita e reseta os outros campos localmente e no DB
+        setShowBio(false);
+        setShowLocation(false);
+        setShowJoinDate(false);
+        updates = {
+          ...updates,
+          showBio: false,
+          showLocation: false,
+          showJoinDate: false
+        };
+      }
+    } else if (field === 'showBio') {
+      setShowBio(value);
+    } else if (field === 'showLocation') {
+      setShowLocation(value);
+    } else if (field === 'showJoinDate') {
+      setShowJoinDate(value);
+    }
+
+    updateDocumentNonBlocking(userRef, updates);
     toast({ title: "PRIVACIDADE", description: "Preferências atualizadas." });
   };
 
@@ -311,28 +332,40 @@ export default function SettingsPage() {
                 <Switch checked={isPublic} onCheckedChange={(val) => handleTogglePrivacyField('isPublicProfile', val)} />
               </div>
               
-              <div className="flex items-center justify-between px-5 py-5">
+              <div className={cn("flex items-center justify-between px-5 py-5 transition-opacity", !isPublic && "opacity-50")}>
                 <div className="space-y-1">
                   <p className="text-[11px] font-black uppercase tracking-widest">Exibir Localização</p>
                   <p className="text-[9px] text-zinc-600 uppercase font-bold">Cidade e Estado no perfil</p>
                 </div>
-                <Switch checked={showLocation} onCheckedChange={(val) => handleTogglePrivacyField('showLocation', val)} />
+                <Switch 
+                  disabled={!isPublic}
+                  checked={showLocation} 
+                  onCheckedChange={(val) => handleTogglePrivacyField('showLocation', val)} 
+                />
               </div>
 
-              <div className="flex items-center justify-between px-5 py-5">
+              <div className={cn("flex items-center justify-between px-5 py-5 transition-opacity", !isPublic && "opacity-50")}>
                 <div className="space-y-1">
                   <p className="text-[11px] font-black uppercase tracking-widest">Exibir Biografia</p>
                   <p className="text-[9px] text-zinc-600 uppercase font-bold">Sua trajetória no clube</p>
                 </div>
-                <Switch checked={showBio} onCheckedChange={(val) => handleTogglePrivacyField('showBio', val)} />
+                <Switch 
+                  disabled={!isPublic}
+                  checked={showBio} 
+                  onCheckedChange={(val) => handleTogglePrivacyField('showBio', val)} 
+                />
               </div>
 
-              <div className="flex items-center justify-between px-5 py-5">
+              <div className={cn("flex items-center justify-between px-5 py-5 transition-opacity", !isPublic && "opacity-50")}>
                 <div className="space-y-1">
                   <p className="text-[11px] font-black uppercase tracking-widest">Exibir Admissão</p>
                   <p className="text-[9px] text-zinc-600 uppercase font-bold">Ano de entrada na elite</p>
                 </div>
-                <Switch checked={showJoinDate} onCheckedChange={(val) => handleTogglePrivacyField('showJoinDate', val)} />
+                <Switch 
+                  disabled={!isPublic}
+                  checked={showJoinDate} 
+                  onCheckedChange={(val) => handleTogglePrivacyField('showJoinDate', val)} 
+                />
               </div>
             </div>
           </section>
