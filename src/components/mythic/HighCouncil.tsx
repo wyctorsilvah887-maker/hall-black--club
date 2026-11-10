@@ -6,7 +6,7 @@ import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebas
 import { collection, query, orderBy, limit, where } from 'firebase/firestore';
 import { 
   User, ShieldCheck, MapPin, Lock, MessageSquare, Send, 
-  Clock, Loader2, Trophy, Medal, Star, Users, LayoutGrid, Zap 
+  Clock, Loader2, Trophy, Medal, Star, Users, LayoutGrid, Zap, ChevronRight 
 } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import { RankBadge } from './MythicIcons';
 
 /**
  * @fileOverview Seção do Conselho com sub-navegação: Alto Conselho, Ranking e Audiência.
+ * Layout de ranking organizado com estética de elite.
  */
 
 type CouncilTab = 'members' | 'ranking' | 'audience';
@@ -192,54 +193,102 @@ export function HighCouncil({ profile }: { profile: any }) {
           </section>
         )}
 
-        {/* ABA: RANKING */}
+        {/* ABA: RANKING ORGANIZADO */}
         {activeTab === 'ranking' && (
           <section className="space-y-8 max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-12">
-              <Trophy className="w-12 h-12 text-primary mx-auto animate-bounce" />
+            <div className="text-center space-y-3 mb-10">
+              <div className="inline-flex p-3 rounded-2xl bg-primary/10 border border-primary/20 mb-2">
+                <Trophy className="w-8 h-8 text-primary animate-pulse" />
+              </div>
               <h3 className="text-3xl font-black uppercase tracking-tighter text-white">Ranking de Prestígio</h3>
-              <p className="text-[10px] text-zinc-600 uppercase tracking-[0.3em] font-bold">Os Pilares da Rede Sovereign Founders</p>
+              <p className="text-[9px] text-zinc-600 uppercase tracking-[0.4em] font-bold">Os Pilares da Rede Sovereign Founders</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {isMembersLoading ? (
-                Array(5).fill(0).map((_, i) => <div key={i} className="h-20 bg-zinc-900/20 rounded-2xl animate-pulse" />)
+                Array(5).fill(0).map((_, i) => <div key={i} className="h-16 bg-zinc-900/20 rounded-2xl animate-pulse" />)
               ) : rankedMembers.map((member, index) => (
                 <div 
                   key={member.id} 
                   className={cn(
-                    "flex items-center justify-between p-5 md:p-6 rounded-[2rem] border transition-all duration-500",
-                    index === 0 ? "bg-primary/5 border-primary/30 shadow-[0_0_30px_rgba(var(--primary),0.1)]" : "bg-zinc-950/40 border-zinc-900"
+                    "group relative flex items-center gap-4 md:gap-6 p-4 md:p-5 rounded-2xl border transition-all duration-500 overflow-hidden",
+                    index === 0 
+                      ? "bg-primary/5 border-primary/30 shadow-[0_0_40px_rgba(var(--primary),0.15)]" 
+                      : "bg-zinc-950/40 border-zinc-900/80 hover:border-zinc-800"
                   )}
                 >
-                  <div className="flex items-center gap-4 md:gap-8">
-                    <div className="relative w-10 md:w-14 flex items-center justify-center">
-                      {index === 0 ? <Star className="w-6 h-6 text-primary fill-primary" /> :
-                       index === 1 ? <Medal className="w-6 h-6 text-yellow-500" /> :
-                       index === 2 ? <Medal className="w-6 h-6 text-zinc-400" /> :
-                       <span className="text-lg font-black text-zinc-800">#{index + 1}</span>}
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-zinc-900 overflow-hidden relative border border-zinc-800">
-                        {member.photo ? <Image src={member.photo} alt={member.name} fill className="object-cover" unoptimized /> : <User className="w-full h-full p-2 text-zinc-800" />}
-                      </div>
-                      <div className="space-y-0.5">
-                        <p className="text-sm font-black uppercase tracking-tight text-white">{member.name}</p>
-                        <div className="flex items-center gap-2">
-                           <span className="text-[8px] font-black text-primary uppercase tracking-widest">#{member.memberNumber?.toString().padStart(2, '0')}</span>
-                           <span className="w-1 h-1 rounded-full bg-zinc-800" />
-                           <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">{member.city || 'Sovereign Hub'}</span>
+                  {/* POSITION INDICATOR */}
+                  <div className="flex-shrink-0 w-10 md:w-14 flex items-center justify-center">
+                    {index === 0 ? <Star className="w-6 h-6 text-primary fill-primary animate-hallblack-ruby-glow rounded-full p-1" /> :
+                     index === 1 ? <Medal className="w-6 h-6 text-yellow-500" /> :
+                     index === 2 ? <Medal className="w-6 h-6 text-zinc-400" /> :
+                     <span className="text-sm font-black text-zinc-700 font-mono tracking-tighter">{(index + 1).toString().padStart(2, '0')}</span>}
+                  </div>
+
+                  {/* AVATAR */}
+                  <div className="flex-shrink-0 relative">
+                    <div className={cn(
+                      "w-12 h-12 md:w-14 md:h-14 rounded-xl bg-zinc-900 overflow-hidden border transition-all duration-500 group-hover:scale-105",
+                      index === 0 ? "border-primary/50" : "border-zinc-800"
+                    )}>
+                      {member.photo ? (
+                        <Image src={member.photo} alt={member.name} fill className="object-cover" unoptimized />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-zinc-950">
+                          <User className="w-6 h-6 text-zinc-800" />
                         </div>
-                      </div>
+                      )}
+                    </div>
+                    {index === 0 && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-black" />
+                    )}
+                  </div>
+
+                  {/* MEMBER DETAILS */}
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center gap-2">
+                       <h4 className={cn(
+                         "text-sm md:text-base font-black uppercase tracking-tight truncate",
+                         index === 0 ? "text-white" : "text-zinc-300"
+                       )}>
+                         {member.name}
+                       </h4>
+                       {member.role === 'admin' && (
+                         <ShieldCheck className="w-3 h-3 text-primary" />
+                       )}
+                    </div>
+                    <div className="flex items-center gap-3 flex-wrap">
+                       <span className="text-[8px] font-black text-primary uppercase tracking-widest">
+                         #{member.memberNumber?.toString().padStart(2, '0')} FOUNDER
+                       </span>
+                       <div className="h-2 w-px bg-zinc-800" />
+                       <div className="flex items-center gap-1 text-zinc-600">
+                         <MapPin className="w-2.5 h-2.5" />
+                         <span className="text-[8px] font-bold uppercase truncate max-w-[100px]">
+                           {member.city || 'Sovereign Hub'}
+                         </span>
+                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                       <Zap className="w-3.5 h-3.5 text-primary" />
-                       <p className="text-xl md:text-2xl font-black text-white tracking-tighter">{member.eliteScore || '100'}</p>
+
+                  {/* ELITE SCORE SECTION */}
+                  <div className="flex-shrink-0 text-right pr-2">
+                    <div className="flex items-center justify-end gap-1.5 mb-0.5">
+                       <Zap className={cn("w-3.5 h-3.5", index === 0 ? "text-primary animate-pulse" : "text-zinc-700")} />
+                       <p className={cn(
+                         "text-lg md:text-2xl font-black tracking-tighter",
+                         index === 0 ? "text-white" : "text-zinc-400"
+                       )}>
+                         {member.eliteScore || '100'}
+                       </p>
                     </div>
-                    <p className="text-[7px] font-black text-zinc-700 uppercase tracking-widest">Elite Score</p>
+                    <p className="text-[7px] font-black text-zinc-800 uppercase tracking-widest">Elite Score</p>
                   </div>
+                  
+                  {/* DECORATIVE LINE FOR TOP 1 */}
+                  {index === 0 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+                  )}
                 </div>
               ))}
             </div>
