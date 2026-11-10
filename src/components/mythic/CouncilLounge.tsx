@@ -9,6 +9,7 @@ import { Send, User, Loader2, Sparkles, ShieldAlert, MapPin, ShieldCheck, Chevro
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { cn } from '@/lib/utils';
 import { calculateRankByTime, getRankLabel, getThemeClass } from '@/lib/rank-utils';
 import { useToast } from '@/hooks/use-toast';
@@ -111,7 +112,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
     const userTypingRef = ref(db, `typingStatus/${user.uid}`);
 
     const updateTyping = (isTyping: boolean) => {
-      // Usamos set() para garantir que o status seja atualizado.
       set(userTypingRef, {
         userName: profile.name,
         isTyping,
@@ -121,7 +121,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
       });
 
       if (isTyping) {
-        // Remove o status ao desconectar
         onDisconnect(userTypingRef).remove();
       }
     };
@@ -159,7 +158,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
       const userTypingRef = ref(db, `typingStatus/${user.uid}`);
       const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
       
-      // Limpa status de digitação imediatamente após enviar
       set(userTypingRef, { 
         userName: profile.name,
         isTyping: false,
@@ -230,7 +228,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
                     isMe ? "flex-row-reverse" : "flex-row"
                   )}
                 >
-                  {/* AVATAR CLICÁVEL */}
                   <div className="flex-shrink-0 cursor-pointer active:scale-90 transition-transform" onClick={() => setPreviewUserId(msg.userId)}>
                     <div className={cn(
                       "w-8 h-8 md:w-11 md:h-11 rounded-full overflow-hidden border bg-zinc-950 shadow-2xl",
@@ -249,7 +246,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
                     "flex flex-col space-y-1.5 max-w-[85%] md:max-w-[70%]",
                     isMe ? "items-end" : "items-start"
                   )}>
-                    {/* NOME CLICÁVEL */}
                     <div className="flex items-center gap-2 px-1 cursor-pointer group" onClick={() => setPreviewUserId(msg.userId)}>
                       <span className={cn(
                         "text-[8px] md:text-[9px] font-black uppercase tracking-widest group-hover:underline",
@@ -333,7 +329,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
             </div>
           ) : previewProfile ? (
             <div className="flex flex-col">
-              {/* Banner / Cabeçalho do Preview */}
               <div className="h-24 bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-900 relative">
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
                    <div className={cn(
