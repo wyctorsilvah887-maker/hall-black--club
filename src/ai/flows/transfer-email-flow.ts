@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Fluxo de IA para composição e envio de e-mails de transferência de elite.
@@ -31,7 +32,7 @@ const prompt = ai.definePrompt({
   name: 'transferEmailPrompt',
   input: { schema: TransferEmailInputSchema },
   output: { schema: TransferEmailOutputSchema },
-  prompt: `Você é o Sistema Central de Comunicações do Hall Black Club. 
+  prompt: `Você é o Sistema Central de Comunicações do Sovereign Founders Club. 
 Sua tarefa é compor um e-mail de confirmação de transferência de credencial de elite extremamente formal, minimalista e seguro.
 
 DADOS DA TRANSAÇÃO:
@@ -59,8 +60,8 @@ const transferEmailFlow = ai.defineFlow(
     const { output } = await prompt(input);
     
     // Simulação de transporte SMTP real no console para auditoria
-    console.log(`[HALL BLACK MAIL SERVICE]
-    DE: noreply@hallblack.club
+    console.log(`[SOVEREIGN MAIL SERVICE]
+    DE: noreply@sovereignfounders.club
     PARA: ${input.fromEmail}
     ASSUNTO: PROTOCOLO DE CESSÃO DE CREDENCIAL - ${input.confirmationCode}
     

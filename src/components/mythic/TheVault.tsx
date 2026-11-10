@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -20,8 +21,7 @@ import {
 
 /**
  * @fileOverview O Cofre (The Vault) - Business & Strategy Edition.
- * Repositório central de inteligência estratégica e diversos modelos de negócio.
- * Pilares: ESTRATÉGIA, MODELOS (SaaS, Serviços, E-commerce), FINANCE/EQUITY.
+ * Repositório central de inteligência estratégica reservado aos membros do Sovereign Founders Club.
  */
 
 interface VaultArticle {
@@ -252,7 +252,7 @@ export function TheVault({ profile }: { profile: any }) {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center gap-4 mt-4 text-zinc-600">
-                  <span className="text-[8px] font-black uppercase tracking-widest">Protocolo: HB-BIZ-{readingArticle.id.substring(0,6).toUpperCase()}</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest">Protocolo: SVR-BIZ-{readingArticle.id.substring(0,6).toUpperCase()}</span>
                   <span className="w-1 h-1 rounded-full bg-zinc-800" />
                   <span className="text-[8px] font-black uppercase tracking-widest">Sincronizado: {new Date(readingArticle.timestamp).toLocaleDateString('pt-BR')}</span>
                 </div>
@@ -263,7 +263,7 @@ export function TheVault({ profile }: { profile: any }) {
                 <div className="flex items-start gap-4 p-6 bg-zinc-900/30 border border-zinc-800/50 rounded-2xl">
                   <BookOpen className={cn("w-5 h-5 flex-shrink-0 mt-1", themeColor)} />
                   <p className="text-sm font-medium text-zinc-300 leading-relaxed italic">
-                    "Este documento estratégico é de uso exclusivo da rede Hall Black. O compartilhamento externo de diretrizes resulta em exclusão imediata da linhagem."
+                    "Este documento estratégico é de uso exclusivo da rede Sovereign Founders. O compartilhamento externo de diretrizes resulta em exclusão imediata da linhagem."
                   </p>
                 </div>
                 

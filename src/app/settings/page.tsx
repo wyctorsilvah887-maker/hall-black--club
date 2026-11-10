@@ -23,8 +23,7 @@ import { signOut } from 'firebase/auth';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
- * @fileOverview Página de configurações de elite do Hall Black Club.
- * Lógica de privacidade aprimorada: sub-opções são desabilitadas na UI mas preservam estado no DB.
+ * @fileOverview Página de configurações de elite do Sovereign Founders Club.
  */
 
 export default function SettingsPage() {
@@ -396,7 +395,7 @@ export default function SettingsPage() {
         </div>
 
         <footer className="mt-12 py-12 border-t border-zinc-900/50 text-center opacity-20">
-          <p className="text-[8px] font-black uppercase tracking-[0.8em]">Hall Black Protocol v2.0</p>
+          <p className="text-[8px] font-black uppercase tracking-[0.8em]">Sovereign Founders Protocol v2.0</p>
         </footer>
       </div>
 
@@ -524,7 +523,7 @@ export default function SettingsPage() {
                   <Label className="text-[10px] uppercase tracking-widest text-zinc-600 font-bold ml-1">E-mail do Novo Titular</Label>
                   <Input 
                     type="email" required 
-                    placeholder="exemplo@hallblack.com"
+                    placeholder="exemplo@sovereign.club"
                     className="bg-black/40 border-zinc-800 h-14 rounded-2xl text-sm font-bold"
                     value={transferEmail || ''}
                     onChange={(e) => setTransferEmail(e.target.value)}

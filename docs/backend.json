@@ -87,11 +87,11 @@
   "firestore": {
     "/mythicCodes/{mythicCodeId}": {
       "schema": "MythicCode",
-      "description": "Controle de chaves HB."
+      "description": "Controle de chaves Sovereign."
     },
     "/users/{userId}": {
       "schema": "UserProfile",
-      "description": "Dossiês de membros."
+      "description": "Dossiês de membros Founders."
     },
     "/vault/{articleId}": {
       "schema": "VaultArticle",

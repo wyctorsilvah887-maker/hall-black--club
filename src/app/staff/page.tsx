@@ -21,7 +21,7 @@ import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Centro de Comando Staff - Alto Conselho Hall Black.
+ * @fileOverview Centro de Comando Staff - Alto Conselho Sovereign Founders Club.
  */
 
 type StaffView = 'dashboard' | 'messages' | 'users';

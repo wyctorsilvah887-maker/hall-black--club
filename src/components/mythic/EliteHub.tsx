@@ -22,9 +22,7 @@ interface EliteHubProps {
 }
 
 /**
- * @fileOverview Elite Hub - Central de Comando Sovereign.
- * Navegação simplificada no Dock inferior.
- * Cabeçalho superior fixo gerencia o acesso ao perfil e exibe o Elite Score.
+ * @fileOverview Elite Hub - Central de Comando Sovereign Founders Club.
  */
 
 export function EliteHub({ profile }: EliteHubProps) {

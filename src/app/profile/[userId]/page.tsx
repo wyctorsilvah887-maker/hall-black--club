@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use } from 'react';
@@ -67,7 +68,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
   const getBadgeInfo = (rank: string) => {
     switch (rank) {
       case 'HALL_BLACK': 
-        return { text: 'ÁPICE HALL BLACK', icon: <Star className="w-4 h-4" />, style: 'border-zinc-700 bg-zinc-900/50 text-white' };
+        return { text: 'SOVEREIGN FOUNDER', icon: <Star className="w-4 h-4" />, style: 'border-zinc-700 bg-zinc-900/50 text-white' };
       case 'MYTHIC':
         return { text: 'MEMBRO MÍTICO', icon: <CollarIcon className="w-4 h-4" />, style: 'border-primary/50 bg-primary/10 text-primary animate-ruby-glow' };
       case 'AMBER':
@@ -179,7 +180,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
             <Trophy className={`w-10 h-10 md:w-12 md:h-12 mb-2 ${currentRank === 'HALL_BLACK' ? 'text-white' : currentRank === 'MYTHIC' ? 'text-primary' : currentRank === 'AMBER' ? 'text-orange-500' : 'text-yellow-500'}`} />
             <h3 className="text-base md:text-lg font-black uppercase tracking-tighter">Status de Elite</h3>
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest leading-relaxed max-w-xs">
-              Membro certificado com acesso total às funcionalidades e eventos exclusivos Hall Black. Identidade verificada em rede segura.
+              Membro certificado com acesso total às funcionalidades e eventos exclusivos Sovereign. Identidade verificada em rede segura.
             </p>
           </Card>
         </div>
@@ -191,7 +192,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
             <div className="h-px w-8 bg-zinc-800" />
           </div>
           <p className="text-[8px] md:text-[9px] text-zinc-600 uppercase tracking-[0.4em] font-light px-4">
-            HALL BLACK CLUB SECURE PROFILE • IDENTIDADE PROTEGIDA
+            SOVEREIGN FOUNDERS CLUB SECURE PROFILE • IDENTIDADE PROTEGIDA
           </p>
         </footer>
       </div>

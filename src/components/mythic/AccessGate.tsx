@@ -39,7 +39,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
 
       if (result.success) {
         toast({
-          title: "SISTEMA HALL BLACK",
+          title: "SISTEMA SOVEREIGN",
           description: result.message,
         });
         onSuccess(result.profile);
@@ -73,7 +73,7 @@ export function AccessGate({ onSuccess }: AccessGateProps) {
             <div className="h-[1px] w-4 md:w-6 bg-primary/50" />
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white">
-            HALL <span className="text-primary animate-text-ruby-glow">BLACK</span>
+            SOVEREIGN <span className="text-primary animate-text-ruby-glow">FOUNDERS</span>
           </h1>
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mt-2">
             Protocolo de Elite v2026.12

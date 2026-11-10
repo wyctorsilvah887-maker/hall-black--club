@@ -20,11 +20,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { RankBadge } from './MythicIcons';
+import { RankBadge } from './RankBadge';
 import Link from 'next/link';
 
 /**
- * @fileOverview Black Room - Chat em tempo real utilizando Firebase Realtime Database com Indicadores de Digitação e Identidade Visual por Patente.
+ * @fileOverview Black Room - Chat em tempo real do Sovereign Founders Club.
  */
 
 type TypingUser = {

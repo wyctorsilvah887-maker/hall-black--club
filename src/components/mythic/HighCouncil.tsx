@@ -19,11 +19,10 @@ import { useToast } from "@/hooks/use-toast";
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Card } from "@/components/ui/card";
 import { cn } from '@/lib/utils';
-import { RankBadge } from './MythicIcons';
+import { RankBadge } from './RankBadge';
 
 /**
- * @fileOverview Seção do Conselho com sub-navegação: Alto Conselho, Ranking e Audiência.
- * Implementada navegação para perfis individuais com verificação de privacidade.
+ * @fileOverview Seção do Conselho - Sovereign Founders Club.
  */
 
 type CouncilTab = 'members' | 'ranking' | 'audience';
@@ -272,7 +271,7 @@ export function HighCouncil({ profile }: { profile: any }) {
                        <div className="flex items-center gap-1.5 text-zinc-600">
                          <MapPin className="w-3 h-3" />
                          <span className="text-[8px] md:text-[9px] font-bold uppercase truncate max-w-[120px]">
-                           {member.city || 'Sovereign Hub'}
+                           {member.city || 'Sovereign Founders'}
                          </span>
                        </div>
                     </div>

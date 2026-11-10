@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use, useState, useEffect } from 'react';
@@ -127,7 +128,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
               <RankBadge status={currentRank} id={owner.id} size="lg" className="drop-shadow-[0_0_60px_rgba(var(--primary),0.5)] scale-90 md:scale-125" />
               <div className="space-y-3 text-center">
                 <p className={`text-[11px] md:text-[13px] font-black uppercase tracking-[0.8em] md:tracking-[1em] ${themeColorClass} animate-pulse`}>Identidade Confirmada</p>
-                <p className="text-zinc-700 text-[9px] md:text-[10px] font-bold uppercase tracking-widest italic opacity-60">Hall Black Elite Identity</p>
+                <p className="text-zinc-700 text-[9px] md:text-[10px] font-bold uppercase tracking-widest italic opacity-60">Sovereign Elite Identity</p>
               </div>
             </div>
           )}
@@ -210,7 +211,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                   <div className="space-y-1">
                     <p className="text-white font-black text-xl uppercase tracking-tight">{owner.name}</p>
                     <p className={`text-[9px] font-bold uppercase tracking-widest ${themeColorClass}`}>
-                      {currentRank === 'HALL_BLACK' ? 'ÁPICE HALL BLACK' : 
+                      {currentRank === 'HALL_BLACK' ? 'ÁPICE SOVEREIGN' : 
                        currentRank === 'MYTHIC' ? 'MEMBRO MÍTICO' :
                        currentRank === 'AMBER' ? 'LEGENDÁRIO ÂMBAR' :
                        currentRank === 'LEGENDARY' ? 'PLATINUM LENDÁRIO' : 'MEMBRO ELITE'}
@@ -261,7 +262,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
                     <h3 className={`text-[9px] font-black uppercase tracking-widest ${isSOSActive ? 'text-red-500' : 'text-white'}`}>
                       {isSOSActive ? 'ALERTA DE SEGURANÇA' : 'Segurança Ativa'}
                     </h3>
-                    <p className="text-[8px] text-zinc-600 uppercase tracking-widest">Protocolo Hall Black v2.0</p>
+                    <p className="text-[8px] text-zinc-600 uppercase tracking-widest">Protocolo Sovereign v2.0</p>
                   </div>
                </Card>
             </div>
@@ -272,7 +273,7 @@ export default function PetProfilePage({ params }: PetPageProps) {
               <div className="text-center space-y-2">
                 <h2 className="text-red-500 font-black text-2xl uppercase tracking-tighter italic">PET PERDIDO</h2>
                 <p className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold max-w-sm mx-auto leading-relaxed">
-                  ESTE ANIMAL FAZ PARTE DA REDE HALL BLACK. POR FAVOR, ENTRE EM CONTATO COM O GUARDIÃO.
+                  ESTE ANIMAL FAZ PARTE DA REDE SOVEREIGN FOUNDERS. POR FAVOR, ENTRE EM CONTATO COM O GUARDIÃO.
                 </p>
               </div>
               
@@ -296,13 +297,13 @@ export default function PetProfilePage({ params }: PetPageProps) {
           <div className="pt-8 flex flex-col items-center text-center">
              <CollarIcon className="w-8 h-8 text-zinc-900 mb-4" />
              <p className="text-[8px] text-zinc-700 uppercase tracking-[0.6em] font-medium max-w-[200px] leading-relaxed">
-               ESTE DOCUMENTO DIGITAL CERTIFICA A IDENTIDADE DE ELITE DO ANIMAL NO ECOSSISTEMA HALL BLACK.
+               ESTE DOCUMENTO DIGITAL CERTIFICA A IDENTIDADE DE ELITE DO ANIMAL NO ECOSSISTEMA SOVEREIGN FOUNDERS.
              </p>
           </div>
 
           <footer className="pt-8 md:pt-12 text-center opacity-30">
             <p className="text-[8px] text-zinc-800 uppercase tracking-[0.5em] font-black">
-              HALL BLACK PET IDENTITY PROTOCOL © {new Date().getFullYear()}
+              SOVEREIGN PET IDENTITY PROTOCOL © {new Date().getFullYear()}
             </p>
           </footer>
         </div>

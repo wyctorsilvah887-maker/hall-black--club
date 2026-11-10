@@ -1,6 +1,6 @@
-# Hall Black Club | Mythic Elite
+# Sovereign Founders Club | Apex Elite
 
-Este é o sistema de elite do **Hall Black Club**, desenvolvido com Next.js 15, Firebase e Tailwind CSS.
+Este é o sistema de elite do **Sovereign Founders Club**, desenvolvido com Next.js 15, Firebase e Tailwind CSS.
 
 ## 🚀 Como subir para o GitHub
 
@@ -18,7 +18,7 @@ Para versionar este projeto no seu repositório, execute os seguintes comandos n
 
 3. **Faça o commit inicial:**
    ```bash
-   git commit -m "Initial commit: Hall Black Club Elite System"
+   git commit -m "Initial commit: Sovereign Founders Club Elite System"
    ```
 
 4. **Conecte ao seu repositório remoto:**
@@ -53,38 +53,12 @@ Os códigos seguem o padrão `HB-26-[NÍVEL]-[ID]`. O "26" refere-se ao ano de 2
 ### 🔥 Nível 2: LEGENDÁRIO ÂMBAR (Laranja/Amber) - 20 VAGAS
 **Configuração:** `status_rank: AMBER` | `theme: amber`
 - `HB-26-AMBR-X01`
-- `HB-26-AMBR-B22`
-- `HB-26-AMBR-Z99`
-- `HB-26-AMBR-K33`
-- `HB-26-AMBR-R55`
-- `HB-26-AMBR-P11`
-- `HB-26-AMBR-M07`
-- `HB-26-AMBR-T12`
-- `HB-26-AMBR-Y44`
-- `HB-26-AMBR-W10`
-- `HB-26-AMBR-S88`
-- `HB-26-AMBR-V15`
-- `HB-26-AMBR-F20`
-- `HB-26-AMBR-G25`
-- `HB-26-AMBR-H30`
-- `HB-26-AMBR-J35`
-- `HB-26-AMBR-L40`
-- `HB-26-AMBR-N45`
-- `HB-26-AMBR-Q50`
-- `HB-26-AMBR-C55`
+- IDs: X01, B22, Z99, K33, R55, P11, M07, T12, Y44, W10, S88, V15, F20, G25, H30, J35, L40, N45, Q50, C55.
 
 ### 💎 Nível 3: MÍTICO (Rubi/Red) - 10 VAGAS
 **Configuração:** `status_rank: MYTHIC` | `theme: mythic`
 - `HB-26-MYTH-X01`
-- `HB-26-MYTH-K99`
-- `HB-26-MYTH-Z77`
-- `HB-26-MYTH-B12`
-- `HB-26-MYTH-R50`
-- `HB-26-MYTH-L33`
-- `HB-26-MYTH-P10`
-- `HB-26-MYTH-V07`
-- `HB-26-MYTH-Q88`
-- `HB-26-MYTH-A42`
+- IDs: X01, K99, Z77, B12, R50, L33, P10, V07, Q88, A42.
 
 ---
 
@@ -97,4 +71,4 @@ Os códigos seguem o padrão `HB-26-[NÍVEL]-[ID]`. O "26" refere-se ao ano de 2
 
 ## 📄 Licença
 
-Uso exclusivo para membros da rede **Hall Black**.
+Uso exclusivo para membros da rede **Sovereign Founders**.

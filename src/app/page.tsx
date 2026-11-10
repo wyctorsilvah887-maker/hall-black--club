@@ -9,9 +9,8 @@ import { doc } from 'firebase/firestore';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
- * @fileOverview Página principal do Hall Black Club.
+ * @fileOverview Página principal do Sovereign Founders Club.
  * Gerencia o fluxo de acesso e renderiza o Elite Hub para membros autenticados.
- * Removido o AccessGate para acesso direto à autenticação.
  */
 
 export default function Home() {

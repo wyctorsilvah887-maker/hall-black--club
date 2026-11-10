@@ -1,3 +1,4 @@
+
 "use client"
 
 import React from 'react';
@@ -8,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
- * @fileOverview Cabeçalho Superior de Elite - Hall Black Club.
+ * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
  * Configurado como 'fixed' para visibilidade absoluta.
  * Suporta Safe Area Insets para dispositivos móveis (PWA).
  */
@@ -32,7 +33,7 @@ export function TopHeader({ profile }: { profile: any }) {
           </div>
           <div>
             <h1 className="text-sm md:text-lg font-black uppercase tracking-tighter text-white leading-none">
-              Hall <span className="text-primary">Black</span>
+              Sovereign <span className="text-primary">Founders</span>
             </h1>
             <p className="text-[7px] text-zinc-600 font-bold uppercase tracking-widest mt-0.5">Elite Identity</p>
           </div>

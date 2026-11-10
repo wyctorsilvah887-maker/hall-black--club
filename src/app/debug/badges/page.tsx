@@ -8,8 +8,7 @@ import Link from 'next/link';
 
 /**
  * @fileOverview Galeria de Exposição de Patentes - Protocolo de Elite.
- * Exposição técnica das credenciais atualizadas com o novo ápice supremo: HALL BLACK.
- * Refinamento final de etiquetas externas para harmonização visual.
+ * Exposição técnica das credenciais atualizadas com o novo ápice supremo: SOVEREIGN.
  */
 
 export default function BadgeGalleryPage() {
@@ -20,12 +19,12 @@ export default function BadgeGalleryPage() {
   }, []);
 
   const ranks = [
-    { status: 'HALL_BLACK', label: 'Hall Black', description: 'O Ápice Supremo. O tutor que transcendeu a linhagem, unificando todos os graus de prestígio.' },
+    { status: 'HALL_BLACK', label: 'Sovereign Founder', description: 'O Ápice Supremo. O tutor que transcendeu a linhagem, unificando todos os graus de prestígio.' },
     { status: 'MYTHIC', label: 'Mítico Rubi', description: 'Autoridade suprema e acesso ao conselho secreto. A guardiã da linhagem mística.' },
     { status: 'AMBER', label: 'Legendário Âmbar', description: 'Nível de prestígio superior alcançado após 12 meses de linhagem ativa.' },
     { status: 'LEGENDARY', label: 'Lendário', description: 'Título de alta nobreza alcançado após 9 meses de permanência no clube.' },
     { status: 'ELITE', label: 'Membro Elite', description: 'Patente intermediária alcançada após 4 meses como Mestre.' },
-    { status: 'MASTER', label: 'Mestre do Clube', description: 'Nível de Entrada. O início da jornada na elite Hall Black.' }
+    { status: 'MASTER', label: 'Mestre do Clube', description: 'Nível de Entrada. O início da jornada na elite Sovereign.' }
   ];
 
   if (!mounted) return null;
@@ -42,7 +41,7 @@ export default function BadgeGalleryPage() {
             </Link>
             <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">Protocolo de Patentes</h1>
             <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-bold max-w-xl leading-relaxed">
-              Exposição técnica das credenciais de linhagem. O sistema evolui conforme o tempo de casa: Mestre {'>'} Elite (4m) {'>'} Lendário (9m) {'>'} Legendário Âmbar (12m) {'>'} Mítico (18m) {'>'} Hall Black (24m).
+              Exposição técnica das credenciais de linhagem. O sistema evolui conforme o tempo de casa: Mestre {'>'} Elite (4m) {'>'} Lendário (9m) {'>'} Legendário Âmbar (12m) {'>'} Mítico (18m) {'>'} Sovereign (24m).
             </p>
           </div>
           <div className="flex items-center gap-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-900">
@@ -91,7 +90,7 @@ export default function BadgeGalleryPage() {
 
         <footer className="pt-20 pb-12 text-center opacity-20">
           <p className="text-[8px] font-black uppercase tracking-[1em] text-zinc-500">
-            Hall Black Identity System • Apex Protocol v5.0
+            Sovereign Identity System • Apex Protocol v5.0
           </p>
         </footer>
       </div>
