@@ -6,7 +6,6 @@
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "scope": "/",
   "icons": [
     {
       "src": "/maskable_icon_x48.png",
@@ -25,12 +24,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    },
-    {
-      "src": "/favicon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png",
-      "purpose": "any"
     }
   ]
 }
