@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -320,6 +321,11 @@ export function CouncilLounge({ profile }: { profile: any }) {
       {/* MODAL DE PREVIEW DO PERFIL */}
       <Dialog open={!!previewUserId} onOpenChange={(open) => !open && setPreviewUserId(null)}>
         <DialogContent className="bg-zinc-950 border-zinc-900 text-white w-[90vw] max-w-sm rounded-[2.5rem] p-0 overflow-hidden shadow-2xl z-[300]">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Dossiê do Membro</DialogTitle>
+            <DialogDescription>Visualização rápida das credenciais de linhagem.</DialogDescription>
+          </DialogHeader>
+
           {isPreviewLoading ? (
             <div className="py-20 flex flex-col items-center justify-center gap-4">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
