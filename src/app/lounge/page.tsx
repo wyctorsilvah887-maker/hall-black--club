@@ -64,12 +64,12 @@ export default function LoungePage() {
              </div>
              <div>
                <h1 className="text-xl font-black uppercase tracking-tighter leading-tight">Black Room</h1>
-               <p className="text-[7px] text-zinc-600 uppercase tracking-widest font-bold">Secret Room</p>
+               <p className="text-[7px] text-zinc-600 uppercase tracking-widest font-bold">Rede Segura</p>
              </div>
           </div>
           <div className="flex items-center gap-2 bg-zinc-950/50 p-2 px-4 rounded-full border border-zinc-900">
              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-             <div className="text-[7px] font-black uppercase tracking-widest text-zinc-400">Rede Ativa</div>
+             <div className="text-[7px] font-black uppercase tracking-widest text-zinc-400">Canal Ativo</div>
           </div>
         </div>
         <CouncilLounge profile={profile} />

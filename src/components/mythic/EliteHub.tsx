@@ -5,14 +5,13 @@ import React, { useState, useMemo } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, BookOpen, Users, Terminal, 
-  Settings, MessageSquare, Medal, ChevronRight, Zap
+  MessageSquare, ChevronRight, Zap
 } from "lucide-react";
 import Link from 'next/link';
 import { HighCouncil } from './HighCouncil';
 import { TheVault } from './TheVault';
 import { RankBadge } from './MythicIcons';
 import { calculateRankByTime, getRankLabel, getThemeClass } from '@/lib/rank-utils';
-import { Button } from "@/components/ui/button";
 import { cn } from '@/lib/utils';
 import { TopHeader } from './TopHeader';
 
@@ -21,8 +20,8 @@ interface EliteHubProps {
 }
 
 /**
- * @fileOverview Elite Hub - Central de Comando Sovereign Founders Club.
- * Interface unificada com Dock de navegação e seções dinâmicas.
+ * @fileOverview Elite Hub - A Única Sala de Comando Sovereign Founders Club.
+ * Dashboard central unificado que integra todos os módulos de elite.
  */
 
 export function EliteHub({ profile }: EliteHubProps) {
@@ -87,7 +86,7 @@ export function EliteHub({ profile }: EliteHubProps) {
           <div className="space-y-4 text-center md:text-left">
              <div className="flex items-center justify-center md:justify-start gap-3 text-zinc-600">
                <ShieldCheck className={cn("w-3.5 h-3.5", themeColor)} />
-               <span className="text-[9px] font-black uppercase tracking-[0.5em]">Protocolo de Acesso Ativo</span>
+               <span className="text-[9px] font-black uppercase tracking-[0.5em]">Sala de Comando Ativa</span>
              </div>
              <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter leading-none">
                Bem-vindo, {profile.name.split(' ')[0]}
@@ -105,7 +104,7 @@ export function EliteHub({ profile }: EliteHubProps) {
           </div>
         </section>
 
-        {/* ÁREA DE CONTEÚDO DINÂMICO */}
+        {/* ÁREA DE CONTEÚDO DINÂMICO UNIFICADO */}
         <div key={activeTab} className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
           {activeTab === 'vault' && <TheVault profile={{ ...profile, status: currentRank }} />}
           {activeTab === 'council' && <HighCouncil profile={profile} />}
@@ -114,7 +113,7 @@ export function EliteHub({ profile }: EliteHubProps) {
 
       <footer className="mt-20 py-20 text-center opacity-10">
         <p className="text-[8px] font-black uppercase tracking-[1.5em] text-zinc-400">
-          Sovereign Hub Protocol v5.0
+          Sovereign Founders Central Dashboard v5.0
         </p>
       </footer>
     </div>

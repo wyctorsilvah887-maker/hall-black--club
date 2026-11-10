@@ -9,8 +9,8 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
- * @fileOverview Ponto de entrada do sistema.
- * Atua como Gateway de Autenticação. Redireciona membros para /hub.
+ * @fileOverview Protocolo de Entrada - Gateway de Autenticação.
+ * Redireciona membros autenticados para o Hub Central (/hub).
  */
 
 export default function Home() {
@@ -30,7 +30,7 @@ export default function Home() {
     }
   }, []);
 
-  // Redirecionamento automático para o Hub se o usuário já estiver logado
+  // Redirecionamento automático para o Hub Central
   useEffect(() => {
     if (user && !isUserLoading) {
       router.push('/hub');

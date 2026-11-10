@@ -87,7 +87,7 @@ export default function PublicProfilePage({ params }: ProfilePageProps) {
     <main className={`min-h-screen bg-black text-white selection:bg-primary selection:text-white ${themeClass}`}>
       <div className="max-w-4xl mx-auto px-5 py-8 md:py-20 space-y-10 md:space-y-12">
         <Link href="/hub" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-[0.3em]">
-          <ArrowLeft className="w-4 h-4" /> Voltar ao Início
+          <ArrowLeft className="w-4 h-4" /> Voltar ao Hub
         </Link>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-zinc-900 pb-10 md:pb-12">

@@ -13,7 +13,7 @@ import { TopHeader } from '@/components/mythic/TopHeader';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
- * @fileOverview Página Dedicada do Sovereign Advisor.
+ * @fileOverview Terminal Dedicated do Sovereign Advisor.
  */
 
 export default function AdvisorPage() {

@@ -10,6 +10,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
+ * Sincronizado para apontar exclusivamente para o Hub Central.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
