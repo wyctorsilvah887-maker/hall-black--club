@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Página do Salão do Conselho - Sovereign Founders Club.
+ * Otimizada para tela cheia e experiência mobile nativa.
  */
 
 export default function LoungePage() {
@@ -49,34 +50,31 @@ export default function LoungePage() {
 
   return (
     <main className={cn("fixed inset-0 bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
-      <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 md:px-6 pt-6 md:pt-10 overflow-hidden">
-        
-        {/* HEADER */}
-        <header className="flex items-center justify-between gap-4 border-b border-zinc-900 pb-6 mb-6 flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 hover:bg-zinc-900 rounded-full transition-colors active:scale-95">
-              <ArrowLeft className="w-5 h-5 text-zinc-500" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-                <MessageSquare className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-xl md:text-3xl font-black uppercase tracking-tighter">Salão do Conselho</h1>
-                <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-bold">Lounge Founders</p>
-              </div>
+      {/* HEADER FIXO - ADAPTADO MOBILE */}
+      <header className="flex items-center justify-between gap-4 border-b border-zinc-900/50 px-4 py-4 md:px-8 md:py-6 flex-shrink-0 bg-black/40 backdrop-blur-xl z-50">
+        <div className="flex items-center gap-3 md:gap-4">
+          <Link href="/" className="p-2 -ml-2 hover:bg-zinc-900/50 rounded-full transition-colors active:scale-95">
+            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 text-zinc-500" />
+          </Link>
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="p-1.5 md:p-2 rounded-xl bg-primary/10 border border-primary/20">
+              <MessageSquare className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-lg md:text-2xl font-black uppercase tracking-tighter leading-tight">Salão Elite</h1>
+              <p className="text-[7px] md:text-[8px] text-zinc-600 uppercase tracking-widest font-bold">Lounge Founders</p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-3 bg-zinc-950 p-2 md:p-3 rounded-xl border border-zinc-900">
-             <div className="w-2 h-2 rounded-full bg-primary animate-ruby-glow" />
-             <div className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Canal de Elite</div>
-          </div>
-        </header>
-
-        {/* CHAT CONTAINER */}
-        <div className="flex-1 min-h-0 pb-6 overflow-hidden">
-          <CouncilLounge profile={profile} />
         </div>
+        <div className="flex items-center gap-2 md:gap-3 bg-zinc-950/50 p-1.5 md:p-2 px-3 md:px-4 rounded-full border border-zinc-900">
+           <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+           <div className="text-[7px] md:text-[8px] font-black uppercase tracking-widest text-zinc-400">Live Connection</div>
+        </div>
+      </header>
+
+      {/* CHAT CONTAINER - TELA CHEIA */}
+      <div className="flex-1 flex flex-col w-full max-w-6xl mx-auto overflow-hidden relative">
+        <CouncilLounge profile={profile} />
       </div>
     </main>
   );

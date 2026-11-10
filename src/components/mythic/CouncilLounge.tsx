@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database.
- * Inclui sistema de indicadores de digitação em tempo real.
+ * Otimizado para mobile com experiência de tela cheia e indicadores em tempo real.
  */
 
 export function CouncilLounge({ profile }: { profile: any }) {
@@ -36,51 +36,44 @@ export function CouncilLounge({ profile }: { profile: any }) {
 
     const messagesRef = query(ref(db, 'loungeMessages'), limitToLast(100));
     
-    const unsubscribe = onSnapshotMessages();
-    const typingUnsubscribe = onSnapshotTyping();
+    const unsubscribe = onValue(messagesRef, (snapshot) => {
+      setPermissionError(false);
+      const data = snapshot.val();
+      if (data) {
+        const messageList = Object.entries(data).map(([id, val]: [string, any]) => ({
+          id,
+          ...val
+        })).sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+        
+        setMessages(messageList);
+      } else {
+        setMessages([]);
+      }
+      setIsLoading(false);
+    }, (error) => {
+      console.error("RTDB Sync Error:", error);
+      if (error.message.includes('permission_denied')) {
+        setPermissionError(true);
+      }
+      setIsLoading(false);
+    });
 
-    function onSnapshotMessages() {
-      return onValue(messagesRef, (snapshot) => {
-        setPermissionError(false);
-        const data = snapshot.val();
-        if (data) {
-          const messageList = Object.entries(data).map(([id, val]: [string, any]) => ({
-            id,
-            ...val
-          })).sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-          
-          setMessages(messageList);
-        } else {
-          setMessages([]);
-        }
-        setIsLoading(false);
-      }, (error) => {
-        console.error("RTDB Sync Error:", error);
-        if (error.message.includes('permission_denied')) {
-          setPermissionError(true);
-        }
-        setIsLoading(false);
-      });
-    }
-
-    function onSnapshotTyping() {
-      const typingRef = ref(db, 'typingStatus');
-      return onValue(typingRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const currentlyTyping = Object.entries(data)
-            .filter(([uid, status]: [string, any]) => uid !== user?.uid && status.isTyping)
-            .map(([_, status]: [string, any]) => status.userName);
-          setTypingUsers(currentlyTyping);
-        } else {
-          setTypingUsers([]);
-        }
-      });
-    }
+    const typingRef = ref(db, 'typingStatus');
+    const typingUnsubscribe = onValue(typingRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const currentlyTyping = Object.entries(data)
+          .filter(([uid, status]: [string, any]) => uid !== user?.uid && status.isTyping)
+          .map(([_, status]: [string, any]) => status.userName);
+        setTypingUsers(currentlyTyping);
+      } else {
+        setTypingUsers([]);
+      }
+    });
 
     return () => {
-      off(ref(db, 'loungeMessages'));
-      off(ref(db, 'typingStatus'));
+      off(messagesRef);
+      off(typingRef);
     };
   }, [db, user?.uid]);
 
@@ -91,23 +84,19 @@ export function CouncilLounge({ profile }: { profile: any }) {
     const userTypingRef = ref(db, `typingStatus/${user.uid}`);
 
     if (newMessage.length > 0) {
-      // Atualiza status para digitando
       set(userTypingRef, {
         userName: profile.name,
         isTyping: true,
         lastUpdate: serverTimestamp()
       });
 
-      // Configura limpeza automática ao desconectar
       onDisconnect(userTypingRef).remove();
 
-      // Timeout para parar de digitar após inatividade
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = setTimeout(() => {
         set(userTypingRef, { isTyping: false });
       }, 3000);
     } else {
-      // Se apagar tudo, remove status imediatamente
       set(userTypingRef, { isTyping: false });
     }
 
@@ -135,7 +124,6 @@ export function CouncilLounge({ profile }: { profile: any }) {
       const typingRef = ref(db, `typingStatus/${user.uid}`);
       const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
       
-      // Remove status de digitando imediatamente ao enviar
       set(typingRef, { isTyping: false });
 
       await push(messagesRef, {
@@ -147,12 +135,12 @@ export function CouncilLounge({ profile }: { profile: any }) {
         timestamp: serverTimestamp()
       });
     } catch (error: any) {
-      console.error("Erro ao transmitir mensagem via RTDB:", error);
+      console.error("Erro ao transmitir mensagem:", error);
       if (error.message.includes('permission_denied')) {
         toast({
           variant: "destructive",
           title: "ACESSO NEGADO",
-          description: "O Salão está trancado. Verifique as regras de rede."
+          description: "O Salão está trancado. Verifique as regras de rede no Console."
         });
       }
     } finally {
@@ -161,51 +149,34 @@ export function CouncilLounge({ profile }: { profile: any }) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-zinc-950/20 border border-zinc-900/50 rounded-[2rem] overflow-hidden backdrop-blur-sm">
-      {/* HEADER DO CHAT */}
-      <div className="p-5 border-b border-zinc-900 flex items-center justify-between bg-black/20">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-            <Hash className="w-4 h-4 text-primary" />
-          </div>
-          <div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-white">Frequência Sovereign</h3>
-            <p className="text-[8px] text-zinc-600 uppercase font-bold tracking-[0.2em]">Realtime Stream v5.0</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", permissionError ? "bg-red-600" : "bg-primary")} />
-          <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">
-            {permissionError ? 'Erro de Link' : 'Live RTDB'}
-          </span>
-        </div>
-      </div>
-
+    <div className="flex flex-col h-full bg-transparent overflow-hidden">
       {/* ÁREA DE MENSAGENS */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar"
+        className="flex-1 overflow-y-auto px-4 py-6 md:px-12 md:py-10 space-y-6 md:space-y-8 custom-scrollbar scroll-smooth"
       >
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full opacity-20">
-            <Loader2 className="w-8 h-8 animate-spin mb-4" />
-            <p className="text-[10px] font-black uppercase tracking-widest">Sintonizando Rede...</p>
+            <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
+            <p className="text-[10px] font-black uppercase tracking-widest">Sintonizando Rede de Elite...</p>
           </div>
         ) : permissionError ? (
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-4 px-10">
-            <ShieldAlert className="w-12 h-12 text-red-900" />
-            <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600">Protocolo Negado</p>
-              <p className="text-[9px] text-zinc-600 uppercase font-bold leading-relaxed">
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-10">
+            <div className="p-6 rounded-[2rem] bg-red-950/10 border border-red-900/30">
+              <ShieldAlert className="w-16 h-16 text-red-600 animate-pulse" />
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-red-600">Protocolo de Rede Negado</p>
+              <p className="text-[10px] text-zinc-600 uppercase font-bold leading-relaxed max-w-xs mx-auto">
                 As regras do Realtime Database estão bloqueando a conexão. Atualize as regras no Console do Firebase.
               </p>
             </div>
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-10">
-            <Sparkles className="w-12 h-12" />
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] max-w-[200px]">
-              O Salão está em silêncio. Inicie a transmissão de elite.
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-6 opacity-20">
+            <Sparkles className="w-16 h-16 text-primary" />
+            <p className="text-[11px] font-black uppercase tracking-[0.4em] max-w-[240px] leading-relaxed">
+              O Salão está em silêncio. Inicie a transmissão para a rede Founders.
             </p>
           </div>
         ) : (
@@ -216,38 +187,41 @@ export function CouncilLounge({ profile }: { profile: any }) {
                 <div 
                   key={msg.id} 
                   className={cn(
-                    "flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500",
+                    "flex items-start gap-3 md:gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700",
                     isMe ? "flex-row-reverse" : "flex-row"
                   )}
                 >
                   <div className="flex-shrink-0 relative">
                     <div className={cn(
-                      "w-8 h-8 rounded-full overflow-hidden border bg-zinc-900 shadow-xl",
+                      "w-8 h-8 md:w-11 md:h-11 rounded-full overflow-hidden border bg-zinc-950 shadow-2xl transition-transform hover:scale-105",
                       msg.userRank === 'HALL_BLACK' ? "border-white/20" : 
                       msg.userRank === 'MYTHIC' ? "border-primary/50" : "border-zinc-800"
                     )}>
                       {msg.userPhoto ? (
-                        <Image src={msg.userPhoto} alt={msg.userName} width={32} height={32} className="object-cover" unoptimized />
+                        <Image src={msg.userPhoto} alt={msg.userName} width={44} height={44} className="object-cover" unoptimized />
                       ) : (
-                        <User className="w-full h-full p-2 text-zinc-700" />
+                        <User className="w-full h-full p-2 text-zinc-800" />
                       )}
                     </div>
                   </div>
                   <div className={cn(
-                    "flex flex-col space-y-1 max-w-[80%]",
+                    "flex flex-col space-y-1.5 max-w-[85%] md:max-w-[70%]",
                     isMe ? "items-end" : "items-start"
                   )}>
                     <div className="flex items-center gap-2 px-1">
-                      <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">{msg.userName}</span>
-                      <span className="text-[7px] font-bold uppercase text-zinc-700">
+                      <span className={cn(
+                        "text-[8px] md:text-[9px] font-black uppercase tracking-widest",
+                        isMe ? "text-primary" : "text-zinc-500"
+                      )}>{msg.userName}</span>
+                      <span className="text-[7px] md:text-[8px] font-bold uppercase text-zinc-700">
                         {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                       </span>
                     </div>
                     <div className={cn(
-                      "p-4 rounded-[1.2rem] text-xs font-medium leading-relaxed shadow-lg border",
+                      "p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] text-[11px] md:text-sm font-medium leading-relaxed shadow-2xl border backdrop-blur-md transition-all",
                       isMe 
                         ? "bg-primary/10 border-primary/20 text-white rounded-tr-none" 
-                        : "bg-zinc-900/50 border-zinc-800/50 text-zinc-300 rounded-tl-none"
+                        : "bg-zinc-900/40 border-zinc-800/40 text-zinc-200 rounded-tl-none"
                     )}>
                       {msg.content}
                     </div>
@@ -256,18 +230,18 @@ export function CouncilLounge({ profile }: { profile: any }) {
               );
             })}
             
-            {/* Typing Indicator */}
+            {/* Typing Indicator - Estilo Mobile */}
             {typingUsers.length > 0 && (
-              <div className="flex items-center gap-2 px-2 animate-in fade-in slide-in-from-bottom-1 duration-300">
+              <div className="flex items-center gap-2 px-2 py-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="flex gap-1">
-                  <span className="w-1 h-1 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-1 h-1 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-1 h-1 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
-                <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest italic">
+                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">
                   {typingUsers.length === 1 
-                    ? `${typingUsers[0]} está digitando...` 
-                    : `${typingUsers.length} fundadores estão digitando...`}
+                    ? `${typingUsers[0].split(' ')[0]} está digitando...` 
+                    : `${typingUsers.length} fundadores digitando...`}
                 </span>
               </div>
             )}
@@ -275,23 +249,25 @@ export function CouncilLounge({ profile }: { profile: any }) {
         )}
       </div>
 
-      {/* INPUT DE MENSAGEM */}
-      <form onSubmit={handleSendMessage} className="p-4 bg-black/40 border-t border-zinc-900 flex items-center gap-3">
-        <Input 
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder={permissionError ? "LINK INTERROMPIDO..." : "TRANSMITIR MENSAGEM..."}
-          disabled={isSending || permissionError}
-          className="bg-zinc-900/50 border-zinc-800 h-12 rounded-xl px-5 text-[11px] font-black uppercase tracking-tight focus-visible:ring-primary/40"
-        />
-        <Button 
-          type="submit" 
-          disabled={isSending || !newMessage.trim() || permissionError}
-          className="h-12 w-12 rounded-xl bg-primary text-primary-foreground hover:bg-accent transition-all active:scale-95 shadow-lg shadow-primary/20"
-        >
-          {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-        </Button>
-      </form>
+      {/* ÁREA DE INPUT - OTIMIZADA MOBILE */}
+      <div className="flex-shrink-0 bg-black/60 backdrop-blur-2xl border-t border-zinc-900/50 p-4 md:p-10 pb-6 md:pb-12 z-50">
+        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-3 md:gap-4 relative">
+          <Input 
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder={permissionError ? "LINK INTERROMPIDO..." : "TRANSMITIR MENSAGEM..."}
+            disabled={isSending || permissionError}
+            className="bg-zinc-950/50 border-zinc-800 h-14 md:h-20 rounded-2xl md:rounded-[2.5rem] px-6 md:px-10 text-xs md:text-base font-black uppercase tracking-tight focus-visible:ring-primary/40 pr-16 md:pr-24 shadow-inner"
+          />
+          <Button 
+            type="submit" 
+            disabled={isSending || !newMessage.trim() || permissionError}
+            className="absolute right-2 md:right-4 h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-3xl bg-primary text-primary-foreground hover:bg-accent transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center"
+          >
+            {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 md:w-6 md:h-6" />}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
