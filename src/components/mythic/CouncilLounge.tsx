@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -25,7 +24,7 @@ import Link from 'next/link';
 /**
  * @fileOverview Salão do Conselho - Chat em tempo real utilizando Firebase Realtime Database.
  * Inclui:
- * - Indicadores de digitação.
+ * - Indicadores de digitação com animação dot-pulse customizada.
  * - Auto-scroll.
  * - Preview de perfil de membros ao clicar.
  */
@@ -111,17 +110,22 @@ export function CouncilLounge({ profile }: { profile: any }) {
     const userTypingRef = ref(db, `typingStatus/${user.uid}`);
 
     const updateTyping = (isTyping: boolean) => {
+      // Usamos set() para garantir que o status seja atualizado.
       set(userTypingRef, {
         userName: profile.name,
         isTyping,
         lastUpdate: serverTimestamp()
+      }).catch(err => {
+        console.warn("RTDB Typing Error:", err);
       });
+
       if (isTyping) {
+        // Remove o status ao desconectar
         onDisconnect(userTypingRef).remove();
       }
     };
 
-    if (newMessage.length > 0) {
+    if (newMessage.trim().length > 0) {
       updateTyping(true);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = setTimeout(() => updateTyping(false), 3000);
@@ -154,7 +158,12 @@ export function CouncilLounge({ profile }: { profile: any }) {
       const userTypingRef = ref(db, `typingStatus/${user.uid}`);
       const currentRank = calculateRankByTime(profile.registrationDateTime, profile.status);
       
-      set(userTypingRef, { isTyping: false });
+      // Limpa status de digitação imediatamente após enviar
+      set(userTypingRef, { 
+        userName: profile.name,
+        isTyping: false,
+        lastUpdate: serverTimestamp()
+      });
 
       await push(messagesRef, {
         userId: user.uid,
@@ -169,7 +178,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
         toast({
           variant: "destructive",
           title: "SISTEMA BLOQUEADO",
-          description: "O Salão exige permissão de rede ativa no Console."
+          description: "O Salão exige permissão de rede ativa no Console para 'loungeMessages' e 'typingStatus'."
         });
       }
     } finally {
@@ -197,7 +206,7 @@ export function CouncilLounge({ profile }: { profile: any }) {
             <div className="space-y-3">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-red-600">Acesso de Rede Negado</p>
               <p className="text-[10px] text-zinc-600 uppercase font-bold leading-relaxed max-w-xs mx-auto">
-                Configure as regras do Realtime Database para permitir leitura/escrita.
+                Configure as regras do Realtime Database para permitir leitura/escrita em 'loungeMessages' e 'typingStatus'.
               </p>
             </div>
           </div>
@@ -277,9 +286,9 @@ export function CouncilLounge({ profile }: { profile: any }) {
                       : `${typingUsers.length} fundadores digitando...`}
                   </span>
                   <div className="bg-zinc-900/40 border border-zinc-800/40 p-3 md:p-4 rounded-[1.2rem] rounded-tl-none flex items-center justify-center gap-1.5 w-16 md:w-20">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0s' }} />
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0.2s' }} />
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-dot-pulse" style={{ animationDelay: '0.4s' }} />
                   </div>
                 </div>
               </div>

@@ -183,6 +183,15 @@
   animation: star-fill 2s infinite ease-in-out;
 }
 
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(0.8); opacity: 0.4; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+.animate-dot-pulse {
+  animation: dot-pulse 1.4s infinite ease-in-out;
+}
+
 .glass-card {
   background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(12px);
