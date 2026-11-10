@@ -227,7 +227,7 @@ export function AuthGate({ theme, tempProfile }: AuthGateProps) {
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 flex items-center gap-2">
-                  <Phone className="w-3 h-3" /> Contato de Emergência
+                  <Phone className="w-3 h-3" /> WhatsApp de Elite
                 </Label>
                 <Input
                   placeholder="(00) 00000-0000"

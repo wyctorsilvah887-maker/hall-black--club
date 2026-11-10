@@ -436,10 +436,10 @@ export default function SettingsPage() {
                 <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1 flex items-center gap-2">
                   <User className="w-3.5 h-3.5" /> Nome Completo
                 </Label>
-                <Input 
+                <input 
                   value={settingsName || ''} 
                   onChange={(e) => setSettingsName(e.target.value)}
-                  className="bg-zinc-950/50 border-zinc-900/80 h-14 rounded-xl font-bold uppercase focus-visible:ring-primary/40 text-sm"
+                  className="bg-zinc-950/50 border-zinc-900/80 h-14 rounded-xl font-bold uppercase focus-visible:ring-primary/40 text-sm px-4 w-full outline-none"
                 />
               </div>
 
@@ -457,7 +457,7 @@ export default function SettingsPage() {
 
               <div className="space-y-3">
                 <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5" /> Contato SOS
+                  <Phone className="w-3.5 h-3.5" /> WhatsApp de Elite
                 </Label>
                 <Input 
                   value={settingsPhone || ''} 
