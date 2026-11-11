@@ -17,6 +17,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
@@ -28,7 +29,8 @@ service cloud.firestore {
     }
 
     match /notifications/{notifId} {
-      allow read, list: if isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.userId == 'global');
+      // Use 'in' operator to better match client queries using 'where ... in'
+      allow read, list: if isSignedIn() && (resource.data.userId in [request.auth.uid, 'global']);
       allow create, update, delete: if isAdmin();
     }
 
