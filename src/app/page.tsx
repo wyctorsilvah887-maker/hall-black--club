@@ -103,7 +103,7 @@ export default function Home() {
               onClick={() => setShowAuth(true)}
               className="h-14 md:h-20 w-full sm:w-auto px-10 md:px-16 bg-primary hover:bg-accent text-white font-black uppercase tracking-[0.4em] text-[9px] md:text-xs rounded-2xl shadow-2xl shadow-primary/20 transition-all active:scale-95 group"
             >
-              Reivindicar Identidade <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-2 transition-transform" />
+              Garantir Vaga <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-2 transition-transform" />
             </Button>
             <Button 
               variant="outline"
@@ -226,7 +226,7 @@ export default function Home() {
             onClick={() => setShowAuth(true)}
             className="h-16 md:h-24 w-full sm:w-auto px-12 md:px-24 bg-primary hover:bg-accent text-white font-black uppercase tracking-[0.4em] md:tracking-[0.5em] text-[9px] md:text-sm rounded-2xl shadow-[0_20px_60px_rgba(var(--primary),0.2)] md:shadow-[0_30px_70px_rgba(var(--primary),0.3)] transition-all active:scale-95 group"
           >
-            Reivindicar Agora <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-3 transition-transform duration-500" />
+            Garantir Vaga <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-3 transition-transform duration-500" />
           </Button>
 
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 pt-8 md:pt-12 opacity-30">
