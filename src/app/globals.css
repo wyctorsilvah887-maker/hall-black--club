@@ -107,7 +107,18 @@
   }
 }
 
-/* Scrollbars Minimalistas */
+/* Protocolo de Invisibilidade de Scrollbar (Desktop) */
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Scrollbars Minimalistas para Mobile ou containers específicos se necessário */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
