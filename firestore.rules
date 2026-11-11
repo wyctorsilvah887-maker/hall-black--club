@@ -11,26 +11,21 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
     function isAdmin() {
       return isSignedIn() && 
              exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'member') == 'admin';
     }
 
     match /users/{userId} {
       allow read, list: if true;
-      allow create: if isOwner(userId);
-      allow delete: if isOwner(userId);
-      allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED') || isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
     }
 
     match /notifications/{notifId} {
-      // Permite listagem para qualquer usuário autenticado. 
-      // O filtro de privacidade (userId == uid ou global) é aplicado via query no código.
+      // Regra simplificada para permitir listagem com filtros complexos (in, orderBy)
       allow read, list: if isSignedIn();
       allow create, update, delete: if isAdmin();
     }

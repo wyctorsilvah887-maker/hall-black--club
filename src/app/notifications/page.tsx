@@ -9,11 +9,10 @@ import { TopHeader } from '@/components/mythic/TopHeader';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
 import { 
   Bell, ShieldCheck, ArrowLeft, Zap, Info, 
-  MessageSquare, AlertTriangle, ChevronRight, X, Sparkles, DatabaseZap
+  MessageSquare, AlertTriangle, ChevronRight, Sparkles, DatabaseZap
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -37,17 +36,25 @@ export default function NotificationsPage() {
 
   const { data: profile, isLoading: isProfileLoading } = useDoc(userRef);
 
+  // Consulta de notificações otimizada
   const notificationsQuery = useMemoFirebase(() => {
     if (!db || !user?.uid || !profile) return null;
     return query(
       collection(db, 'notifications'),
       where('userId', 'in', [user.uid, 'global']),
-      orderBy('timestamp', 'desc'),
       limit(20)
     );
   }, [db, user, profile]);
 
-  const { data: notifications, isLoading: isNotifsLoading } = useCollection(notificationsQuery);
+  const { data: notificationsData, isLoading: isNotifsLoading } = useCollection(notificationsQuery);
+
+  // Ordenação manual no cliente para evitar a necessidade de índices compostos complexos no início
+  const notifications = React.useMemo(() => {
+    if (!notificationsData) return [];
+    return [...notificationsData].sort((a, b) => {
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+    });
+  }, [notificationsData]);
 
   const handleSeedNotifications = async () => {
     if (!db || !user?.uid || profile?.role !== 'admin') return;
@@ -142,7 +149,7 @@ export default function NotificationsPage() {
               </div>
            </div>
            
-           {profile.role === 'admin' && (!notifications || notifications.length === 0) && (
+           {profile.role === 'admin' && notifications.length === 0 && (
               <Button 
                 onClick={handleSeedNotifications} 
                 disabled={isBootstrapping}
@@ -160,7 +167,7 @@ export default function NotificationsPage() {
             Array(4).fill(0).map((_, i) => (
               <div key={i} className="h-24 bg-zinc-900/20 border border-zinc-900 rounded-3xl animate-pulse" />
             ))
-          ) : !notifications || notifications.length === 0 ? (
+          ) : notifications.length === 0 ? (
             <div className="py-20 text-center border border-dashed border-zinc-900 rounded-[3rem] opacity-30">
                <Bell className="w-12 h-12 mx-auto mb-4 text-zinc-800" />
                <p className="text-[10px] font-black uppercase tracking-widest">Nenhum alerta registrado no ciclo atual.</p>
