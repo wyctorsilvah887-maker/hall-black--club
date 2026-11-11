@@ -1,8 +1,7 @@
-
 "use client"
 
 import React from 'react';
-import { User, Zap, LayoutGrid } from 'lucide-react';
+import { User, Zap } from 'lucide-react';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { cn } from '@/lib/utils';
@@ -10,7 +9,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
- * Sincronizado para apontar exclusivamente para o Hub Central.
+ * Sincronizado para uma estética minimalista, utilizando o logo como retorno ao Hub.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
@@ -19,7 +18,7 @@ export function TopHeader({ profile }: { profile: any }) {
 
   return (
     <header className={cn(
-      "fixed top-0 left-0 right-0 z-[60] w-full bg-black/80 backdrop-blur-2xl border-b border-zinc-900/50 flex flex-col justify-center transition-all duration-500 shrink-0",
+      "fixed top-0 left-0 right-0 z-[60] w-full bg-black/80 backdrop-blur-xl border-b border-zinc-900/50 flex flex-col justify-center transition-all duration-500 shrink-0",
       themeClass
     )}>
       {/* Safe Area Spacer for iOS standalone mode */}
@@ -37,11 +36,6 @@ export function TopHeader({ profile }: { profile: any }) {
               unoptimized
               priority
             />
-          </Link>
-          <div className="hidden lg:block h-8 w-px bg-zinc-900" />
-          <Link href="/hub" className="hidden lg:flex items-center gap-2 text-zinc-500 hover:text-white transition-colors">
-            <LayoutGrid className="w-4 h-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Hub Central</span>
           </Link>
         </div>
 
