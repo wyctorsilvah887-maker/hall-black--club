@@ -48,6 +48,14 @@
       },
       "required": ["name", "email", "whatsapp"]
     },
+    "GlobalConfig": {
+      "title": "GlobalConfig",
+      "type": "object",
+      "description": "Configurações globais do sistema.",
+      "properties": {
+        "password": { "type": "string", "description": "Senha prioritária de acesso ao portal." }
+      }
+    },
     "VaultArticle": {
       "title": "VaultArticle",
       "type": "object",
@@ -109,6 +117,10 @@
     "/leads/{leadId}": {
       "schema": "Lead",
       "description": "Captura de leads interessados."
+    },
+    "/globalConfigs/{configId}": {
+      "schema": "GlobalConfig",
+      "description": "Configurações de sistema."
     },
     "/vault/{articleId}": {
       "schema": "VaultArticle",

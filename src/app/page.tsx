@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, doc, getDoc } from 'firebase/firestore';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
 import { AuthGate } from '@/components/mythic/AuthGate';
@@ -15,14 +15,13 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   ShieldCheck, ChevronRight, BookOpen, Terminal, 
   MessageSquare, Trophy, Zap, ArrowRight, Lock, 
-  User, Mail, Phone, Loader2, X 
+  User, Mail, Phone, Loader2, X, KeyRound 
 } from "lucide-react";
 import NextImage from 'next/image';
 import Link from 'next/link';
 
 /**
  * @fileOverview Landing Page Oficial - Sovereign Founders Club.
- * Inclui sistema de captação de leads e transição para o portal de acesso.
  */
 
 export default function Home() {
@@ -32,11 +31,14 @@ export default function Home() {
   const { toast } = useToast();
 
   const [showAuth, setShowAuth] = useState(false);
+  const [showPriorityGate, setShowPriorityGate] = useState(false);
+  const [priorityPassword, setPriorityPassword] = useState('');
+  const [isValidatingPriority, setIsValidatingPriority] = useState(false);
+
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
   const [isForcedLoading, setIsForcedLoading] = useState(true);
   
-  // Estados do formulário de Lead
   const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState('');
   const [leadWhatsapp, setLeadWhatsapp] = useState('');
@@ -114,8 +116,79 @@ export default function Home() {
     }
   };
 
+  const handlePriorityAccess = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!priorityPassword || !db) return;
+
+    setIsValidatingPriority(true);
+    try {
+      const configRef = doc(db, 'globalConfigs', 'priorityAccess');
+      const snap = await getDoc(configRef);
+      
+      if (snap.exists() && snap.data().password === priorityPassword) {
+        toast({ title: "ACESSO LIBERADO", description: "Protocolo de entrada desbloqueado." });
+        setShowPriorityGate(false);
+        setShowAuth(true);
+      } else {
+        toast({ variant: "destructive", title: "ACESSO NEGADO", description: "Senha prioritária incorreta." });
+      }
+    } catch (err) {
+      toast({ variant: "destructive", title: "ERRO DE SISTEMA", description: "Falha na sincronização mística." });
+    } finally {
+      setIsValidatingPriority(false);
+    }
+  };
+
   if (isUserLoading || user || isForcedLoading) {
     return <EliteLoader />;
+  }
+
+  if (showPriorityGate) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center p-6 animate-in fade-in duration-700">
+        <div className="w-full max-w-sm space-y-10 text-center">
+          <div className="space-y-6">
+            <div className="flex justify-center">
+               <div className="p-5 rounded-[2rem] bg-primary/10 border border-primary/20">
+                 <KeyRound className="w-10 h-10 text-primary animate-pulse" />
+               </div>
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black uppercase tracking-tighter">Acesso Prioritário</h2>
+              <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">Insira a chave mestra para liberar o portal</p>
+            </div>
+          </div>
+
+          <form onSubmit={handlePriorityAccess} className="space-y-6">
+            <div className="space-y-2">
+              <Label className="text-[9px] uppercase tracking-widest text-zinc-700 font-black">Chave de Segurança</Label>
+              <Input 
+                type="password"
+                required
+                placeholder="••••••••"
+                className="bg-zinc-950 border-zinc-900 h-16 text-center text-xl tracking-[0.5em] rounded-2xl focus-visible:ring-primary/40"
+                value={priorityPassword}
+                onChange={(e) => setPriorityPassword(e.target.value)}
+              />
+            </div>
+            <Button 
+              type="submit" 
+              disabled={isValidatingPriority}
+              className="w-full h-16 bg-primary hover:bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all active:scale-95"
+            >
+              {isValidatingPriority ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Validar Protocolo'}
+            </Button>
+            <button 
+              type="button" 
+              onClick={() => setShowPriorityGate(false)}
+              className="text-[9px] font-black text-zinc-600 uppercase tracking-widest hover:text-white transition-colors"
+            >
+              Retornar à Landing
+            </button>
+          </form>
+        </div>
+      </main>
+    );
   }
 
   if (showAuth) {
@@ -222,7 +295,6 @@ export default function Home() {
       
       {/* HERO SECTION CINEMATOGRÁFICA */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden">
-        {/* Ambient Glow */}
         <div className="absolute inset-0 z-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] bg-primary/10 rounded-full blur-[100px] md:blur-[180px] animate-pulse" />
         </div>
@@ -271,7 +343,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-20 animate-bounce">
            <span className="text-[7px] font-black uppercase tracking-[0.5em] vertical-text">Scroll</span>
            <ChevronRight className="w-4 h-4 rotate-90" />
@@ -301,8 +372,8 @@ export default function Home() {
               </div>
             </div>
             <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl order-1 lg:order-2 group">
-               <NextImage src="https://picsum.photos/seed/vault-landing/1200/900" fill className="object-cover opacity-80 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" alt="The Vault" data-ai-hint="luxury safe" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+               <NextImage src="https://picsum.photos/seed/vault-landing/1200/900" fill className="object-cover opacity-80 transition-all duration-1000" alt="The Vault" data-ai-hint="luxury safe" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-30" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <Lock className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
@@ -312,8 +383,8 @@ export default function Home() {
           {/* SOVEREIGN IA */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group">
-               <NextImage src="/advisor.png" fill className="object-cover opacity-80 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" alt="Terminal Sovereign AI" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+               <NextImage src="/advisor.png" fill className="object-cover opacity-80 transition-all duration-1000" alt="Terminal Sovereign AI" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-30" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <Terminal className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
@@ -355,8 +426,8 @@ export default function Home() {
               </div>
             </div>
             <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group order-1 lg:order-2">
-               <NextImage src="/black-room.png" fill className="object-cover opacity-80 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" alt="Black Room Networking" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+               <NextImage src="/black-room.png" fill className="object-cover opacity-80 transition-all duration-1000" alt="Black Room Networking" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-30" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <MessageSquare className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
@@ -413,7 +484,12 @@ export default function Home() {
         </div>
         
         <div className="flex flex-wrap justify-center gap-x-8 md:gap-x-12 gap-y-4 px-6">
-           <button onClick={() => setShowAuth(true)} className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Portal de Acesso | Login</button>
+           <button 
+             onClick={() => setShowPriorityGate(true)} 
+             className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors"
+           >
+             Portal de Acesso | Login
+           </button>
            <button onClick={() => document.getElementById('pillars')?.scrollIntoView({ behavior: 'smooth' })} className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Explorar Ecossistema</button>
            <Link href="/staff" className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Terminal do Alto Conselho</Link>
         </div>
