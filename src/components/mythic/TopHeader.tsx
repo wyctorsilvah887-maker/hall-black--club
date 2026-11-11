@@ -1,3 +1,4 @@
+
 "use client"
 
 import React from 'react';
@@ -23,13 +24,13 @@ export function TopHeader({ profile }: { profile: any }) {
 
   // Consulta rápida para checar se há notificações não lidas
   const notifQuery = useMemoFirebase(() => {
-    if (!db || !user?.uid) return null;
+    if (!db || !user?.uid || !profile) return null;
     return query(
       collection(db, 'notifications'),
       where('userId', 'in', [user.uid, 'global']),
       limit(5)
     );
-  }, [db, user]);
+  }, [db, user, profile]);
 
   const { data: notifs } = useCollection(notifQuery);
   const hasUnread = notifs && notifs.length > 0;

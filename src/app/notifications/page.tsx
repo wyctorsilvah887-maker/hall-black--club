@@ -38,14 +38,14 @@ export default function NotificationsPage() {
   const { data: profile, isLoading: isProfileLoading } = useDoc(userRef);
 
   const notificationsQuery = useMemoFirebase(() => {
-    if (!db || !user?.uid) return null;
+    if (!db || !user?.uid || !profile) return null;
     return query(
       collection(db, 'notifications'),
       where('userId', 'in', [user.uid, 'global']),
       orderBy('timestamp', 'desc'),
       limit(20)
     );
-  }, [db, user]);
+  }, [db, user, profile]);
 
   const { data: notifications, isLoading: isNotifsLoading } = useCollection(notificationsQuery);
 
