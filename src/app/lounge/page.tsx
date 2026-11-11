@@ -57,7 +57,7 @@ export default function LoungePage() {
       
       <TopHeader profile={profile} />
 
-      <div className="absolute top-20 left-6 z-50 md:top-24">
+      <div className="absolute top-20 left-6 z-50 md:top-24 hidden md:flex">
         <Link href="/hub" className="p-3 bg-black/40 backdrop-blur-xl border border-zinc-900 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all active:scale-90 shadow-2xl">
           <ArrowLeft className="w-5 h-5" />
         </Link>
