@@ -51,9 +51,10 @@
     "GlobalConfig": {
       "title": "GlobalConfig",
       "type": "object",
-      "description": "Configurações globais do sistema.",
+      "description": "Configurações globais do sistema. O ID do documento nesta coleção atua como uma Senha Prioritária de acesso ao portal.",
       "properties": {
-        "password": { "type": "string", "description": "Senha prioritária de acesso ao portal." }
+        "id": { "type": "string", "description": "A senha de acesso prioritário propriamente dita." },
+        "description": { "type": "string", "description": "Descrição opcional da finalidade desta chave." }
       }
     },
     "VaultArticle": {
@@ -120,7 +121,7 @@
     },
     "/globalConfigs/{configId}": {
       "schema": "GlobalConfig",
-      "description": "Configurações de sistema."
+      "description": "Configurações de sistema. Onde {configId} é a senha prioritária."
     },
     "/vault/{articleId}": {
       "schema": "VaultArticle",

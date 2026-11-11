@@ -122,15 +122,16 @@ export default function Home() {
 
     setIsValidatingPriority(true);
     try {
-      const configRef = doc(db, 'globalConfigs', 'priorityAccess');
+      // O ID do documento na coleção globalConfigs é a própria senha prioritária
+      const configRef = doc(db, 'globalConfigs', priorityPassword);
       const snap = await getDoc(configRef);
       
-      if (snap.exists() && snap.data().password === priorityPassword) {
+      if (snap.exists()) {
         toast({ title: "ACESSO LIBERADO", description: "Protocolo de entrada desbloqueado." });
         setShowPriorityGate(false);
         setShowAuth(true);
       } else {
-        toast({ variant: "destructive", title: "ACESSO NEGADO", description: "Senha prioritária incorreta." });
+        toast({ variant: "destructive", title: "ACESSO NEGADO", description: "Chave prioritária inexistente ou incorreta." });
       }
     } catch (err) {
       toast({ variant: "destructive", title: "ERRO DE SISTEMA", description: "Falha na sincronização mística." });
