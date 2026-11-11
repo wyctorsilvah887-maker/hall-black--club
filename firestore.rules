@@ -28,8 +28,8 @@ service cloud.firestore {
     }
 
     match /notifications/{notifId} {
-      // Regra simplificada para resolver bloqueios de listagem (list)
-      // O filtro de privacidade é garantido pela consulta client-side: where('userId', 'in', [uid, 'global'])
+      // Permite listagem para qualquer usuário autenticado. 
+      // O filtro de privacidade (userId == uid ou global) é aplicado via query no código.
       allow read, list: if isSignedIn();
       allow create, update, delete: if isAdmin();
     }
