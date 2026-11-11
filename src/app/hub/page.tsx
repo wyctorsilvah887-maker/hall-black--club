@@ -1,7 +1,7 @@
 
 "use client"
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { EliteHub } from '@/components/mythic/EliteHub';
@@ -11,12 +11,18 @@ import Link from 'next/link';
 
 /**
  * @fileOverview Hub Central - A "Sala de Comando" oficial do Sovereign Founders Club.
- * Sincronizado para ser idêntico à experiência original de elite.
+ * Sincronizado com um atraso proposital para imersão de elite.
  */
 
 export default function HubPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
+  const [isForcedLoading, setIsForcedLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsForcedLoading(false), 2800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const userRef = useMemoFirebase(() => {
     if (!user || !db) return null;
@@ -25,7 +31,7 @@ export default function HubPage() {
 
   const { data: profile, isLoading: isProfileLoading } = useDoc(userRef);
 
-  if (isUserLoading || isProfileLoading) {
+  if (isUserLoading || isProfileLoading || isForcedLoading) {
     return <EliteLoader />;
   }
 

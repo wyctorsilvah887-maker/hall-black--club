@@ -1,7 +1,7 @@
 
 "use client"
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
@@ -14,11 +14,18 @@ import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
  * @fileOverview Página do Black Room - Sovereign Founders Club.
+ * Sincronizado com atraso proposital para imersão de elite.
  */
 
 export default function LoungePage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
+  const [isForcedLoading, setIsForcedLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsForcedLoading(false), 2800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const userRef = useMemoFirebase(() => {
     if (!user || !db) return null;
@@ -27,7 +34,7 @@ export default function LoungePage() {
 
   const { data: profile, isLoading: isProfileLoading } = useDoc(userRef);
 
-  if (isUserLoading || isProfileLoading) {
+  if (isUserLoading || isProfileLoading || isForcedLoading) {
     return <EliteLoader />;
   }
 
@@ -37,7 +44,7 @@ export default function LoungePage() {
         <ShieldCheck className="w-16 h-16 text-zinc-900 mb-6" />
         <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Acesso Restrito</h1>
         <p className="text-zinc-600 text-xs uppercase tracking-widest max-w-xs mb-8">Autentique-se para entrar no Black Room.</p>
-        <Link href="/" className="text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Voltar ao Portal</Link>
+        <Link href="/hub" className="text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Voltar ao Hub</Link>
       </div>
     );
   }

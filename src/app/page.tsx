@@ -34,6 +34,7 @@ export default function Home() {
   const [showAuth, setShowAuth] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  const [isForcedLoading, setIsForcedLoading] = useState(true);
   
   // Estados do formulário de Lead
   const [leadName, setLeadName] = useState('');
@@ -41,6 +42,11 @@ export default function Home() {
   const [leadWhatsapp, setLeadWhatsapp] = useState('');
 
   const [tempProfile, setTempProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsForcedLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem('mythic_access_granted');
@@ -93,7 +99,6 @@ export default function Home() {
         description: "Sua solicitação de vaga foi enviada ao sistema central.",
       });
 
-      // Após o lead, limpa os campos e fecha o formulário, retornando à landing conforme solicitado
       setLeadName('');
       setLeadEmail('');
       setLeadWhatsapp('');
@@ -109,7 +114,7 @@ export default function Home() {
     }
   };
 
-  if (isUserLoading || user) {
+  if (isUserLoading || user || isForcedLoading) {
     return <EliteLoader />;
   }
 

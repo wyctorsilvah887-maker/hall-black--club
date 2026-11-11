@@ -25,6 +25,7 @@ import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
  * @fileOverview Página de configurações de elite do Sovereign Founders Club.
+ * Sincronizado com atraso proposital para imersão de elite.
  */
 
 export default function SettingsPage() {
@@ -32,6 +33,12 @@ export default function SettingsPage() {
   const db = useFirestore();
   const auth = useAuth();
   const { toast } = useToast();
+  const [isForcedLoading, setIsForcedLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsForcedLoading(false), 2800);
+    return () => clearTimeout(timer);
+  }, []);
   
   const profilePicInputRef = useRef<HTMLInputElement>(null);
   
@@ -220,7 +227,7 @@ export default function SettingsPage() {
     }
   };
 
-  if (isUserLoading || isProfileLoading) {
+  if (isUserLoading || isProfileLoading || isForcedLoading) {
     return <EliteLoader />;
   }
 
@@ -321,8 +328,7 @@ export default function SettingsPage() {
               
               <div className={cn("flex items-center justify-between px-5 py-5 transition-opacity", !isPublic && "opacity-50")}>
                 <div className="space-y-1">
-                  <p className="text-[11px] font-black uppercase tracking-widest">Exibir Localização</p>
-                  <p className="text-[9px] text-zinc-600 uppercase font-bold">Cidade e Estado no perfil</p>
+                  <p className="text-[11px] font-black uppercase tracking-widest">Cidade e Estado no perfil</p>
                 </div>
                 <Switch 
                   disabled={!isPublic}
