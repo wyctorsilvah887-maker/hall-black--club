@@ -32,6 +32,11 @@ service cloud.firestore {
       }
     }
 
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read, list, delete, update: if isAdmin();
+    }
+
     match /vault/{articleId} {
       allow read, list: if isSignedIn();
       allow create, update, delete: if isAdmin();

@@ -3,23 +3,43 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
 import { AuthGate } from '@/components/mythic/AuthGate';
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, ChevronRight, BookOpen, Terminal, MessageSquare, Trophy, Zap, ArrowRight, Lock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  ShieldCheck, ChevronRight, BookOpen, Terminal, 
+  MessageSquare, Trophy, Zap, ArrowRight, Lock, 
+  User, Mail, Phone, Loader2, X 
+} from "lucide-react";
 import NextImage from 'next/image';
 import Link from 'next/link';
 
 /**
  * @fileOverview Landing Page Oficial - Sovereign Founders Club.
- * Porta de entrada luxuosa para o ecossistema de elite, otimizada para mobile.
+ * Inclui sistema de captação de leads e transição para o portal de acesso.
  */
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const db = useFirestore();
+  const { toast } = useToast();
+
   const [showAuth, setShowAuth] = useState(false);
+  const [showLeadForm, setShowLeadForm] = useState(false);
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  
+  // Estados do formulário de Lead
+  const [leadName, setLeadName] = useState('');
+  const [leadEmail, setLeadEmail] = useState('');
+  const [leadWhatsapp, setLeadWhatsapp] = useState('');
+
   const [tempProfile, setTempProfile] = useState<any>(null);
 
   useEffect(() => {
@@ -40,6 +60,52 @@ export default function Home() {
       router.push('/hub');
     }
   }, [user, isUserLoading, router]);
+
+  const formatPhoneMask = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  };
+
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLeadWhatsapp(formatPhoneMask(e.target.value));
+  };
+
+  const handleLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!leadName || !leadEmail || !leadWhatsapp || !db) return;
+
+    setIsSubmittingLead(true);
+    try {
+      const leadsRef = collection(db, 'leads');
+      await addDocumentNonBlocking(leadsRef, {
+        name: leadName,
+        email: leadEmail,
+        whatsapp: leadWhatsapp,
+        timestamp: new Date().toISOString()
+      });
+
+      toast({
+        title: "CANDIDATURA REGISTRADA",
+        description: "Sua solicitação de vaga foi enviada ao sistema central.",
+      });
+
+      // Após o lead, encaminha para o AuthGate
+      setShowLeadForm(false);
+      setShowAuth(true);
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "ERRO DE PROTOCOLO",
+        description: "Falha ao registrar candidatura.",
+      });
+    } finally {
+      setIsSubmittingLead(false);
+    }
+  };
 
   if (isUserLoading || user) {
     return <EliteLoader />;
@@ -63,6 +129,89 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white selection:bg-primary/30 overflow-x-hidden font-body">
+      
+      {/* FORMULÁRIO DE CAPTAÇÃO DE LEADS (OVERLAY) */}
+      {showLeadForm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-3xl animate-in fade-in duration-500">
+          <div className="w-full max-w-md bg-zinc-950 border border-zinc-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <button 
+              onClick={() => setShowLeadForm(false)}
+              className="absolute top-6 right-6 p-2 text-zinc-600 hover:text-white transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="absolute top-0 inset-x-0 h-1 bg-primary" />
+            
+            <div className="text-center space-y-4 mb-10">
+              <div className="flex justify-center">
+                 <div className="p-4 rounded-3xl bg-primary/10 border border-primary/20">
+                   <Trophy className="w-8 h-8 text-primary" />
+                 </div>
+              </div>
+              <h2 className="text-2xl font-black uppercase tracking-tighter">Dossiê de Candidatura</h2>
+              <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Solicite sua vaga na linhagem de elite</p>
+            </div>
+
+            <form onSubmit={handleLeadSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-zinc-600 font-black ml-1">Seu Nome</Label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-800" />
+                  <Input 
+                    required
+                    placeholder="NOME COMPLETO"
+                    className="bg-black border-zinc-900 h-14 pl-12 rounded-2xl font-bold uppercase text-xs"
+                    value={leadName}
+                    onChange={(e) => setLeadName(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-zinc-600 font-black ml-1">E-mail Profissional</Label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-800" />
+                  <Input 
+                    required
+                    type="email"
+                    placeholder="SEU@EMAIL.COM"
+                    className="bg-black border-zinc-900 h-14 pl-12 rounded-2xl font-bold uppercase text-xs"
+                    value={leadEmail}
+                    onChange={(e) => setLeadEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-zinc-600 font-black ml-1">WhatsApp de Elite</Label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-800" />
+                  <Input 
+                    required
+                    placeholder="(00) 00000-0000"
+                    className="bg-black border-zinc-900 h-14 pl-12 rounded-2xl font-mono text-xs"
+                    value={leadWhatsapp}
+                    onChange={handleWhatsappChange}
+                  />
+                </div>
+              </div>
+
+              <Button 
+                type="submit"
+                disabled={isSubmittingLead}
+                className="w-full h-16 bg-primary hover:bg-accent text-white font-black uppercase tracking-[0.4em] text-[10px] rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 mt-4"
+              >
+                {isSubmittingLead ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Submeter Candidatura'}
+              </Button>
+              
+              <p className="text-[7px] text-center text-zinc-700 uppercase tracking-widest font-black leading-relaxed">
+                Ao submeter, você aceita o protocolo de privacidade da rede.
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
       
       {/* HERO SECTION CINEMATOGRÁFICA */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden">
@@ -100,7 +249,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 pt-4 md:pt-6">
             <Button 
-              onClick={() => setShowAuth(true)}
+              onClick={() => setShowLeadForm(true)}
               className="h-14 md:h-20 w-full sm:w-auto px-10 md:px-16 bg-primary hover:bg-accent text-white font-black uppercase tracking-[0.4em] text-[9px] md:text-xs rounded-2xl shadow-2xl shadow-primary/20 transition-all active:scale-95 group"
             >
               Garantir Vaga <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-2 transition-transform" />
@@ -223,7 +372,7 @@ export default function Home() {
           </div>
           
           <Button 
-            onClick={() => setShowAuth(true)}
+            onClick={() => setShowLeadForm(true)}
             className="h-16 md:h-24 w-full sm:w-auto px-12 md:px-24 bg-primary hover:bg-accent text-white font-black uppercase tracking-[0.4em] md:tracking-[0.5em] text-[9px] md:text-sm rounded-2xl shadow-[0_20px_60px_rgba(var(--primary),0.2)] md:shadow-[0_30px_70px_rgba(var(--primary),0.3)] transition-all active:scale-95 group"
           >
             Garantir Vaga <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-3 transition-transform duration-500" />

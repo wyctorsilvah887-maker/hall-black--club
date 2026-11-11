@@ -35,6 +35,19 @@
       },
       "required": ["id", "name", "email", "role"]
     },
+    "Lead": {
+      "title": "Lead",
+      "type": "object",
+      "description": "Dados capturados de interessados na rede.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "whatsapp"]
+    },
     "VaultArticle": {
       "title": "VaultArticle",
       "type": "object",
@@ -92,6 +105,10 @@
     "/users/{userId}": {
       "schema": "UserProfile",
       "description": "Dossiês de membros Founders."
+    },
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Captura de leads interessados."
     },
     "/vault/{articleId}": {
       "schema": "VaultArticle",
