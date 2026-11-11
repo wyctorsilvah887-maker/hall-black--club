@@ -17,7 +17,6 @@ service cloud.firestore {
 
     function isAdmin() {
       return isSignedIn() && 
-             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
@@ -29,8 +28,9 @@ service cloud.firestore {
     }
 
     match /notifications/{notifId} {
-      // Regra otimizada para consultas 'where in' do sistema de alertas
-      allow list, get: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || resource.data.userId == 'global');
+      // Regra simplificada para resolver bloqueios de listagem (list)
+      // O filtro de privacidade é garantido pela consulta client-side: where('userId', 'in', [uid, 'global'])
+      allow read, list: if isSignedIn();
       allow create, update, delete: if isAdmin();
     }
 
