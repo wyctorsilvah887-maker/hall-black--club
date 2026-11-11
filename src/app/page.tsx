@@ -93,9 +93,11 @@ export default function Home() {
         description: "Sua solicitação de vaga foi enviada ao sistema central.",
       });
 
-      // Após o lead, encaminha para o AuthGate
+      // Após o lead, limpa os campos e fecha o formulário, retornando à landing conforme solicitado
+      setLeadName('');
+      setLeadEmail('');
+      setLeadWhatsapp('');
       setShowLeadForm(false);
-      setShowAuth(true);
     } catch (err) {
       toast({
         variant: "destructive",
