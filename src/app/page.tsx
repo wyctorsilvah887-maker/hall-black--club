@@ -22,6 +22,7 @@ import Link from 'next/link';
 
 /**
  * @fileOverview Landing Page Oficial - Sovereign Founders Club.
+ * Otimizada para adaptação perfeita entre Desktop e Mobile.
  */
 
 export default function Home() {
@@ -122,7 +123,6 @@ export default function Home() {
 
     setIsValidatingPriority(true);
     try {
-      // O ID do documento na coleção globalConfigs é a própria senha prioritária
       const configRef = doc(db, 'globalConfigs', priorityPassword);
       const snap = await getDoc(configRef);
       
@@ -211,7 +211,6 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white selection:bg-primary/30 overflow-x-hidden font-body">
       
-      {/* FORMULÁRIO DE CAPTAÇÃO DE LEADS (OVERLAY) */}
       {showLeadForm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-3xl animate-in fade-in duration-500">
           <div className="w-full max-w-md bg-zinc-950 border border-zinc-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
@@ -294,7 +293,6 @@ export default function Home() {
         </div>
       )}
       
-      {/* HERO SECTION CINEMATOGRÁFICA */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] bg-primary/10 rounded-full blur-[100px] md:blur-[180px] animate-pulse" />
@@ -350,13 +348,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PILLARS SECTION */}
       <section id="pillars" className="py-24 md:py-40 px-6 md:px-12 border-t border-zinc-900/50 relative">
-        <div className="max-w-7xl mx-auto space-y-32 md:space-y-40">
+        <div className="max-w-7xl mx-auto space-y-32 md:space-y-48">
           
           {/* THE VAULT */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="space-y-8 md:space-y-10 order-2 lg:order-1">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+            <div className="space-y-8 md:space-y-12 order-2 lg:order-1">
               <div className="inline-flex p-3 md:p-4 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20">
                 <BookOpen className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               </div>
@@ -373,8 +370,8 @@ export default function Home() {
               </div>
             </div>
             <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl order-1 lg:order-2 group">
-               <NextImage src="https://picsum.photos/seed/vault-landing/1200/900" fill className="object-cover opacity-80 transition-all duration-1000" alt="The Vault" data-ai-hint="luxury safe" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-30" />
+               <NextImage src="https://picsum.photos/seed/vault-landing/1200/900" fill className="object-cover opacity-90 group-hover:scale-105 transition-all duration-1000" alt="The Vault" data-ai-hint="luxury safe" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <Lock className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
@@ -382,15 +379,15 @@ export default function Home() {
           </div>
 
           {/* SOVEREIGN IA */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
             <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group">
-               <NextImage src="/advisor.png" fill className="object-cover opacity-80 transition-all duration-1000" alt="Terminal Sovereign AI" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-30" />
+               <NextImage src="/advisor.png" fill className="object-cover opacity-90 group-hover:scale-105 transition-all duration-1000" alt="Terminal Sovereign AI" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <Terminal className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
             </div>
-            <div className="space-y-8 md:space-y-10">
+            <div className="space-y-8 md:space-y-12">
               <div className="inline-flex p-3 md:p-4 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20">
                 <Terminal className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               </div>
@@ -409,8 +406,8 @@ export default function Home() {
           </div>
 
           {/* BLACK ROOM */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="space-y-8 md:space-y-10 order-2 lg:order-1">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+            <div className="space-y-8 md:space-y-12 order-2 lg:order-1">
               <div className="inline-flex p-3 md:p-4 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20">
                 <MessageSquare className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               </div>
@@ -427,8 +424,8 @@ export default function Home() {
               </div>
             </div>
             <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group order-1 lg:order-2">
-               <NextImage src="/black-room.png" fill className="object-cover opacity-80 transition-all duration-1000" alt="Black Room Networking" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-30" />
+               <NextImage src="/black-room.png" fill className="object-cover opacity-90 group-hover:scale-105 transition-all duration-1000" alt="Black Room Networking" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <MessageSquare className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
@@ -438,7 +435,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CALL TO ACTION FINAL */}
       <section className="py-40 md:py-60 px-6 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-primary/10 blur-[120px] md:blur-[180px] rounded-full scale-150 animate-pulse" />
         <div className="max-w-4xl mx-auto space-y-12 md:space-y-16 relative z-10">
@@ -470,7 +466,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOOTER LUXUOSO */}
       <footer className="py-16 md:py-24 border-t border-zinc-900/50 bg-zinc-950/20 backdrop-blur-3xl text-center space-y-8 md:space-y-12">
         <div className="flex flex-col items-center gap-4 md:gap-6 px-6">
           <NextImage 
