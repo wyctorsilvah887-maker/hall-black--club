@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useMemo } from 'react';
@@ -11,6 +10,7 @@ import { useCollection, useFirestore, useMemoFirebase, useAuth } from '@/firebas
 import { collection, doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +40,7 @@ interface MythicDashboardProps {
 export function MythicDashboard({ profile }: MythicDashboardProps) {
   const db = useFirestore();
   const auth = useAuth();
+  const router = useRouter();
   const { toast } = useToast();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -101,6 +102,11 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
     } finally { setIsSubmitting(false); }
   };
 
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/');
+  };
+
   return (
     <div className={cn("min-h-screen bg-black text-white selection:bg-primary/30", themeClass)}>
       <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-zinc-900/50 h-20 md:h-24 flex items-center justify-between px-6">
@@ -131,7 +137,7 @@ export function MythicDashboard({ profile }: MythicDashboardProps) {
               <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
               <DropdownMenuItem asChild><Link href="/settings">Configurações</Link></DropdownMenuItem>
               <DropdownMenuItem asChild><Link href="/debug/badges">Protocolo de Patentes</Link></DropdownMenuItem>
-              <DropdownMenuItem onClick={() => signOut(auth)}>Sair</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>Sair</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

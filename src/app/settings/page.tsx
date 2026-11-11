@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -22,6 +21,7 @@ import { sendTransferConfirmationEmail } from '@/app/actions';
 import { signOut } from 'firebase/auth';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
+import { useRouter } from 'next/navigation';
 
 /**
  * @fileOverview Página de configurações de elite do Sovereign Founders Club.
@@ -32,6 +32,7 @@ export default function SettingsPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
   const auth = useAuth();
+  const router = useRouter();
   const { toast } = useToast();
   const [isForcedLoading, setIsForcedLoading] = useState(true);
 
@@ -219,12 +220,20 @@ export default function SettingsPage() {
 
       setTransferProtocolStatus('done');
       toast({ variant: "destructive", title: "REVOGAÇÃO EM CURSO", description: "Sua identidade será encerrada." });
-      setTimeout(() => signOut(auth), 10000);
+      setTimeout(async () => {
+        await signOut(auth);
+        router.push('/');
+      }, 10000);
     } catch (err) {
       toast({ variant: "destructive", title: "ERRO", description: "Falha no protocolo de cessão." });
       setIsTransferring(false);
       setTransferProtocolStatus('idle');
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/');
   };
 
   if (isUserLoading || isProfileLoading || isForcedLoading) {
@@ -395,11 +404,11 @@ export default function SettingsPage() {
               </button>
               
               <button 
-                onClick={() => signOut(auth)}
+                onClick={handleSignOut}
                 className="w-full flex items-center justify-between px-5 py-5 active:bg-zinc-900/60 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 rounded-xl bg-black border border-zinc-800/30">
+                  <div className={cn("p-2 rounded-xl bg-black border", themeBorder)}>
                     <ShieldCheck className="w-4 h-4 text-zinc-500" />
                   </div>
                   <p className="text-[11px] font-black uppercase tracking-widest text-zinc-300">Encerrar Sessão</p>
