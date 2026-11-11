@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Phone, UserCircle, Medal, CreditCard, Sparkles } from "lucide-react";
+import { ArrowLeft, User, Camera, ShieldAlert, ArrowRightLeft, Loader2, ShieldX, ShieldCheck, ChevronRight, X, MapPin, AlignLeft, Phone, UserCircle, Medal, CreditCard, Sparkles, LayoutDashboard } from "lucide-react";
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { compressImage } from '@/lib/image-utils';
@@ -366,6 +366,21 @@ export default function SettingsPage() {
           <section>
             <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] px-5 mb-4">Gestão e Segurança</p>
             <div className="bg-zinc-950/40 border-y border-zinc-900/60 divide-y divide-zinc-900/40">
+              {profile?.role === 'admin' && (
+                <Link 
+                  href="/staff"
+                  className="w-full flex items-center justify-between px-5 py-5 active:bg-zinc-900/60 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-xl bg-black border border-primary/30">
+                      <LayoutDashboard className="w-4 h-4 text-primary" />
+                    </div>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-primary">Terminal Staff</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-zinc-800" />
+                </Link>
+              )}
+
               <button 
                 onClick={() => setIsTransferOpen(true)}
                 className="w-full flex items-center justify-between px-5 py-5 active:bg-red-950/10 transition-colors"
