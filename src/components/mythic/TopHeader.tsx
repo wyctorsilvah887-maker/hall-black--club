@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -13,6 +12,7 @@ import { collection, query, where, limit } from 'firebase/firestore';
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
  * Sincronizado para uma estética minimalista, incluindo o sino de notificações.
+ * Versão otimizada com Prestige Score reduzido.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
@@ -68,13 +68,13 @@ export function TopHeader({ profile }: { profile: any }) {
           </div>
 
           <div className="flex flex-col items-end">
-            <div className="flex items-center gap-1.5 bg-zinc-950 px-3 py-1.5 rounded-full border border-zinc-900 shadow-inner">
-               <Zap className="w-3 h-3 text-primary animate-pulse" />
-               <span className="text-[11px] font-black text-white tracking-tighter">
+            <div className="flex items-center gap-1 bg-zinc-950 px-2 py-1 rounded-full border border-zinc-900 shadow-inner">
+               <Zap className="w-2.5 h-2.5 text-primary animate-pulse" />
+               <span className="text-[9px] font-black text-white tracking-tighter">
                  {profile?.eliteScore || '100'}
                </span>
             </div>
-            <p className="text-[6px] font-black text-zinc-600 uppercase tracking-widest mt-1 mr-1">Prestige Score</p>
+            <p className="text-[5px] font-black text-zinc-700 uppercase tracking-widest mt-0.5 mr-0.5">Prestige</p>
           </div>
 
           <div className="flex items-center gap-3">
