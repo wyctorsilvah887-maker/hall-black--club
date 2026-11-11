@@ -157,7 +157,7 @@ export default function Home() {
                  </div>
               </div>
               <h2 className="text-2xl font-black uppercase tracking-tighter">Dossiê de Candidatura</h2>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Solicite sua vaga na linhagem de elite</p>
+              <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Solicite seu acesso ao ecossistema de elite</p>
             </div>
 
             <form onSubmit={handleLeadSubmit} className="space-y-6">
@@ -250,7 +250,7 @@ export default function Home() {
               <span className="text-primary">Poder Digital</span>
             </h1>
             <p className="text-[10px] md:text-xl text-zinc-500 font-bold max-w-2xl mx-auto uppercase tracking-[0.15em] md:tracking-[0.2em] leading-relaxed px-4">
-              O ecossistema definitivo para fundadores, estrategistas e visionários. Onde a linhagem de elite encontra a inteligência artificial de escala.
+              O ecossistema definitivo para fundadores, estrategistas e visionários. Onde a maestria estratégica encontra a inteligência artificial de escala.
             </p>
           </div>
 
@@ -344,7 +344,7 @@ export default function Home() {
               </div>
               <h2 className="text-3xl md:text-7xl font-black uppercase tracking-tighter leading-none">Black Room <br /><span className="text-primary">Networking</span></h2>
               <p className="text-zinc-500 text-xs md:text-lg font-bold leading-relaxed uppercase tracking-widest italic">
-                Onde o networking de verdade acontece. Uma rede segura e criptografada para conexões místicas entre fundadores de alto escalão.
+                Onde o networking de verdade acontece. Uma rede segura e criptografada para conexões estratégicas entre fundadores de alto escalão.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 {["Rede Segura", "Membros Verificados", "Negócios de Elite", "Sigilo Absoluto"].map((item, i) => (
@@ -372,7 +372,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto space-y-12 md:space-y-16 relative z-10">
           <div className="flex flex-col items-center gap-6 md:gap-8">
             <Trophy className="w-16 h-16 md:w-20 md:h-20 text-primary drop-shadow-[0_0_30px_rgba(var(--primary),0.5)]" />
-            <h2 className="text-4xl md:text-[8rem] font-black uppercase tracking-tighter leading-none text-white">Ascenda à <br /> Linhagem</h2>
+            <h2 className="text-4xl md:text-[8rem] font-black uppercase tracking-tighter leading-none text-white">Alcance o <br /> Ápice</h2>
             <p className="text-zinc-500 text-[10px] md:text-2xl font-black uppercase tracking-[0.3em] md:tracking-[0.4em] max-w-3xl mx-auto leading-relaxed">
               Protocolo de acesso liberado. <br /> Assinatura de elite por apenas <span className="text-white">R$ 10,90/mês</span>.
             </p>
