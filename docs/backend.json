@@ -35,6 +35,21 @@
       },
       "required": ["id", "name", "email", "role"]
     },
+    "Notification": {
+      "title": "Notification",
+      "type": "object",
+      "description": "Comunicados oficiais e alertas de sistema.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string", "description": "ID do destinatário ou 'global' para todos." },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["STRATEGIC", "SYSTEM", "COUNCIL"] },
+        "isRead": { "type": "boolean" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "type", "timestamp"]
+    },
     "Lead": {
       "title": "Lead",
       "type": "object",
@@ -86,21 +101,6 @@
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "message", "timestamp"]
-    },
-    "LoungeMessage": {
-      "title": "LoungeMessage",
-      "type": "object",
-      "description": "Mensagens de chat em tempo real no Black Room.",
-      "properties": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "userName": { "type": "string" },
-        "userPhoto": { "type": "string" },
-        "userRank": { "type": "string" },
-        "content": { "type": "string" },
-        "timestamp": { "type": "string", "format": "date-time" }
-      },
-      "required": ["userId", "userName", "content", "timestamp"]
     }
   },
   "auth": {
@@ -114,6 +114,10 @@
     "/users/{userId}": {
       "schema": "UserProfile",
       "description": "Dossiês de membros Founders."
+    },
+    "/notifications/{notifId}": {
+      "schema": "Notification",
+      "description": "Mensagens de sistema e alertas."
     },
     "/leads/{leadId}": {
       "schema": "Lead",
@@ -130,10 +134,6 @@
     "/councilMessages/{messageId}": {
       "schema": "CouncilMessage",
       "description": "Canal de audiência do Alto Conselho."
-    },
-    "/loungeMessages/{messageId}": {
-      "schema": "LoungeMessage",
-      "description": "Mensagens do Black Room."
     }
   }
 }

@@ -1,20 +1,38 @@
+
 "use client"
 
 import React from 'react';
-import { User, Zap } from 'lucide-react';
+import { User, Zap, Bell } from 'lucide-react';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { cn } from '@/lib/utils';
 import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
+import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
+import { collection, query, where, limit } from 'firebase/firestore';
 
 /**
  * @fileOverview Cabeçalho Superior de Elite - Sovereign Founders Club.
- * Sincronizado para uma estética minimalista, utilizando o logo como retorno ao Hub.
+ * Sincronizado para uma estética minimalista, incluindo o sino de notificações.
  */
 
 export function TopHeader({ profile }: { profile: any }) {
+  const { user } = useUser();
+  const db = useFirestore();
   const currentRank = calculateRankByTime(profile?.registrationDateTime, profile?.status);
   const themeClass = getThemeClass(currentRank);
+
+  // Consulta rápida para checar se há notificações não lidas
+  const notifQuery = useMemoFirebase(() => {
+    if (!db || !user?.uid) return null;
+    return query(
+      collection(db, 'notifications'),
+      where('userId', 'in', [user.uid, 'global']),
+      limit(5)
+    );
+  }, [db, user]);
+
+  const { data: notifs } = useCollection(notifQuery);
+  const hasUnread = notifs && notifs.length > 0;
 
   return (
     <header className={cn(
@@ -40,6 +58,15 @@ export function TopHeader({ profile }: { profile: any }) {
         </div>
 
         <div className="flex items-center gap-4 md:gap-8">
+          <div className="flex items-center gap-4">
+             <Link href="/notifications" className="relative p-2.5 rounded-xl bg-zinc-950 border border-zinc-900 hover:border-primary/50 transition-colors group">
+                <Bell className="w-4 h-4 text-zinc-600 group-hover:text-primary transition-colors" />
+                {hasUnread && (
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse border-2 border-black" />
+                )}
+             </Link>
+          </div>
+
           <div className="flex flex-col items-end">
             <div className="flex items-center gap-1.5 bg-zinc-950 px-3 py-1.5 rounded-full border border-zinc-900 shadow-inner">
                <Zap className="w-3 h-3 text-primary animate-pulse" />

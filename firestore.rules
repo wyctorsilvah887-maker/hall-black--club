@@ -25,11 +25,11 @@ service cloud.firestore {
       allow create: if isOwner(userId);
       allow delete: if isOwner(userId);
       allow update: if isOwner(userId) || (isSignedIn() && request.resource.data.status == 'REVOKED') || isAdmin();
+    }
 
-      match /pets/{petId} {
-        allow read: if true; 
-        allow write: if isOwner(userId) || isAdmin();
-      }
+    match /notifications/{notifId} {
+      allow read, list: if isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.userId == 'global');
+      allow create, update, delete: if isAdmin();
     }
 
     match /leads/{leadId} {
@@ -57,13 +57,6 @@ service cloud.firestore {
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow update: if isAdmin();
-    }
-
-    match /loungeMessages/{messageId} {
-      allow read, list: if isSignedIn();
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow delete: if isAdmin();
-      allow update: if false;
     }
   }
 }
