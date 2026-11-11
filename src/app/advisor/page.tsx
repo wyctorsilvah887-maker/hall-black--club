@@ -13,7 +13,7 @@ import { TopHeader } from '@/components/mythic/TopHeader';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
- * @fileOverview Terminal Dedicated do Sovereign Advisor.
+ * @fileOverview Terminal Dedicated do Sovereign AI.
  * Sincronizado com atraso proposital para imersão de elite.
  */
 
@@ -72,7 +72,7 @@ export default function AdvisorPage() {
             </div>
             <div>
               <h1 className="text-xl md:text-3xl font-black uppercase tracking-tighter">Sovereign IA</h1>
-              <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-bold">Terminal Advisor</p>
+              <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-bold">Terminal Sovereign AI</p>
             </div>
           </div>
           <div className="flex items-center gap-3 bg-zinc-950 p-2 md:p-3 rounded-xl border border-zinc-900">

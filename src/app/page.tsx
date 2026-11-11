@@ -322,7 +322,7 @@ export default function Home() {
               <div className="inline-flex p-3 md:p-4 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20">
                 <Terminal className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               </div>
-              <h2 className="text-3xl md:text-7xl font-black uppercase tracking-tighter leading-none">Terminal <br /><span className="text-primary">Advisor IA</span></h2>
+              <h2 className="text-3xl md:text-7xl font-black uppercase tracking-tighter leading-none">Terminal <br /><span className="text-primary">Sovereign AI</span></h2>
               <p className="text-zinc-500 text-xs md:text-lg font-bold leading-relaxed uppercase tracking-widest italic">
                 Auditoria de negócios em tempo real. Uma inteligência sem filtros para dissecar seu projeto e prover rotas de escala sem precedentes.
               </p>
