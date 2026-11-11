@@ -408,7 +408,7 @@ export default function Home() {
         </div>
         
         <div className="flex flex-wrap justify-center gap-x-8 md:gap-x-12 gap-y-4 px-6">
-           <button onClick={() => setShowAuth(true)} className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Portal de Acesso</button>
+           <button onClick={() => setShowAuth(true)} className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Portal de Acesso | Login</button>
            <button onClick={() => document.getElementById('pillars')?.scrollIntoView({ behavior: 'smooth' })} className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Explorar Ecossistema</button>
            <Link href="/staff" className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Terminal do Alto Conselho</Link>
         </div>
