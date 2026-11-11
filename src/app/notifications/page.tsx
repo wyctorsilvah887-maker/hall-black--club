@@ -8,7 +8,7 @@ import { calculateRankByTime, getThemeClass } from '@/lib/rank-utils';
 import { TopHeader } from '@/components/mythic/TopHeader';
 import { EliteLoader } from '@/components/mythic/EliteLoader';
 import { 
-  Bell, ShieldCheck, ArrowLeft, Zap, Info, 
+  Bell, ShieldCheck, Zap, Info, 
   MessageSquare, AlertTriangle, ChevronRight, Sparkles, DatabaseZap
 } from 'lucide-react';
 import Link from 'next/link';
@@ -129,12 +129,6 @@ export default function NotificationsPage() {
     <main className={cn("min-h-screen bg-black text-white selection:bg-primary/30 flex flex-col", themeClass)}>
       
       <TopHeader profile={profile} />
-
-      <div className="absolute top-24 left-6 z-50">
-        <Link href="/hub" className="p-3 bg-black/40 backdrop-blur-xl border border-zinc-900 rounded-full flex items-center justify-center text-zinc-500 hover:text-white transition-all active:scale-90 shadow-2xl">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-      </div>
 
       <div className="flex-1 max-w-4xl mx-auto w-full px-6 pt-32 pb-20 space-y-12">
         
