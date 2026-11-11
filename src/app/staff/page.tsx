@@ -22,6 +22,7 @@ import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
  * @fileOverview Centro de Comando Staff - Alto Conselho Sovereign Founders Club.
+ * Otimizado para adaptação perfeita entre Desktop e Mobile.
  */
 
 type StaffView = 'dashboard' | 'messages' | 'users';
@@ -128,94 +129,94 @@ export default function StaffPanelPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-primary/30 pb-20">
-      <div className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+    <main className="min-h-screen bg-black text-white selection:bg-primary/30 pb-20 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 space-y-8 md:space-y-12">
         
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-zinc-900 pb-12">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-zinc-900 pb-8 md:pb-12">
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
               {currentView !== 'dashboard' && (
-                <button onClick={() => setCurrentView('dashboard')} className="p-2 hover:bg-zinc-900 rounded-full transition-colors">
-                  <ArrowLeft className="w-6 h-6" />
+                <button onClick={() => setCurrentView('dashboard')} className="p-2 hover:bg-zinc-900 rounded-full transition-colors active:scale-90">
+                  <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
               )}
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">
+              <h1 className="text-3xl md:text-6xl font-black uppercase tracking-tighter leading-tight">
                 {currentView === 'dashboard' ? 'Centro de Comando' : 
                  currentView === 'messages' ? 'Protocolos' : 'Gestão de Membros'}
               </h1>
             </div>
             <div className="flex items-center gap-3">
-               <Badge className="bg-primary/10 text-primary border-primary/20 text-[9px] font-black tracking-[0.2em] px-3 py-1">STAFF TERMINAL</Badge>
-               <span className="text-zinc-700 text-[9px] font-bold uppercase tracking-widest">Protocolo Apex v2.0</span>
+               <Badge className="bg-primary/10 text-primary border-primary/20 text-[8px] md:text-[9px] font-black tracking-[0.2em] px-3 py-1">STAFF TERMINAL</Badge>
+               <span className="text-zinc-700 text-[8px] md:text-[9px] font-bold uppercase tracking-widest">Protocolo Apex v2.0</span>
             </div>
           </div>
         </header>
 
         {currentView === 'dashboard' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <button 
               onClick={() => setCurrentView('messages')}
-              className="group text-left p-10 rounded-[3rem] bg-zinc-950 border border-zinc-900 hover:border-primary transition-all flex flex-col justify-between aspect-video md:aspect-auto"
+              className="group text-left p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] bg-zinc-950 border border-zinc-900 hover:border-primary transition-all flex flex-col justify-between aspect-auto min-h-[220px]"
             >
-              <div className="space-y-6">
-                <div className="w-16 h-16 rounded-[1.5rem] bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <MessageSquare className="w-8 h-8 text-primary" />
+              <div className="space-y-4 md:space-y-6">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1rem] md:rounded-[1.5rem] bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MessageSquare className="w-6 h-6 md:w-8 md:h-8 text-primary" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black uppercase tracking-tighter">Protocolo de Audiência</h3>
-                  <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
+                  <h3 className="text-xl md:text-2xl font-black uppercase tracking-tighter">Protocolo de Audiência</h3>
+                  <p className="text-zinc-500 text-[10px] md:text-xs font-bold uppercase tracking-widest leading-relaxed">
                     Responda aos comunicados oficiais e emita vereditos do Alto Conselho.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between mt-10">
-                <Badge variant="outline" className="border-zinc-800 text-primary text-[9px] px-4">{messages?.filter(m => m.status === 'pending').length || 0} PENDENTES</Badge>
-                <ChevronRight className="w-6 h-6 text-zinc-800 group-hover:translate-x-2 transition-transform" />
+              <div className="flex items-center justify-between mt-6 md:mt-10">
+                <Badge variant="outline" className="border-zinc-800 text-primary text-[8px] md:text-[9px] px-4">{messages?.filter(m => m.status === 'pending').length || 0} PENDENTES</Badge>
+                <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-zinc-800 group-hover:translate-x-2 transition-transform" />
               </div>
             </button>
 
             <button 
               onClick={() => setCurrentView('users')}
-              className="group text-left p-10 rounded-[3rem] bg-zinc-950 border border-zinc-900 hover:border-zinc-500 transition-all flex flex-col justify-between aspect-video md:aspect-auto"
+              className="group text-left p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] bg-zinc-950 border border-zinc-900 hover:border-zinc-500 transition-all flex flex-col justify-between aspect-auto min-h-[220px]"
             >
-              <div className="space-y-6">
-                <div className="w-16 h-16 rounded-[1.5rem] bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <UserCog className="w-8 h-8 text-white" />
+              <div className="space-y-4 md:space-y-6">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1rem] md:rounded-[1.5rem] bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <UserCog className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black uppercase tracking-tighter">Gestão de Membros</h3>
-                  <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
+                  <h3 className="text-xl md:text-2xl font-black uppercase tracking-tighter">Gestão de Membros</h3>
+                  <p className="text-zinc-500 text-[10px] md:text-xs font-bold uppercase tracking-widest leading-relaxed">
                     Controle de linhagem, rankings e permissões administrativas da rede.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between mt-10">
-                <Badge variant="outline" className="border-zinc-800 text-white text-[9px] px-4">{allUsers?.length || 0} MEMBROS</Badge>
-                <ChevronRight className="w-6 h-6 text-zinc-800 group-hover:translate-x-2 transition-transform" />
+              <div className="flex items-center justify-between mt-6 md:mt-10">
+                <Badge variant="outline" className="border-zinc-800 text-white text-[8px] md:text-[9px] px-4">{allUsers?.length || 0} MEMBROS</Badge>
+                <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-zinc-800 group-hover:translate-x-2 transition-transform" />
               </div>
             </button>
           </div>
         )}
 
         {currentView === 'messages' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 animate-in fade-in duration-500">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 animate-in fade-in duration-500">
             <aside className="lg:col-span-4 space-y-6">
-              <div className="flex gap-2">
+              <div className="flex gap-2 bg-zinc-950/50 p-1.5 rounded-2xl border border-zinc-900">
                 {['all', 'pending', 'replied'].map((f) => (
                   <button
                     key={f}
                     onClick={() => setMsgFilter(f as any)}
                     className={cn(
-                      "flex-1 px-4 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest border transition-all",
-                      msgFilter === f ? "bg-primary border-primary text-white" : "border-zinc-900 text-zinc-600"
+                      "flex-1 px-2 py-3 rounded-xl text-[7px] md:text-[8px] font-black uppercase tracking-widest border transition-all",
+                      msgFilter === f ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" : "border-transparent text-zinc-600 hover:text-zinc-400"
                     )}
                   >
-                    {f === 'all' ? 'Tudo' : f === 'pending' ? 'Pendentes' : 'Concluídos'}
+                    {f === 'all' ? 'Tudo' : f === 'pending' ? 'Pendentes' : 'OK'}
                   </button>
                 ))}
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[60vh] lg:max-h-[70vh] overflow-y-auto pr-1 custom-scrollbar">
                 {isMessagesLoading ? (
                   Array(3).fill(0).map((_, i) => <div key={i} className="h-24 bg-zinc-900/40 rounded-2xl animate-pulse" />)
                 ) : filteredMessages?.length === 0 ? (
@@ -226,49 +227,62 @@ export default function StaffPanelPage() {
                   filteredMessages?.map((msg) => (
                     <button
                       key={msg.id}
-                      onClick={() => { setSelectedMessage(msg); setReplyText(msg.reply || ''); }}
+                      onClick={() => { 
+                        setSelectedMessage(msg); 
+                        setReplyText(msg.reply || '');
+                        if (window.innerWidth < 1024) {
+                           document.getElementById('msg-detail')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
                       className={cn(
-                        "w-full text-left p-6 rounded-2xl border transition-all space-y-3",
-                        selectedMessage?.id === msg.id ? "bg-zinc-900 border-primary" : "bg-zinc-950/40 border-zinc-900"
+                        "w-full text-left p-5 md:p-6 rounded-2xl border transition-all space-y-3 active:scale-[0.98]",
+                        selectedMessage?.id === msg.id ? "bg-zinc-900 border-primary" : "bg-zinc-950/40 border-zinc-900 hover:border-zinc-700"
                       )}
                     >
                       <div className="flex justify-between items-start">
-                        <span className="text-[9px] font-black text-primary uppercase tracking-widest">{msg.userName}</span>
-                        <Badge variant="outline" className={cn("text-[7px] px-2", msg.status === 'replied' ? "border-green-900 text-green-500" : "border-primary/40 text-primary")}>
+                        <span className="text-[8px] md:text-[9px] font-black text-primary uppercase tracking-widest truncate max-w-[70%]">{msg.userName}</span>
+                        <Badge variant="outline" className={cn("text-[7px] px-2 leading-none h-4", msg.status === 'replied' ? "border-green-900 text-green-500" : "border-primary/40 text-primary")}>
                           {msg.status === 'replied' ? 'OK' : 'WAIT'}
                         </Badge>
                       </div>
-                      <h4 className="text-xs font-black uppercase truncate">{msg.subject}</h4>
+                      <h4 className="text-[11px] md:text-xs font-black uppercase truncate">{msg.subject}</h4>
                     </button>
                   ))
                 )}
               </div>
             </aside>
 
-            <section className="lg:col-span-8">
+            <section id="msg-detail" className="lg:col-span-8">
               {selectedMessage ? (
-                <Card className="bg-zinc-950 border-zinc-900 p-8 md:p-12 rounded-[3rem] space-y-8">
+                <Card className="bg-zinc-950 border-zinc-900 p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="space-y-4">
-                    <h3 className="text-3xl font-black uppercase tracking-tighter">{selectedMessage.subject}</h3>
-                    <p className="text-zinc-400 text-sm italic font-medium leading-relaxed">"{selectedMessage.message}"</p>
+                    <div className="flex justify-between items-start">
+                       <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-tight">{selectedMessage.subject}</h3>
+                       <button onClick={() => setSelectedMessage(null)} className="lg:hidden p-2 text-zinc-600">
+                          <X className="w-5 h-5" />
+                       </button>
+                    </div>
+                    <p className="text-zinc-400 text-xs md:text-sm italic font-medium leading-relaxed bg-zinc-900/40 p-6 rounded-2xl border border-zinc-900">
+                      "{selectedMessage.message}"
+                    </p>
                   </div>
                   <div className="space-y-4 pt-6 border-t border-zinc-900">
-                    <Label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Parecer do Alto Conselho</Label>
+                    <Label className="text-[9px] md:text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Parecer do Alto Conselho</Label>
                     <Textarea 
                       value={replyText} 
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="ESCREVA A RESPOSTA OFICIAL..."
-                      className="bg-black border-zinc-900 min-h-[150px] rounded-2xl text-sm"
+                      className="bg-black border-zinc-900 min-h-[150px] rounded-2xl text-xs md:text-sm p-5 focus-visible:ring-primary/40"
                     />
-                    <Button onClick={handleSendReply} disabled={isReplying || !replyText.trim()} className="w-full h-14 bg-primary rounded-2xl font-black uppercase tracking-widest">
+                    <Button onClick={handleSendReply} disabled={isReplying || !replyText.trim()} className="w-full h-14 bg-primary hover:bg-accent rounded-2xl font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20">
                       {isReplying ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Emitir Veredito'}
                     </Button>
                   </div>
                 </Card>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center p-20 border border-dashed border-zinc-900 rounded-[3rem] opacity-20">
-                  <MessageSquare className="w-16 h-16 mb-6" />
-                  <p className="text-[10px] font-black uppercase tracking-widest">Selecione uma audiência</p>
+                <div className="h-full hidden lg:flex flex-col items-center justify-center p-20 border border-dashed border-zinc-900 rounded-[3rem] opacity-20">
+                  <MessageSquare className="w-16 h-16 mb-6 text-zinc-700" />
+                  <p className="text-[10px] font-black uppercase tracking-widest">Selecione uma audiência para analisar</p>
                 </div>
               )}
             </section>
@@ -276,65 +290,69 @@ export default function StaffPanelPage() {
         )}
 
         {currentView === 'users' && (
-          <div className="space-y-8 animate-in fade-in duration-500">
+          <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500">
             <div className="relative max-w-md">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
               <Input 
                 placeholder="BUSCAR POR NOME OU E-MAIL..." 
-                className="bg-zinc-950 border-zinc-900 h-14 pl-12 rounded-2xl font-bold uppercase text-xs"
+                className="bg-zinc-950 border-zinc-900 h-14 pl-12 rounded-2xl font-bold uppercase text-xs focus-visible:ring-primary/40"
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
               />
             </div>
 
-            <Card className="bg-zinc-950 border-zinc-900 rounded-[2.5rem] overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+            <Card className="bg-zinc-950 border-zinc-900 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl">
+              <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
                     <tr className="bg-zinc-900/50 border-b border-zinc-900">
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Membro</th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Patente</th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Elite Score</th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações</th>
+                      <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-zinc-500">Membro</th>
+                      <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-zinc-500">Patente</th>
+                      <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-zinc-500">Elite Score</th>
+                      <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-zinc-500 text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-900">
                     {isUsersLoading ? (
                       Array(5).fill(0).map((_, i) => <tr key={i} className="h-16 bg-zinc-900/20 animate-pulse" />)
+                    ) : filteredUsers?.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-20 text-center text-zinc-700 font-black uppercase tracking-widest text-[10px]">Nenhum membro localizado</td>
+                      </tr>
                     ) : filteredUsers?.map((u) => (
                       <tr key={u.id} className="hover:bg-zinc-900/30 transition-colors">
-                        <td className="px-8 py-6">
+                        <td className="px-6 md:px-8 py-6">
                           <div className="flex flex-col">
-                            <span className="text-sm font-black uppercase">{u.name}</span>
-                            <span className="text-[9px] text-zinc-600 font-bold uppercase">{u.email}</span>
+                            <span className="text-xs md:text-sm font-black uppercase truncate max-w-[200px]">{u.name}</span>
+                            <span className="text-[8px] md:text-[9px] text-zinc-600 font-bold uppercase truncate max-w-[200px]">{u.email}</span>
                           </div>
                         </td>
-                        <td className="px-8 py-6">
-                          <Badge variant="outline" className="border-zinc-800 text-[8px] font-black tracking-widest">
+                        <td className="px-6 md:px-8 py-6">
+                          <Badge variant="outline" className="border-zinc-800 text-[8px] font-black tracking-widest bg-black/40">
                             {u.status || 'MASTER'}
                           </Badge>
                         </td>
-                        <td className="px-8 py-6">
+                        <td className="px-6 md:px-8 py-6">
                           <div className="flex items-center gap-2">
-                             <Zap className="w-3 h-3 text-primary" />
-                             <span className="text-xs font-black">{u.eliteScore || 0}</span>
+                             <Zap className="w-3 h-3 text-primary animate-pulse" />
+                             <span className="text-xs md:text-sm font-black font-mono">{u.eliteScore || 0}</span>
                           </div>
                         </td>
-                        <td className="px-8 py-6 text-right">
+                        <td className="px-6 md:px-8 py-6 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Button 
                               variant="outline" 
                               size="sm" 
                               onClick={() => handleConfirmPayment(u)}
-                              className="h-8 border-primary/30 text-[9px] font-black uppercase tracking-widest hover:bg-primary/10"
+                              className="h-8 md:h-9 border-primary/30 text-[8px] md:text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 rounded-xl"
                             >
-                              <CreditCard className="w-3 h-3 mr-1" /> Mensalidade
+                              <CreditCard className="w-3 h-3 mr-1.5 hidden sm:inline" /> Pontos
                             </Button>
                             <Button 
                               variant="ghost" 
                               size="sm" 
                               onClick={() => handleToggleRole(u)}
-                              className="h-8 text-[9px] font-black uppercase tracking-widest hover:text-primary"
+                              className="h-8 md:h-9 text-[8px] md:text-[9px] font-black uppercase tracking-widest hover:text-primary rounded-xl"
                             >
                               {u.role === 'admin' ? 'Membro' : 'Admin'}
                             </Button>
