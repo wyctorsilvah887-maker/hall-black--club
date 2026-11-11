@@ -369,9 +369,16 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl order-1 lg:order-2 group">
-               <NextImage src="https://picsum.photos/seed/vault-landing/1200/900" fill className="object-cover opacity-90 group-hover:scale-105 transition-all duration-1000" alt="The Vault" data-ai-hint="luxury safe" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
+            <div className="relative aspect-video rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl order-1 lg:order-2 group">
+               <NextImage 
+                src="https://picsum.photos/seed/vault-landing/1200/900" 
+                fill 
+                className="object-cover opacity-95 group-hover:scale-105 transition-all duration-1000" 
+                alt="The Vault" 
+                data-ai-hint="luxury safe"
+                sizes="(max-width: 768px) 100vw, 50vw"
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-40" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <Lock className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
@@ -380,9 +387,15 @@ export default function Home() {
 
           {/* SOVEREIGN IA */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-            <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group">
-               <NextImage src="/advisor.png" fill className="object-cover opacity-90 group-hover:scale-105 transition-all duration-1000" alt="Terminal Sovereign AI" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
+            <div className="relative aspect-video rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group">
+               <NextImage 
+                src="/advisor.png" 
+                fill 
+                className="object-cover opacity-95 group-hover:scale-105 transition-all duration-1000" 
+                alt="Terminal Sovereign AI"
+                sizes="(max-width: 768px) 100vw, 50vw"
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-40" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <Terminal className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
@@ -423,9 +436,15 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <div className="relative aspect-video lg:aspect-[4/3] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group order-1 lg:order-2">
-               <NextImage src="/black-room.png" fill className="object-cover opacity-90 group-hover:scale-105 transition-all duration-1000" alt="Black Room Networking" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
+            <div className="relative aspect-video rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-zinc-900 shadow-2xl group order-1 lg:order-2">
+               <NextImage 
+                src="/black-room.png" 
+                fill 
+                className="object-cover opacity-95 group-hover:scale-105 transition-all duration-1000" 
+                alt="Black Room Networking"
+                sizes="(max-width: 768px) 100vw, 50vw"
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-40" />
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <MessageSquare className="w-12 h-12 md:w-16 md:h-16 text-primary animate-pulse" />
                </div>
