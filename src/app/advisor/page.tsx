@@ -13,8 +13,7 @@ import { EliteLoader } from '@/components/mythic/EliteLoader';
 
 /**
  * @fileOverview Terminal Dedicado do Sovereign AI.
- * Sincronizado com atraso proposital para imersão de elite.
- * O cabeçalho global e o botão de voltar foram removidos para experiência 100% full screen.
+ * Sincronizado com o padrão visual do Black Room para imersão 100% full screen.
  */
 
 export default function AdvisorPage() {
@@ -55,27 +54,25 @@ export default function AdvisorPage() {
   return (
     <main className={cn("fixed inset-0 bg-black text-white selection:bg-primary/30 flex flex-col overflow-hidden", themeClass)}>
       
-      {/* O cabeçalho global TopHeader e o botão de voltar foram removidos para tela 100% cheia */}
-
-      <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full px-4 overflow-hidden">
+      <div className="flex-1 flex flex-col w-full max-w-6xl mx-auto overflow-hidden relative">
         
-        <div className="flex items-center justify-between gap-4 mb-6 px-4 pt-8 md:pt-12">
+        <div className="pt-8 md:pt-12 px-8 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-              <Terminal className="w-5 h-5 text-primary" />
+              <Terminal className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl md:text-3xl font-black uppercase tracking-tighter">Sovereign AI</h1>
-              <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-bold">Protocolo de Auditoria Digital</p>
+              <h1 className="text-xl font-black uppercase tracking-tighter leading-tight">Sovereign AI</h1>
+              <p className="text-[7px] text-zinc-600 uppercase tracking-widest font-bold">Protocolo de Auditoria</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 bg-zinc-950/50 p-2 md:p-3 rounded-xl border border-zinc-900">
-             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-             <div className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Canal Criptografado</div>
+          <div className="flex items-center gap-2 bg-zinc-950/50 p-2 px-4 rounded-full border border-zinc-900">
+             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+             <div className="text-[7px] font-black uppercase tracking-widest text-zinc-400">Link Criptografado</div>
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 bg-zinc-950/20 border-t border-x border-zinc-900/50 rounded-t-[2.5rem] md:rounded-t-[3.5rem] p-4 md:p-8 shadow-2xl backdrop-blur-sm flex flex-col overflow-hidden">
+        <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <BlackAdvisor profile={{ ...profile, status: currentRank }} />
         </div>
       </div>
